@@ -1,0 +1,384 @@
+/* styles particuliers pour le consignel dans le même répertoire */
+/* Héritage de designvegetal  */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td, 
+nav, header, footer, section, article, aside, figure, figcaption {
+  margin: 0; padding: 0; border: 0; outline: 0; 
+  font-size: 100%; vertical-align: baseline; background: transparent;
+}
+html {height:100%;}
+body {height:100%; line-height: 1;}
+ol, ul { list-style: none; }
+blockquote, q { quotes: none; }
+/* remember to define focus styles! */
+:focus { outline: 0; }
+/* remember to highlight inserts somehow! */
+ins { text-decoration: none; }
+del { text-decoration: line-through; }
+/* tables still need 'cellspacing="0"' in the markup */
+table { border-collapse: collapse; border-spacing: 0; }
+/* fin du  reset */
+body { margin-left:auto; margin-right:auto; }
+body {font-family: palatino, serif; padding:5px;}
+body * {padding:0px;}
+div {}
+applet {} /* java */
+object {display: block;} /* inclusion de quelque chose */
+iframe {} /* inclusion de quelque chose */
+blockquote {} /* citation longue */
+
+span {}
+span.lettrine {font-size:1.4em;color:#fff;background-color:#070;border-top:solid 5px #070;line-height: 1.2em;}
+
+h1 {font-size:1.75em;}   /* corps 21 */
+h2 {font-size:1.33em;}   /* corps 16 */
+h3 {font-size:1.17em;}   /* corps 14 */
+h4, h5, h6 {font-size:1.08em;} /* corps 13 */
+h4 {font-style:oblique;}
+
+
+p, figurecaption {font-size: 0.92em;line-height: 1.17em; text-align:justify; padding-top:0.17em; padding-bottom:0.17em;}
+
+
+
+blockquote {font-style:oblique;border-left:1px solid #008;padding-left:1em;} /* citation longue */
+pre {font-family: courier;font-size:0.92em; overflow: auto;}  /* corps 11 *//* texte préformaté */
+a:link { color:#009 ;}
+a:hover {font-weight: bold;}
+a:visited { color: #004;}
+.liensclairs a {text-decoration:none; }
+a.actif { color: #00e;}
+a.inactif{ color: #bbb;}
+a.inactif img{ display: none;}
+
+abbr {}
+acronym {}
+address {font-style: normal;}
+big {font-size:1.17em;font-weight: bold;}
+cite {}
+code {font-family: courier;font-size:0.83em; background-color:#eef;display:block;overflow:auto;white-space:nowrap;}
+del {}
+defn {}
+em {font-size:1.12em;font-weight: bold;color:#002;}
+font {}
+img {}
+ins {background-color:#ff6;}
+kbd {font-family: arial , sans-serif;}
+q {quotes: '"' '"' "¬´" "¬ª";}
+s {}
+samp {}
+small {font-size: 0.83em;}
+strike {}
+strong {font-size:1.12em;font-weight: bold;color:#200;}
+strong:hover {background-color:#800;}
+sub {font-size: 0.83em;}
+sup {font-size: 0.83em;vertical-align: super; line-height: 0.55em;}
+tt {} 
+var {} 
+b {} 
+u {} 
+i {} 
+center {} 
+
+ol {margin-left: 1.17em; list-style: decimal;} 
+ul {margin-left: 1.17em; list-style: disc;} 
+li {font-size: 0.92em;line-height: 1.17em; } 
+li.vide {display : list-item;
+  list-style-image : url(carre01.gif);
+} 
+li.sinon { list-style:none; margin-left:-1.2em; }
+li.sinon2 { list-style:none; margin-left:0em; }
+
+
+
+.listecle li:hover {background-color:#cce;}
+.listecle li:hover ul {background-color:#ffe;}
+.listecle ul ul { display:none;}
+.listecle ul li:hover ul { display: block; }
+.listecle ul li:hover ul ul { display: none; }
+.listecle ul ul li:hover ul { display: block; }
+.listecle ul ul li:hover ul ul { display: none; }
+.listecle ul ul ul li:hover ul { display: block; }
+.listecle ul ul ul li:hover ul ul { display: none; }
+.listecle ul ul ul ul li:hover ul { display: block; }
+.listecle ul ul ul ul li:hover ul ul { display: none; }
+fieldset {} 
+form {} 
+label {} 
+legend {} 
+table {} 
+caption {} 
+tbody {} 
+tfoot {} 
+thead {} 
+tr {}
+th  {font-size: 0.92em;line-height: 1.17em; } 
+th th, th td {font-size: 1em;line-height: 1em; } 
+td  {font-size: 0.92em;line-height: 1.17em; } 
+td th, td td {font-size: 1em;line-height: 1em; } 
+/* balises html5 */
+nav {}
+header {}
+footer {}
+section {}
+article {}
+aside {}
+figure {}
+figcaption {}
+
+/* classes s'appliquant au texte */
+
+.gauche {text-align:left;}
+.centre {text-align:center;}
+.droite {text-align:right;}
+span.droite {display:block; float:right;}
+img.droite {float:right;}
+img.enligne {display:inline;}
+img.large {width:100%}
+.discret, .discret a { color:#88b; text-decoration: none;}
+.discret:hover, .discret a:hover { color:#006;}
+
+.design, .design a {color: #B48B1D;}
+.vegetal, .vegetal a {color: #0D7610;}
+.mieux, .mieux a {color: #64385A;}
+.vivre, .vivre a {color: #4A7737;}
+.ici, .ici a {color: #B48B1D;}
+
+.sansfond  {background-color:#fff; } 
+.fondleger  {background-color:#cce; } 
+.fondmoyen   {background-color:#98f; } 
+.fondfort   {background-color:#78f; } 
+
+.voit   {display:block; border-left: solid 5px red; margin-left:7px;}
+.voit  .voit {display:block; border-left: solid 5px green; margin-left:7px;}
+.voit  .voit  .voit  {display:block; border-left: solid 5px blue; margin-left:7px;}
+.cache  {display:none; }
+
+.separateur { display: block; margin-left: auto; margin-right: auto;  clear: both;}
+
+p + h3, div.jugem + h3 {margin-top: 1em;}
+h3.titreliste {font-size: medium; font-weight: bold; color:#335; margin-top: 1em; margin-bottom: 0px; text-align:left;}
+h3.titreliste a {text-decoration: none; color:#335;}
+
+.date {line-height:0.75em;}
+.dossier {line-height:0.75em;}
+/* balise table pour faire un graphique en ligne */
+table.tableenligne {display: inline-table; }
+
+
+/* balise table pour faire des tableaux */
+
+.tableau, .tableaulong {border:solid 1px #00f; margin:5px; border-collapse:collapse; background-color:#fff;}
+.tableau caption, .tableaulong caption {border-top:solid 5px #B48B1D;  padding:10px; }
+.tableau thead, .tableaulong thead  {border-bottom:solid 5px #0D7610;}
+.tableau tfoot, .tableaulong tfoot {border-top:solid 5px #64385A;} 
+
+.tableau td, .tableaulong td {border:solid 1px #990; padding:5px; }
+.tableau th, .tableaulong th {border:solid 1px #099; padding:5px; }
+.tableau tr.evidence, .tableaulong tr.evidence {border:solid 5px #59f;}
+.tableau tr.tableentete, .tableaulong tr.tableentete {border:dashed 2px #000;}
+.tableau td.evidence, .tableaulong td.evidence {border:solid 10px #f60;}
+.tableau col.evidence, .tableaulong col.evidence {border:solid 6px #f95;}
+.tableau col.tableentete, .tableaulong col.tableentete {border:solid 3px #03f;}
+
+.tableaulong {margin-bottom:32em; width:480px; }
+.tableaulong tbody {position:absolute; max-height:30em; overflow-y: scroll; }
+.tableaulong, .tableaulong tbody, .tableaulong tfoot {width:480px; margin-left:-1px;}
+.tableaulong tfoot {z-index:-1; position:absolute; margin-top:30em; }
+
+/* balise table pour faire des factures */
+.facture {width:100%; border-collapse:collapse; border:0;}
+.facture th, .facture td { padding-left:0.5em;padding-right:0.5em;}
+.facture thead  {background-color:#ccf; border-bottom: #007 solid 1px; }
+.facture thead th, .facture thead td {font-size: 0.83em; line-height: 1.17em; vertical-align:bottom; font-weight: normal; }
+.facture tbody td {padding-top:0.25em; text-align:left; }
+.facture tbody td+td {text-align:center;}
+.facture tbody td+td+td {text-align:right;}
+.facture tbody+tbody { border-top: #007 solid 1px; }
+.facture .taxes {font-size: 0.83em; line-height: 1.17em;}
+.facture .taxes td, .facture .totalavanttaxes td, .facture .totalaprestaxes td {text-align:right;}
+.facture .totalavanttaxes {font-weight: bold;}
+.facture tfoot  {background-color:#ccf; border-top: #007 solid 1px; font-weight: bold; padding-top:0.25px;}
+.facture tfoot td{ padding-top:0.5em;}
+/* coloration pour form avec 7 botons radio pour jugement majoritaire */
+div.jugemaffiche span {display:inline-block; width:2em; text-align:center;}
+.jugem0 { background: url(eval0.png); padding:3px;}
+.jugem1 { background: url(eval1.png); padding:3px;}
+.jugem2 { background: url(eval2.png); padding:3px;}
+.jugem3 { background: url(eval3.png); padding:3px;}
+.jugem4 { background: url(eval4.png); padding:3px;}
+.jugem5 { background: url(eval5.png); padding:3px;}
+.jugem6 { background: url(eval6.png); padding:3px;}
+.eval0, .neval-2 { background: #fc2a1c; padding:3px;}
+.eval1, .neval-1 { background: #fd9226; padding:3px;}
+.eval2, .neval-0 { background: #fed631; padding:3px;}
+.eval3, .neval0 { background: #d9fd35; padding:3px;}
+.eval4, .neval1 { background: #a3fd32; padding:3px;}
+.eval5, .neval2 { background: #25da29; padding:3px;}
+.eval6, .neval3 { background: #44ac45; padding:3px;}
+.eval7 { background: #880000; padding:3px;}
+td.eval0, td.eval1, td.eval2, td.eval3, td.eval4, td.eval5, td.eval6 { padding: 0px;}
+.nevaln { display:none; }
+
+.test { border: solid 2px #aaa;}
+
+h2 { color: #00b; text-shadow: #99f 0px 3px 3px ;}
+h2:first-letter { font-size: 1.69em; }
+h3 { color:#335;}
+p.soustitre { margin-top: -0.25em; margin-bottom: 0.5em; font-size: 0.75em ;}
+p { text-align: justify ;}
+
+
+
+.unecolonne {width: 100%;}
+.deuxcolonnesA {display: block; float: left; width: 40%;}
+.deuxcolonnesB {display: block; float: right; width: 55%;}
+
+.deuxcolonnesA2 {display: block; float: left; width: 20%;}
+.deuxcolonnesB2 {display: block; float: right; width: 75%;}
+
+.deuxcolonnesA3 {display: block; float: left; width: 48%;}
+.deuxcolonnesB3 {display: block; float: right; width: 48%;}
+
+/* Fin de Héritage de designvegetal  */
+/* mise en forme générale */
+/* .application {border:solid 1px #555; width:320px; height:568px;overflow-y: auto; overflow-x: hidden; }  */
+.application {border:solid 0px #555; width:98%; height:auto;overflow-y: auto; overflow-x: hidden; margin-left:auto; margin-right:auto;}
+div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
+
+/* graphique de suivi du compte */
+.suivicompte { }
+.suivi {width: 300px; height: 30px; border: solid 0px; position: relative; margin:auto; margin-top:10px; margin-bottom:10px; clear:both;}
+
+.suivi .suivi0, .suivi .suivi1, .suivi .suivi2, .suivi .suivi3, .suivi .suivi4, .suivi .suivi5, .suivi .suivi6 {height: 4px; border: 0px; margin:0px; padding:0px; float:left; margin-top:13px;}
+.suivi .suivi0, .suivi .suivi6 {width: 10px;} .suivi .suivi1, .suivi .suivi5 {width: 20px; } 
+.suivi .suivi2, .suivi .suivi4 {width: 40px;} .suivi .suivi3 {width: 160px; } 
+
+.suivi .barredisponible {position: absolute; top:0; left:0; margin-left:149px; margin-top:4px; width: 0px; height: 20px; border: solid 1px #000; }
+/* margin-left de le cible 135 margin left du rond à la médiane 139 */
+.suivi .cible {margin:0px; float:left; position: absolute; top:0; left:0; margin-left:135px;  width: 24px; height: 24px; border-radius: 14px; background: transparent; border: dotted 3px green;}
+.suivi .rond {position: absolute; top:0; left:0; margin-left:139px; margin-top:4px; width: 22px; height: 22px; border-radius: 14px; background: #0a0; border: solid 0px #000; }
+
+/* inscription b*/
+.inscription {}
+
+/* Entête avec identification */
+.appentete {width:100%; }
+.recherche { clear:both;}
+.pied {}
+
+
+.appentete img.utilisateur {height:3em; float:left; margin-right:0.5em; } .appentete p {border-bottom: solid 1px;}
+.appentete .menupref {display:block; float: right; margin-right:1em;} 
+.appentete p.connexionmenu {} .appentete .connexionmenu span {display: inline-block; margin-left:1em; margin-right:1em;} 
+
+
+
+/* utilisation */
+#draggable {  }
+.ui-menu {list-style-type: none;  background: #fff ; width:270px;}
+.ui-menu-item {  padding-left:1em; border-bottom:solid 1px #aaa; }
+.ui-helper-hidden-accessible {display:none;}
+.offre h3, .demande h3 {padding-top:5px; padding-left:1.5em;} 
+.utilisation .recherche {padding-left:20px;padding-right:20px;}
+.utilisation .recherche input {}
+.utilisation #poubelle {min-height:10em; width:5px; height:calc(80vh - 11em  );  background:#eee; float:left; padding:0em;}
+.utilisation #poubelle2 {min-height:10em; width:5px; height:calc(80vh - 11em );  background:#eee; float:right; padding:0em;}
+.utilisation .memorise {width:15px; height:50px;  background:#eee; float:right;  padding-top:0.5em; padding-bottom:0.5em;}
+#choixenattente {width:auto; height:50px; background:#fee; overflow-y: auto; overflow-x: hidden; padding:0.5em;}
+#choixenattente div {display:inline-block; float:left; margin:2px;} #choixenattente div h5 {float:left;}
+#choixenattente * {color:#f00;}
+
+#offrechoisi, #demandechoisi, #offreconfirme, #demandeconfirme {min-height:10em; width:auto; height: calc(80vh - 12em ); padding:0.5em; background:#efe; overflow-y: auto; overflow-x: hidden; }
+#offreconfirme, #demandeconfirme {min-height:10em; background:#fff; border:solid 3px #efe; height: calc(80vh - 12em  - 6px);}
+#offrechoisi *, #demandechoisi * , #offreconfirme * , #demandeconfirme * { padding:0;}
+#offrechoisi div, #demandechoisi div , #offreconfirme div , #demandeconfirme div { padding-top:0.5em;}
+#offrechoisi div .environnement, #demandechoisi div .environnement, #offreconfirme div .environnement, #demandeconfirme div .environnement {background:#cfc; }
+#dacoffre h3, #dacdemande h3 {padding-top:5px; padding-left:1.5em; }
+#dacoffre div, #dacdemande div {padding-left:0.9em; }
+
+.doubletroc { background-color:#fee;}
+.simpletroc {}
+.fraude { background-color:#f00;}
+
+
+.acceptetransaction{width:90%; margin:auto; text-align:center; padding:1em;}
+.acceptetransaction button {width:25%; height:3em; background:#9f9;}
+.acceptetransaction button + button {width:25%; background:#ff9;}
+.acceptetransaction button + button + button {width:25%; background:#f99;}
+
+.detection img {width: 11em; height:11em; padding:3px;}
+
+.valeursdd  {width: 300px;  margin: auto; clear:both; }
+.argent {background:#fee; }
+.monnaielocale {background:#fffafa; } 
+.environnement {background:#efe; } 
+.social {background:#eef; }
+.valeursdd .argent, .valeursdd .environnement, .valeursdd .social {width:32%; display: inline-block; border:0px; margin:5px 0px 5px 0px ; padding:0px;}
+.valeursdd input { width:98%; border:none; margin:0px;}
+
+.statutfichierspourtous * {width:2em;}
+
+.validation { margin-top: 5px;}
+/* .validation .utilisateur {display:block; float:right; border:solid 1px; padding:5px;} */
+.validation .qr {float:left; padding:5px; background:#ffdd99; opacity:0.25;}
+.validation .qr1 {float:right; padding:5px; background:#eeee99; opacity:0.25;}
+.validation .qr2 {float:left; padding:5px; background:#eeffee; opacity:1;}
+.validation .qr3 {float:left; padding:5px; background:#eeffdd; opacity:1;} 
+.validation .qr .qrcodetexte, .validation .qr2 .qrcodetexte , .validation .qr3 .qrcodetexte  {float:left; width:240px;  margin:0px; }   
+.validation .qr1 .qrcodetexte  {float:right; width:240px;  margin:0px; }   
+/* .validation .codebarre {float:right; width:200px; height:40px; border:solid 1px;padding:5px;}  */ 
+
+.actif {background:#fff; opacity:1;}
+.attente {color:blue; background:#eeee99; opacity:0.25;}
+
+.arretesession {}
+.arretesession button {}
+.arretesession .suiviarret {width: 80%; margin:auto; height: 10px; position: relative; background: #eee;}
+.arretesession #arretesessionsuivi {background-color: #0D7610;  width: 10px; height: 10px; position: absolute;}
+
+.ui-autocomplete { max-height: 20em; overflow-y: auto;
+  overflow-x: hidden; /* prevent horizontal scrollbar */
+}
+
+.ui-autocomplete-loading { background: white url("patienter.gif") right center no-repeat; }
+
+@media only screen and (max-width: 380px) {
+.recherche #inputactivite {width:80%;}
+}
+
+@media only screen and (min-width: 768px) {
+.suivi {transform: scale(1.25, 1.25);}
+h1 {font-size:2em;}
+h2 {font-size:1.75em;}
+h2:first-letter { font-size: 1.75em; }
+h3 {font-size:1.5em;}
+h3 input {font-size:0.7em;}
+h4, h5, h6 {font-size:1.2em; line-height: 1.4em; }
+* a {font-size:1.17em;}
+p, figurecaption {font-size: 1.12em; line-height: 1.17em; text-align:justify; padding-top:0.17em; padding-bottom:0.17em;}
+pre, strong {font-size:1.22em;}
+code, small, sub, sup {font-size:1.13em;}
+sup {line-height: 0.85em;}
+sub {font-size:0.85em;}
+ol, ul {font-size:1.27em;}
+li, th, td {font-size:1.12em; line-height: 1.27em; }
+th th, th td,td th, td td {font-size:1.2em; line-height: 1.2em; }
+.menupref * {font-size:0.87em;}
+input {font-size:1em;}
+.suivi {font-size:0.75em;}
+.date, p.soustitre {line-height:0.95em;}
+.dossier {line-height:0.95em;}
+#dacoffre div, #dacdemande div {padding-left:1.1em; }
+.appentete img.utilisateur {height:3em; }
+.ui-menu-item {  font-size:0.85em; }
+
+}
+

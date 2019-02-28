@@ -1,0 +1,85 @@
+<!-- détail de la fonction acceptetransaction php (serveur) du consignel -->
+<h3 class="nonfonction">acceptetransaction($var3,$notransaction)</h3>
+<details open> <summary>Objectif et sous objectifs</summary>
+<p class="objectif">Enregistrer la transaction acceptée</p>
+<ul class="sousobjectifs">
+<li>Enregistrer les dépenses (↺) de l'accepteur ($var3)</li>
+<li>Ignorer la demande si l'accepteur n'est pas le destinataire</li>
+<li>Vérifier si la proposition existe</li>
+<li>Refuser si la proposition a déjà été acceptée</li>
+<li></li>
+<li>Refuser la proposition réserve insuffisante</li>
+<li>Refuser la proposition pour dépense excessive</li>
+<li></li>
+</ul>
+</details>
+<details open> <summary>Produit</summary>
+<ul class="produits">
+<li>ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions</li>
+<li>ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions</li>
+<li>ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur</li>
+<li>mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur</li>
+<li>nettoyage et mise à jour fichier xxxxx-suivi31jours.json dans la base de l'accepteur</li>
+<li></li>
+</ul>
+</details>
+<details open> <summary>Reçoit</summary>
+<ul class="recoit">
+<li>$var3 (nombre entier) pour l'accepteur chiffré xxxxxx</li>
+<li>$notransaction (chaine) identifiant de la transaction xxxxxxxx_xxxx_xxxxxx</li>
+<li></li>
+<li></li>
+</ul>
+</details>
+<details open> <summary>Demande</summary>
+<ul class="demande">
+<li>$resumecompe = resumecompte($var3) (chaine type CSV) contient $soldeconsigneldisponible = $derniercompte[0], $soldeconsignelparjour = $derniercompte[1]</li>
+<li>$cheminfichier = ouvrelechemin($idtra)</li>
+<li>$nomfichier = substr($idtra,0,14)."-suivi.json" $var31 identifiant de la transaction entouré de guillemets, $var32, $var33, $var34, $var35, $var36 durée de validité de la proposition, $var37 demande ↺onsignel entourée de guillemets, $var38 numéro du proposeur avec guiillements et fin de ligne</li>
+<li></li>
+</ul>
+</details>
+<details open> <summary>Retourne</summary>
+<ul class="retourne">
+<li>"TACC - ".$nouveauresume; pour proposition acceptée</li>
+<li>"DTAO - C'est ma proposition "</li>
+<li>"TEXP - Proposition expirée"</li>
+<li>"TRIN - Transaction inconnue erreur destinataire "</li>
+<li>"DTCE - Refus dépense ↺onsignel excessive"</li>
+<li>"DTMC - Refus solde ↺onsignel insuffisant"</li>
+<li>"DTMR - Vérifiez le numéro de la proposition"</li>
+<li>"TDAC - Proposition déjà acceptée par vous"</li>
+<li>"TNDI - Cette proposition n'est pas disponible"</li>
+</ul>
+</details>
+<details open> <summary>Dépendances</summary>
+<ul class="dependances">
+<li>resumecompte($var3) [ $soldeconsigneldisponible, $soldeconsignelparjour ]</li>
+<li>ouvrelechemin($idtra)</li>
+<li>decryptelestockage(fgets($fichierencours, 1024))</li>
+<li></li>
+</ul>
+</details>
+<details open> <summary>Limites</summary>
+<ul class="limites">
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+</details>
+<details open> <summary>Vérifications</summary>
+<ul class="verifications"><li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+</details>
+<details open> <summary>Tests</summary>
+<ul class="tests">
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+</details>

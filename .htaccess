@@ -1,0 +1,5 @@
+# Protéger le fichier .consignel
+<files consignel-base>
+order allow,deny
+deny from all
+</files>

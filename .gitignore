@@ -1,0 +1,6 @@
+/consignel-base
+/consignel-base-test
+/precedents
+htaccess*
+.htaccess-*
+/tests

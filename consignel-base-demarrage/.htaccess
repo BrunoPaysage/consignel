@@ -1,0 +1,10 @@
+# Protéger les fichiers de données
+Options All -Indexes
+<files .baseconsignel*>
+order allow,deny
+deny from all
+</files>
+<files *.json>
+order allow,deny
+deny from all
+</files>

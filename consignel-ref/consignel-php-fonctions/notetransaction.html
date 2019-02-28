@@ -1,0 +1,71 @@
+<!-- détail de la fonction notetransaction php (serveur) du consignel -->
+<h3 class="nonfonction">notetransaction($var3,$nomfichier,$contenufichier)</h3>
+<details open> <summary>Objectif et sous objectifs</summary>
+<p class="objectif">Garder les traces de la proposition</p>
+<ul class="sousobjectifs">
+<li>Enregistrer les dépenses (↺) du proposeur ($var3)</li>
+<li>Refuser la proposition pour réserve insuffisante</li>
+<li>Refuser la proposition pour dépense excessive</li>
+<li>Refuser la proposition déjà faite du même auteur</li>
+<li>Enregistrer les dépenses</li>
+</ul>
+</details>
+<details open> <summary>Produit</summary>
+<ul class="produits">
+<li>ajout fichier traxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions</li>
+<li>ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions</li>
+<li>ajout au fichier xxxxx-mesproposition.json dans la base du proposeur</li>
+<li>mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur</li>
+<li>nettoyage et mise à jour fichier xxxxx-suivi31jours.json dans la base du proposeur</li>
+<li>nettoyage et mise à jour fichier xxxxx-gain365jours.json dans la base du proposeur</li>
+<li>mise à jour fichier xxxxx-resume.json dans la base du proposeur</li>
+<li>ajout au fichier xxxxx-suiviresume.json dans la base du proposeur</li>
+</ul>
+</details>
+<details open> <summary>Reçoit</summary>
+<ul class="recoit">
+<li>$var3 (nombre entier) pour l'utilisateur chiffré</li>
+<li>$nomfichier (chaine) ex proposetransaction</li>
+<li>$contenu (chaine) fichier json</li>
+</ul>
+</details>
+<details open> <summary>Demande</summary>
+<ul class="demande">
+<li>$resumecompe = resumecompte($var3) (chaine type CSV) contient $soldeconsigneldisponible = $derniercompte[0], $soldeconsignelparjour = $derniercompte[1] </li>
+<li>$cheminfichier = ouvrelechemin($idtra)</li>
+<li>$cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-".$nomfichierlocal.".json")</li>
+<li>$dernieresidtra = ajouteaufichier2dates($cheminfichier,$idtra) contient $idtraprecedente = $dernieresidtra[0], $anciennete = $dernieresidtra[4]</li>
+</ul>
+</details>
+<details open> <summary>Retourne</summary>
+<ul class="retourne">
+<li>"PEAA - ".$nouveauresume si la proposition est acceptable</li>
+<li>"DTCE - Refus dépense ↺onsignel excessive"</li>
+<li>"DTMC - Refus solde ↺onsignel insuffisant"</li>
+<li>rien si la proposition a déjà été faite par le proposeur</li>
+</ul>
+</details>
+<details open> <summary>Dépendances</summary>
+<ul class="dependances">
+<li>resumecompte($var3) [ $soldeconsigneldisponible, $soldeconsignelparjour ]</li>
+<li>ouvrelechemin($idtra)</li>
+<li>decryptelestockage(fgets($fichierencours, 1024))</li>
+<li>ajouteaufichier($cheminfichier.$nomfichier, $transactionindex)</li>
+<li>ajouteaufichier($cheminfichier.$nomfichier, $transactionsuivi)</li>
+<li>tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-".$nomfichierlocal.".json")</li>
+<li>ajouteaufichier($cheminfichier,$transaction)</li>
+<li>ajouteaufichier2dates($cheminfichier,$idtra)</li>
+<li>suivi31jours($cheminfichier, $idtraprecedente, $idtra, $nouveausoldeconsignel)</li>
+<li>gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre, $anciennete)</li>
+<li>remplacefichier($cheminfichier, $nouveauresume)</li>
+</ul>
+</details>
+<details open> <summary>Limites</summary>
+<div class="limites"></div>
+</details>
+<details open> <summary>Vérifications</summary>
+<div class="verifications"></div>
+</details>
+<details open> <summary>Tests</summary>
+<div class="tests"></div>
+</details>

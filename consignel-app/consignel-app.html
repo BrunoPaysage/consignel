@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.8">
+<title>&#8634;onsignél, l'application</title>
+<link rel="stylesheet" href="consignel-app.css" type="text/css">
+<script src="../consignel-scp/consignel.js"></script>
+<script src="../consignel-scp/jquery.js"></script> 
+<script src="../consignel-scp/jquery-ui.min.js"></script> 
+<script src="../consignel-scp/jquery.ui.touch-punch.min.js"></script> 
+<script src="../consignel-scp/qrcode.min.js"></script> 
+
+<style>
+.inscription, .arretesession, .confirmation, .preferences {display:none;}
+</style>
+
+<script>
+// $(document).ready(function(){ debuter(); }); /*  démarrer le programme */
+</script>
+
+</head>
+
+
+<body>
+
+<!-- début application visible-->
+
+<!-- début entête  -->
+<!-- visible dans tous les cas et ajustement des variables selon l'étape -->
+<div class="appentete">
+<!-- localisation, utilisateur, photo, lieu -->
+<h2 class="localisation"><img class="utilisateur" src="photoidentite.jpg" alt="?"> &#8634;onsignél <span class="lieu">...</span></h2>
+<p class="utilisateur">
+<span class="nomutilisateur">... mode démo ...</span>
+
+<!-- Préférences ou accès différentes pages -->
+<span class="menupref"><span class="suivant cache">.utilisation</span>
+<a id="menuprefinscription">Insc</a>
+<a id="menuprefutilisation">Util</a>
+<a id="menuprefconfirmation">Conf</a>
+<a id="menuprefpreferences">Préf</a>
+</span>
+
+<!-- Alerte sur les problèmes -->
+<span class="alerte"><span class="pbjavascript eval0">Javascript est désactivé sur votre navigateur.<br>Activez javascript dans les préférences de votre navigateur pour pouvoir utiliser cette webapp<br><span class="fondleger">&nbsp;<a href="../consignel-ref/consignel-notes.html#securite">Voir la sécurité du &#8634;onsignél avant d'autoriser javascript</a></span><script>$(".alerte .pbjavascript").remove();</script></span></span>
+</p>
+<!-- Menu général adapté selon la page -->
+<p class="inscription menugeneral">Inscription</p>
+<p class="utilisation menugeneral">Utilisation</p>
+<p class="confirmation menugeneral">Confirmation de transaction</p>
+<p class="preferences menugeneral">Préférences</p>
+
+</div> <!-- Fin div appentete -->
+<!-- indicateur de suivi de compte visible dans tous les cas -->
+<div class="suivicompte">
+<div class="suivi">
+<div class="suivi0 eval0"></div>
+<div class="suivi1 eval1"></div>
+<div class="suivi2 eval2"></div>
+<div class="suivi3 eval3"></div>
+<div class="suivi4 eval2"></div>
+<div class="suivi5 eval1"></div>
+<div class="suivi6 eval0"></div>
+<div class="barre"></div>
+<div class="cible"></div>
+<div class="rond"></div>
+<div class="barredisponible"></div>
+</div> <!-- Fin div suivi -->
+</div> <!-- Fin div suivicompte -->
+
+
+<!-- <div class="corps">mise en forme particulière hauteur -->
+<!-- inscription -->
+<form class="inscription" name="formulaireacces" id="formulaireacces" method="post" onsubmit="return false">
+<span class="alerte"></span>
+<p class="inscription utilisateur">
+Utilisateur<br>
+<input type=text id="formulaireaccesutilisateur" placeholder="Nom ou Identifiant">
+</p>
+<p class="inscription secret">
+Secret<br>
+<input type=password id="formulaireaccespass" placeholder="Code personnel">
+</p>
+</form>
+<form class="arretesession" name="formulairearret" id="formulairearret" method="post" onsubmit="return false">
+<button id="formulairearretcontinue">Continue ma session</button><button id="formulairearretarrete">STOP arrête la session, change d'utilisateur</button>
+<div class="suiviarret"><div id="arretesessionsuivi"></div></div>
+<p>Ce message s'autodétruira dans <span class="statut">100</span></p>
+</form>
+<!-- inscription par code qr -->
+<div class="inscription detection">
+<p>&nbsp;</p>
+<p>Mode démo <input id="modedemo" type="checkbox"  value="oui" checked> <span class="modedemocomment">Utilisez les menus</span><br></p>
+<p><a href="consignel-app.html?var1=20181212_0903_481542"><img src="20181212_0903_481542.png" alt="Code QR pour mode démo"></a></p>
+</div>
+
+<!-- Utilisation -->
+<div class="utilisation choix">                  <!-- Entrée choix avec input -->
+  <div class="recherche centre">
+  <div><a id="rechercheoptionvoitcache" >&#9064;</a><span id="rechercheoption" class="cache"><input type=search id="inputcherchefaire" placeholder="faire " value="" size="15"><input type=search id="inputcherchequoi" placeholder="quoi " value="" size="15"><input type=search id="inputcherchepourqui" placeholder="pour qui " value="" size="15"><input type=search id="inputchercheparqui" placeholder="par qui " value="" size="15"></span></div>
+<!-- Øø &#216; &#248; ǗǛ &#471;&#475;  Ϋ &#939; ÿ &#255; ŏ õ ö &#335; &#245; &#246; ȏȯȫ &#527; &#559; &#555; ǘǜ &#472;&#476; ᐹᐴ &#5177; &#5172; ᐵ ᑈ &#5173; &#5192; https://unicode-table.com/fr/ -->
+  <a id="changeaideinputactivite">&#248;</a> <a id="inverseoffredemande"> - </a><input type=search id="inputactivite" placeholder="&#128270;article " value="" size="40"><a id="rechercheokinputactivite"> ok </a>
+  </div> <!-- Fin recherche centre -->
+</div> <!-- Fin utilisation choix -->
+
+
+<div class="confirmation choix">                  <!-- Entrée choix avec input -->
+  <div class="recherche centre">
+  <div id="confirmationrecherche" class="actif">
+  <a id="changeaideinputconfirmation">&#248;</a> <a id="aidepropositions"> - </a><input type=search id="confirmationinputcode" placeholder="&#128270; code qr de la proposition" value="" size="40"><a id="confirmationokinputcode"> <sub>ok</sub> </a>
+  </div>
+  </div> <!-- Fin recherche centre -->
+</div> <!-- Fin confirmation choix -->
+<div class="confirmation acceptetransaction">
+  <div id="confirmationacceptetransaction" class="attente">
+    <div class="matransaction">
+    <button id="acceptetransactionactualiser">Actualiser</button><button id="acceptetransactionannuler">Retirer la proposition</button>
+    </div>
+    <div class="pasmatransaction">
+    <button id="acceptetransactionoui">Accepté</button><button id="acceptetransactionmodifie">Négocions</button><button id="acceptetransactionnon">Refusé</button>
+    </div>
+  </div>
+</div>
+
+<div class="utilisation confirmation offre deuxcolonnesA3">
+  <h3 id="utilisationchoisioffre"><span class="utilisation">J'offre</span><span class="confirmation">Je donne</span></h3>
+  <div id="poubelle" class="listedeschoix"></div>
+  <div id="offrechoisi" class="listedeschoix utilisation"></div>
+  <div id="offreconfirme" class="listedeschoix confirmation"></div>
+</div> <!-- Fin utilisation offre deuxcolonnesA3 -->
+
+
+<div class="utilisation confirmation demande deuxcolonnesB3">
+  <h3 id="utilisationchoisidemande"><span class="utilisation">Je demande</span><span class="confirmation">Je reçois</span></h3>
+  <div id="poubelle2" class="listedeschoix"></div>
+  <div id="demandechoisi" class="listedeschoix utilisation">
+  <div class="utilisateur">
+    <input id="demandeaqui" type="text" placeholder="A qui ?">
+  </div>
+</div>
+  <div id="demandeconfirme" class="listedeschoix confirmation"></div>
+</div> <!-- Fin utilisation demande deuxcolonnesB3 -->
+<!-- </div> Fin corps --><!-- fin hauteur particulière -->
+
+
+
+<!-- <div id="proposetransaction" >  -->
+<div id="dacoffre" class="utilisation confirmation compensation deuxcolonnesA3">
+  <h3>DA&#8634;</h3>
+  <div class="utilisation"> <!-- Début utilisation  -->
+    <div id="offrecompensation" class="offrecompensation"><span class="montant"></span> &#8634;onsignel <a id="offrecompensationdetails">&#9064;</a></div>
+    <div id="offremontants" class="cache"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codeoffre"></span> <span class="listeact"></span> </div>
+    <div id="idtransaction"><sub><span class="codetransaction vegetal"></span> <span class="date cache"></span><span class="codedate"></span></sub></div>
+  </div> <!-- Fin utilisation  -->
+  <div class="confirmation"> <!-- Début confirmation  -->
+    <div id="offrecompensationconfirme" class="offrecompensation"><span class="montant"></span> &#8634;onsignel <a id="offrecompensationconfirmedetails">&#9064;</a></div>
+    <div id="offremontantsconfirme" class="voit"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codeoffre"></span> <span class="listeact"></span> </div>
+    <div id="idtransactionconfirme"><sub><span class="codetransaction vegetal"></span> <span class="date"></span><span class="codedate"></span></sub></div>
+  </div> <!-- Fin confirmation  -->
+</div> <!-- Fin dac offre utilisation offre deuxcolonnesA3 -->
+
+<div id="dacdemande"  class="utilisation confirmation demandecompensation deuxcolonnesB3">
+  <h3>DA&#8634;</h3>
+  <div class="utilisation"> <!-- Début utilisation  -->
+    <div id="demandecompensation" class="demandecompensation"><span class="montant"></span> &#8634;onsignel <a id="demandecompensationdetails">&#9064;</a></div>
+    <div id="demandemontants" class="cache"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codedemande"></span> <span class="listeact"></span> </div><br>
+    </div> <!-- Fin utilisation  -->
+    <div class="confirmation"> <!-- Début confirmation  -->
+    <div id="demandecompensationconfirme" class="demandecompensation"><span class="montant"></span> &#8634;onsignel <a id="demandecompensationconfirmedetails">&#9064;</a></div>
+    <div id="demandemontantsconfirme" class="voit"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codedemande"></span> <span class="listeact"></span> </div>
+    <div id="idtransactionproposition"><sub><span class="codetransaction vegetal"></span> <span class="date"></span><span class="codedate"></span></sub></div>
+<br>
+  </div> <!-- Fin confirmation  -->
+</div> <!-- Fin dac demande deuxcolonnesB3 -->
+
+
+<div class="utilisation confirmation valeursdd">
+  <div class="argent"><span class="montant"></span><br><span class="externalite"></span><input type="text"><input type="range" name="valeurargent" min="0" max="6" value=5></div>
+  <div class="environnement"><span class="montant"></span><br><span class="externalite"></span><input type="text" ><input type="range" name="valeurenvironnement" min="0" max="6" value=1></div>
+  <div class="social"><span class="montant"></span><br><span class="externalite"></span><input type="text"><input type="range" name="valeursocial" min="0" max="6" value=3></div>
+</div>
+
+<!-- Préférences -->
+<div class="preferences valeurstest">
+<h3>Indicateur DD</h3>
+<div class="preferences testindicateurdd centre"><!-- Préliminaires test barre de suivi -->
+<input type=number id="disponible" placeholder="disponible" size="10">
+<input type=number id="unjour" placeholder="revenu par jour" value="100" size="10">
+<input type=number id="dispomin" placeholder="dispo bas derniers 31 jours" value="1000" size="10">
+<input type=number id="dispomax" placeholder="dispo haut derniers 31 jours" value="2000" size="10">
+</div> <!-- Fin preferences valeurstest -->
+
+</div>
+
+<div class="preferences valeursdd">
+<div class="argent"><input type="text"><input type="range" name="valeurargent" min="0" max="6" value=5></div>
+<div class="environnement"><input type="text" ><input type="range" name="valeurenvironnement" min="0" max="6" value=1></div>
+<div class="social"><input type="text"><input type="range" name="valeursocial" min="0" max="6" value=3></div>
+<h3>Indicateurs 3 gains</h3>
+</div> <!-- Fin preferences valeursdd -->
+
+<div class="preferences dureeoffre">
+<br><h3>Durée des offres <span class="duree"><input id="dureeexpire" type="number" min="1" max="364" size="3" value="1"> jours</span></h3>
+</div> <!-- Fin preferences dureeoffre -->
+
+<div class="preferences limitefluxconsignel">
+<br><h3>Limite de dépense de ↺onsignel <span class="duree"><input id="fluxconsignel" type="number" min="2" max="7" size="3" value="4"> jours de consommation</span></h3>
+</div> <!-- Fin preferences dureeoffre -->
+
+<div id="preferences" class="actif">
+<div class="preferences statutchargement">
+<br><h3>Stockage dans l'ordinateur ou le téléphone </h3>
+<!-- cases pour autorisation de stockage local -->
+<p>Fichiers pour tous <input id="localstoragepublic" type="checkbox" value="non"> <span class="localstoragepublic">non autorisé</span><br>
+Fichiers personnels <input id="localstoragemoi" type="checkbox" value="non"> <span class="localstoragemoi">non autorisé</span>
+</p>
+
+<h4>Fichiers disponibles pour tous</h4>
+<div class="fichierspourtous">
+
+<details><summary><a id="fichierspourtouspoubelle" class="poubelle"> <small>&#128465;</small> </a> <a id="fichierspourtouscharge" class="charge"> &#9851;</a> Fichiers disponibles <span class="fichierspourtous">
+<span class="statut2cherchequoimini">...</span><span class="statut2cherchefaire">...</span><span class="statut2cherchequoi">...</span><span class="statut2cherchepourqui">...</span><span class="statut2chercheparqui">...</span><span class="statut2valeursref">...</span>
+</span>
+</summary>
+<div>Aide activité: <span class="statutcherchequoimini">...</span> <a id="chargecherchequoimini"> &#8634; </a></div>
+<div>Aide faire: <span class="statutcherchefaire">...</span> <a id="chargecherchefaire"> &#8634; </a></div>
+<div>Aide quoi: <span class="statutcherchequoi">...</span> <a id="chargecherchequoi"> &#8634; </a></div>
+<div>Aide pour qui: <span class="statutcherchepourqui">...</span> <a id="chargecherchepourqui"> &#8634; </a></div>
+<div>Aide par qui: <span class="statutchercheparqui">...</span> <a id="chargechercheparqui"> &#8634; </a></div>
+<div>Valeurs de références: <span class="statutvaleursref">...</span> <a id="chargevaleursref"> &#8634; </a></div>
+</details>
+</div> <!-- Fin div fichierspourtous -->
+
+<h4>Fichiers personnels cryptés</h4>
+<div class="fichierspersonnels">
+<details><summary><a class="poubelle" id="fichierspersonnelspoubelle"> <small>&#128465;</small> </a> <a class="chargemoi" id="fichierspersonnelschargemoi"> &#9851;</a> 
+ Fichiers disponibles <span class="statutfichierspersonnels">
+ <span class="statut2resume">...</span><span class="statut2quoi">...</span><span class="statut2mesvaleursref">...</span><span class="statut2mespropositions">...</span><span class="statut2demandeuneproposition">...</span>
+</span>
+</summary>
+<div>Résumé du compte: <span class="statutresume">vide</span> <a id="chargemoiresume"> &#8634; </a></div>
+<div>quoi: <span class="statutquoi">quoi</span> <a id="chargemoiquoi"> &#8634; </a></div>
+<div>mes références de valeurs: <span class="statutmesvaleursref">mesvaleursref</span> <a id="chargemoimesvaleursref"> &#8634; </a></div>
+<!-- <div>mes transactions: <span class="statutmestransactions">mestransactions</span> <a onclick="chargemoi('mestransactions')"> &#8634; </a></div>  -->
+<div>propose transaction: <span class="statutmespropositions">mespropositions</span> <a id="chargemoimespropositions"> &#8634; </a></div>
+<div>demande une proposition: <span class="statutdemandeuneproposition">demandeuneproposition</span> <a id="chargemoidemandeuneproposition"> &#8634; </a></div>
+</details>
+</div> <!-- Fin div fichierspersonnels  -->
+
+<p class="separateur">&nbsp;</p>
+<h3 id="developpementetsuivi">Développement et suivi</h3>
+
+
+</div> <!-- Fin preferences statutchargement -->
+</div> <!-- Fin corps2 -->
+<div class="corps2">
+<div class="utilisation validation">
+<span class="alerte"></span>
+<div id="validqr" class="qr">
+<div id="qrcode"></div>
+<p class="qrcodetexte stockedansdiv">...</p>
+</div>
+<script>$(".qr").hide(); var qrcode = new QRCode(document.getElementById("qrcode"), {});</script>
+</div> <!-- Fin validation -->
+</div> <!-- Fin corps2 -->
+
+<!-- fin corps début pied -->
+<div class="pied">
+
+</div> <!-- Fin pied -->
+<p class="separateur"></p>
+
+
+
+<!-- Vérifications et stockage des .load à masquer -->
+<!-- début Pseudo base de donnée toujours masquée dans le navigatgeur -->
+<div class="cache">
+<div id="appentetesession"></div>
+<div class="couleurs">
+<div class="couleurmin eval0"></div><div class="couleurcentre eval6"></div><div class="couleurmax eval6"></div><div class="couleurexterieur eval7"></div> 
+</div>
+</div><!-- fin div cache toujours masqué -->
+<!-- début caché visible si on le veut -->
+<div id="stockagepreferences" class="preferences">
+<div id="stockage" class="stocke, cache">
+<h4>retour du serveur</h4><div class="retourserveur cache">...</div>
+<div class="retourpasdeserveur ">u001 ,0,0,750,75,500,1000,,</div>
+<!-- Les id des div de chargement commencent par "stocke... le statut est un span class="statut...  le ... est l'identifiant du script charge -->
+<details><summary>Stockage fichiers publics</summary>
+<h4>cherchequoimini</h4><div id="stockecherchequoimini" class="stockedansdiv">...</div> 
+<h4>cherchefaire</h4><div id="stockecherchefaire" class="stockedansdiv">...</div>
+<h4>cherchequoi</h4><div id="stockecherchequoi" class="stockedansdiv">...</div>
+<h4>cherchepourqui</h4><div id="stockecherchepourqui" class="stockedansdiv">...</div>
+<h4>chercheparqui</h4><div id="stockechercheparqui" class="stockedansdiv">...</div>
+<h4>valeursref</h4><div id="stockevaleursref" class="stockedansdiv">...</div>
+<h4>valeursrefmini</h4><div id="stockevaleursrefmini">
+{
+"u104": [ "h", 1, "h", -16.5, -15, 0, -28.2, 1, 0.75, 1, 1],
+"u36": [ "$", 1, "$", -1.1, 1, 0, -1.88, 0.17, 1, 1, 1],
+"u3376": [ "mlc", 1, "mlc", -1.1, 0, 1, -1.88, 0.17, 1, 1, 1],
+"u3574": [ "min", 1, "min", -0.28, -0.25, 0, -0.47, 0.02, 0.75, 1, 1],
+"u1240": [ "kg", 1, "kg", -2.05, -10, 0, -3.5, 1.5, 0.2, 1, 1],
+"u659": [ "m2", 1, "m2", -0.59, -3, 0, -1, 0.5, 0.2, 1, 1],
+"u76": [ "L", 1, "L", -4.77, -1.35, 0, -8.16, 0.17, -0.2, 1, 1],
+"u8634": [ "↺", 1, "↺", -1.1, 0, 0, -1.88, 0.17, 1, 1, 1],
+"e18702": [ "payer 1$", 1, "$", -1.1, -1, 0, -1.88, 0.17, 1, 1, 1],
+"e41642": [ "payer 1mlc", 1, "mlc", -1.1, 0, -1, -1.88, 0.17, 0.5, 1, 1],
+"e721781": [ "donner 1↺", 1, "↺", -1.1, 0, 0, -1.88, 0.17, 1, 1, 1],
+"e537234": [ "rien 0↺", 0, "↺", 0, 0, 0, 0, 0, 0, 0, 0],
+"e229857": [ "entretenir la nature 1h", 1, "h", 23, -30, 0, 18.8, 1, 0.8, 1, 1],
+"e269775": [ "produit de mon jardin 1kg", 1, "kg", -2.05, -10, 0, -3.5, 1.5, 0.2, 1, 1]
+}
+</div>
+<div id="listestockevaleursrefmini">["h","$","mlc","min","kg","m2","L","↺","payer 1$","payer 1mlc","donner 1↺","rien 0↺","entretenir la nature 1h","produit de mon jardin 1kg"]</div>
+</details>
+<!-- Les id des div de chargement commencent par "mstock... le statut est un span class="statut...  le ... est l'identifiant du script chargemoi -->
+<details><summary>Stockage fichiers personnels</summary>
+<h4>resume</h4><div id="mstockresume" class="mstockdansdiv">...</div> 
+<h4>quoi</h4><div id="mstockquoi" class="mstockdansdiv">...</div> 
+<h4>mesvaleursref</h4><div id="mstockmesvaleursref" class="mstockdansdiv">...</div>
+</details>
+<details><summary>Stockage transaction</summary>
+<h4>monoffre</h4><div id="monoffre" class="mstockdansdiv">...</div> 
+<h4>mademande</h4><div id="mademande" class="mstockdansdiv">...</div> 
+<h4>mesact</h4><div id="mesact" class="mstockdansdiv">...</div> 
+<h4>matransaction</h4><div id="matransaction" class="mstockdansdiv">...</div> 
+<h4>mestransactions</h4><div id="mstockmestransactions" class="mstockdansdiv">...</div> 
+<h4>mes proposition</h4><div id="mstockmespropositions" class="mstockdansdiv">...</div> 
+<h4>demande une proposition</h4><div id="mstockdemandeuneproposition" class="mstockdansdiv">...</div> 
+</details>
+<hr><div class="refdocument"> <p class="auteur">Auteur: Bruno Gadrat</p> <p class="revision">Orig: 2018/04 Rev: 2019/02/13</p> <p class="nomdufichier">Fichier: consignel-app.html</p>
+<p class="verification"><sub><a href="//validator.w3.org/check?uri=referer">Contr&ocirc;le html</a> - <a href="//jigsaw.w3.org/css-validator/check/referer">Contr&ocirc;le css</a></sub></p> </div>
+<hr>
+<details><summary>Suivi fonctionnement application</summary>
+<br><div id="suiviappli"></div><br>
+</details>
+</div> <!-- Fin cache stocke et vérification des load -->
+</div> <!-- Fin cache sauf préférences -->
+
+<div class="test cache">--</div>
+<script> (function(){ debuter(); })() ; </script>
+</body>
+</html>

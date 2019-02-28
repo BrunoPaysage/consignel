@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+<title>&#8634;onsignél, notes</title>
+<link rel="stylesheet" href="../../../css/bgdvsite/bgdvsite.css" type="text/css" id="cssdefaut" title="bgdvsite" >
+<script src="../../../scripts/change-aspect.js"></script>
+<script src="../../../scripts/jquery.js"></script> 
+</head>
+
+
+
+<body>
+<!--  -->
+<div id="margehaute"></div>
+<!--  -->
+<nav class="menuaspect">
+<script>reloadLink("defaut", "Aspect initial");</script>  
+<a href="../../../gadrat/a/aspect/aspect-change-css.html" >Autres aspects</a>
+</nav> 
+<!--  -->
+<div class="menusite">
+<ul title="Bruno Gadrat architecte paysagiste">
+<li><a href="../../../index.html">Accueil</a></li>
+<li><a href="../../../references.html">R&eacute;alisations</a></li>
+<li><a href="../../../éléments/services.html">Comment</a></li>
+<li><a href="../../../éléments/prix.html">Valeur</a></li>
+<li><a href="../../../contact.html">Contact</a></li>
+<li><a href="../../../gadrat/o/ouchercher/google-domaine.html">Recherche sur le site</a></li></ul>
+</div>
+<!--  -->
+<header class="entete">
+<h2>ÉCONOMIE <img  style="width: 62px; height: 45px;" src="../../../gadrat/l/logos/logo_notes.jpg" alt="logo_notes" /> ET PAYSAGE</h2>
+<p class="soustitre">Moyen de compensation local garantissant le développement durable</p>
+</header>
+<!--  -->
+<section class="titre">
+<h1>&#8634;onsignél</h1>
+<p class="soustitre">Notes</p>
+<p class="alerte">Les informations dans ce fichier ne sont pas forcément exactes ou conformes à l'état actuel de développement du &#8634;onsignél. C'est un document de travail.</p>
+</section>
+<div class="note"><p><a href="../../../projets/2018-consignel/consignel-app/consignel-app.html">&#8634;</a></p></div>
+
+<div class="menutournepage"><!-- ajuster le script -->
+<a onclick="cachetout(); $('#inscription').show();">Inscription</a>
+<a onclick="cachetout(); $('#securite').show();">Sécurité</a>
+<a onclick="cachetout(); $('#preferences').show();">Préférences</a>
+<a onclick="cachetout(); $('#formats').show();">Formats données</a>
+<a href="../../../gadrat/c/consignel/consignel-calculvaleur.html">Calcul &#8634;onsignél</a>
+
+<script>
+function cachetout(){$("#inscription").hide(); $("#securite").hide(); $("#preferences").hide(); $("#formats").hide(); $("#chap4").hide();};  /* cache les différentes pages du progtamme */
+</script>
+</div>
+
+<div class=chapitre id="inscription">
+<h2>Utilisateur et mot de passe</h2>
+<p class="soustitre">Principe d'accès</p>
+<h3 class="titreliste">Le site web connait</h3>
+<ul>
+  <li>Le hachage du nom d'utilisateur</li>
+  <li>Le hachage du mot de passe utilisateur</li>
+  <li>Le hachage du zéro session</li>
+</ul>
+<h3 class="titreliste">L'utilisateur connait</h3>
+<ul>
+  <li>Son nom d'utilisateur</li>
+  <li>Son mot de passe</li>
+</ul>
+<h3 class="titreliste">Procédure</h3>
+<ol>
+  <li class="utilisateur"><details><summary>L'utilisateur inscrit son identifiant</summary><p>Il n'y a aucune limite sur la longueur ou les caractères sauf exceptions de sécurité.</p></details></li>
+  
+  <li class="navigateur"><details><summary>Le navigateur code l'identifiant et fait l'envoi</summary><p>Le codage est spécifique du &#8634;onsignél. Trois codes sont envoyés. </p><ul><li>Le code de l'identifiant</li><li>Le code de l'identifiant</li><li>Le code de session 0</li></ul></details></li>
+  
+  <li class="siteweb">
+  <details>
+  <summary>Le site web vérifie l'identifiant codé de l'utilisateur</summary>
+    <details class="vrai">
+    <summary>Le code de l'utilisateur existe</summary>
+    <ul>
+      <li>Création du code de session aléatoire</li>
+      <li>Inscription de la session dans le fichier des sessions en cours</li>
+      <li>Renvoi du code de session</li> 
+      <li><details>
+        <summary>des paramètres publics de l'utilisateur</summary>
+        <ul>
+          <li>Avatar</li>
+          <li>Pseudonyme</li>
+          <li>Zone &#8634;onsignél</li>
+        </ul>
+        </details>
+      </li>
+    </ul>
+    </details>
+    <details class="faux">
+    <summary>Le code de l'utilisateur n'existe pas</summary>
+    <ul>
+      <li>Renvoi du code de session 0</li>
+      <li>Notification d'utilisateur inconnu</li>
+    </ul>
+    </details>
+  </details>
+  </li>
+  
+  <li class="navigateur">
+  <details>
+  <summary>Le navigateur affiche les données génériques</summary>
+    <details class="vrai">
+    <summary>Le code de l'utilisateur existe</summary>
+    <ul>
+      <li>Affiche l'avatar</li>
+      <li>le pseudonyme</li>
+      <li>la zone &#8634;onsignél</li>
+      <li>le input pour mot de passe</li>
+    </ul>
+    </details>
+    <details class="faux">
+    <summary>Le code de l'utilisateur n'existe pas</summary>
+    <ul>
+      <li>Efface toutes les données d'utilisation</li>
+      <li>Vide les informations de la page de connexion</li>
+      <li>Replace le curseur sur le input d'identifiant</li>
+    </ul>
+    </details>
+  </details>
+  </li>
+  
+  <li class="utilisateur">
+  <details>
+  <summary>L'utilisateur inscrit son mot de passe</summary>
+  <p>Il n'y a aucune limite sur la longueur ou les caractères sauf exceptions de sécurité.</p>
+  </details>
+  </li>
+  
+  <li class="navigateur">
+  <details>
+  <summary>Le navigateur code l'identifiant et le mot de passe avec le code session</summary>
+  <p>Le codage est spécifique du &#8634;onsignél. Trois codes sont envoyés. </p>
+  <ul><li>Le code de du mot de passe codé avec l'identifiant de session</li><li>Le code de l'identifiant dodé et recodé avec l'identifiant de session</li><li>Le code de du mot de passe codé avec l'identifiant de session</li></ul>
+  </details>
+  </li>
+  
+  <li class="siteweb">
+  <details>
+  <summary>Le site web vérifie les 2 codes</summary>
+    <details class="vrai">
+    <summary>Le code de l'utilisateur recodé avec le numéro de session existe et le code de du mot de passe recodé avec le numéro de session est valide</summary>
+      <ul>
+      <li>Renvoi du code de session </li> 
+      <li><details>
+        <summary>du résumé du compte de l'utilisateur</summary>
+        <ul>
+            <li>Le solde du compte</li>
+            <li>Le revenu journalier moyen</li>
+            <li>Le minimum du solde dans les 31 derniers jours</li>
+            <li>Le maximum du solde dans les 31 derniers jours</li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+    </details>
+    <details class="faux">
+    <summary>Le code de l'utilisateur codé et recodé ou son mot de passe codé et recodé n'est pas bon</summary>
+    <ul>
+      <li>Renvoi du code de session 0</li>
+      <li>Notification d'utilisateur inconnu</li>
+    </ul>
+    </details>
+  </details>
+  </li>
+  
+  <li class="navigateur">
+  <details><summary>Le navigateur affiche les données de l'utilisateur</summary>
+    <details class="vrai">
+    <summary>L'utilisateur existe et son mot de passe est valide</summary>
+    <ul>
+      <li>Vérification des préférences de stockage des données de l'utilisateur</li>
+      <li>Chargement des données de l'utilisateur soit en local soit depuis le serveur en fonction des préférences</li>
+      <li>Affichage de l'indicateur de développement durable</li>
+      <li>Affichage de la page permettant les échanges</li>
+    </ul>
+    </details>
+    <details class="faux">
+    <summary>L'utilisateur n'existe pas ou sa session est expirée ou son mot de passe est invalidevalide</summary>
+    <ul>
+      <li>Efface toutes les données d'utilisation</li>
+      <li>Vide les informations de la page de connexion</li>
+      <li>Replace le curseur sur le input d'identifiant</li>
+    </ul>
+    </details>
+  </details>
+</li>
+  
+  <li class="utilisateur"><details><summary>L'utilisateur accède aux échanges</summary>
+  <details class="vrai"><summary>L'utilisateur existe et son mot de passe est valide</summary><p>L'utilisateur à accès à l'ensemble des fonctionnalités. </p></details>
+  <details class="faux"><summary>L'utilisateur n'existe pas ou sa session est expirée ou son mot de passe est invalide</summary><p>Il peut utiliser le logiciel en mode démonstration. Tous est accessible sauf la finalisation des échanges. Les transactions ne sont pas enregistrées. </p></details>
+  </details></li>
+</ol>
+</div>
+<!--  -->
+<div class=chapitre id="securite">
+<h2>Confidentialité</h2>
+<p class="soustitre">Simples précautions</p>
+<h3>Aucune information nominative</h3>
+<p class="soustitre">Aucune forteresse n'est imprenable, mais on évite le trouble</p>
+<p>Toutes les informations nécessaires à l'identification des comptes est transformée en valeurs numériques sans signification.</p>
+<p>Les informations non personnelles mais rattachées à un compte sont identifiée au numéro de compte uniquement.</p>
+<p>Les informations non nominatives, regroupées pour servir de référence à tous sont publiques.</p>
+<h3>Sécurisation informatique</h3>
+<p class="soustitre">Codage et sécurisation</p>
+<p>Les données faisant référence au compte et transitant par l'internet sont chiffrées. Le nombre transféré pour L'identifiant de l'utilisateur est la somme du code numérique de chaque caractère multiplié par un nombre dépendant de son rang dans la chaîne de caractères (codecar*1+codecar*11+codecar*21+codecar*31,etc.). Seules les empreintes chiffrées sont transférées. La vérification se fait sur les empreintes chiffrées calculées indépendamment côté utilisateur et côté serveur. </p>
+<p>Les chiffres sont modifiés par un numéro de session aléatoire fourni par le serveur. Le chiffrage évoluera en fonction de la consommation des ordinateurs et des progrès des algorithmes.</p>
+<p>Toutes les informations stockées sont soumises à un nettoyage de sécurité (regex d'élimination des caractères ayant un effet de programmation) et de précaution (double vérification). Les données sont séparées en plusieurs fichiers.</p>
+<p>Les données entre l'utilisateur et le serveur sont transmises en https. </p>
+<p>Les répertoires du serveur sont protégés par .htacces</p>
+<code>Options All -Indexes<br>
+&lt;files .baseconsignel*><br>
+order allow,deny<br>
+deny from all<br>
+&lt;/files><br>
+&lt;files *.json><br>
+order allow,deny<br>
+deny from all<br>
+&lt;/files></code>
+<p>Un format ouvert json ou autre format texte simple est utilisé pour les données d'intérêt commun accessibles à tous.</p>
+<p>Javascript est utilisé sur le navigateur de l'utilisateur pour faire le codage des informations avant l'envoi ou l'utilisation par l'application. </p>
+<p>Le stockage des données non nominatives dans la mémoire locale du navigateur (localstorage) est soumis à l'autorisation de l'utilisateur dans les préférences.</p>
+
+</div>
+<!--  -->
+<div class=chapitre id="preferences">
+<h2>Préférences</h2>
+<p class="soustitre"></p>
+<h3>Stockage local</h3>
+<p class="soustitre">Données dans l'ordinateur ou le téléphone</p>
+<p>Préférences générales du stockage</p>
+<p>Localstorage stocke les données de préférences, les fichiers publics et les fichiers personnels selon les autorisations accordées.</p>
+<p>Au démarrage le fichier lit les préférences d'autorisations</p>
+<p>"consignel":[0,0,0]</p>
+<p>Par défaut, l'enregistrement dans localstorage est interdit. Pour l'usage facile sur sa machine personnelle, il est conseillé d'autoriser les 3 l'enregistrement des préférences , l'enregistrement des fichiers publics et l'enregistrement des fichiers personnels .</p>
+<p>L'utilisateur peut interdire les trois depuis les préférences de son navigateur. Il peut aussi le faire depuis les préférences du &#8634;onsignél. Lorsque l'autorisation est retirée c'est fait par localStorage.removeItem("consignel");. L'interdiction n'efface pas les caches du navigateur. </p>
+<p>Les fichiers publics sont des listes pour aider à faire les entrées</p>
+<p>"cherchequoimini":["activite1","activite2",....,"activite3"]</p>
+<p>"cherchefaire":["verbe1","verbe2",....,"verbe3"]</p>
+<p>"cherchequoi":["quoi1","quoi2",....,"quoi3"]</p>
+<p>"chercheparqui":["parqui1","parqui2",....,"parqui3"]</p>
+<p>"cherchepourqui":["pourqui1","pourqui2",....,"pourqui3"]</p>
+<p>Ces fichiers ne sont pas cryptés</p>
+<p>Les fichiers personnels sont des tableaux avec des valeurs d'activité. Voir le codage dans les formats de données</p>
+<p>Par défaut, il n'y a que des nombres sous forme de chaînes dans les tableaux, même s'il représentent des noms ou des dates. </p>
+<p>Les données sont fragmentées pour éviter les correspondances en lecture directe. Les noms sont chiffrés.</p>
+</div>
+<!--  -->
+<div class=chapitre id="formats">
+<h2>Format de données</h2>
+<p class="soustitre">Formats pour les données et les fichiers</p>
+<h3>Fichier des utilisateurs</h3>
+<p class="soustitre">0/.consignel2</p>
+<p>Le fichier des informations pour rejoindre les utilisateurs n'est pas stocké sur le serveur. Le &#8634;onsignel fonctionne en version décentralisée de contrôle d'existence unique des individus. Le serveur conserve les validations d'existence unique dans un registre des vérifications effectuées. Ce fichier est actuellement centralisé par zone de &#8634;onsignel. La décentralisation viendra par la suite.</p>
+<h3>Fichier d'identification des utilisateurs</h3>
+<p class="soustitre">0/.consignel3</p>
+<p>Liste chiffrée des utilisateur et données permettant de les identifier lors d'une connexion</p>
+<table class="tableau">
+<thead><tr><td>chiffre utilisateur</td><td>chiffre passe</td><td>pseudonyme utilisateur<td>image publique utilisateur</td><td>Zone &#8634;onsignél</tr></thead>
+<tbody>
+<tr><td>39382,</td><td>39382,</td><td>"pseudonyme1",<td>"consignel.png",</td><td>"Marieville,"</td></tr>
+<tr><td>39382,</td><td>39382,</td><td>"pseudonyme2",<td>"avatar01.png",</td><td>"Marieville,"</td></tr>
+</tbody>
+</table>
+<p>Tous les noms incluant consignel ou &#8634;onsignél sont réservés pour le système. Aucun nom ni mot de passe n'est transmis ou stocké en clair. Seuls le chiffrage utilisateur est transmis une fois par l'utilisateur pour ouvrir une session. Par la suite les chiffrages sont chiffrés une deuxième fois avec le numéro de session. </p>
+
+<h3>Fichier de session des utilisateurs</h3>
+<p class="soustitre">0/.consignel0</p>
+<p>Liste chiffrée des utilisateurs et des contrôles d'accès</p>
+<table class="tableau">
+<thead><tr><td>chiffre utilisateur codé avec numéro de session</td><td>chiffre secret codé  avec numéro de session</td><td>chiffre utilisateur<td>numéro de session</td><td>heure et minute de session (h*60+mn)</tr></thead>
+<tbody>
+<tr><td>14319,</td><td>14144,</td><td>39382,<td>1000,</td><td>1092</tr>
+<tr><td>7808,</td><td>7983,</td><td>39382,<td>0010,</td><td>1117</td></tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<h3>Dossier et nom de fichier des données de l'utilisateur</h3>
+<p class="soustitre">Les données sont dispersées dans plusieurs fichiers</p>
+<p>Le chiffre de l'utilisateur donne aussi le chemin d'accès au dossier de l'utilisateur par sous-dossiers contenant un maximum de 100 sous-dossiers.</p>
+<p>Par exemple le numéro de l'utilisateur consignel 39382 sera stocké dans le dossier .consignel-base/82/93/3/ sur le serveur son identification pour localstorage commencera par u suivi du code combiné de l'utilisateur et de son mot de passe</p>
+<p>Le dossier contient les fichiers personnels de l'utilisateur. Sur le serveur, il est protégés par .htaccess. L'utilisateur ne peut y accéder que par une demande au serveur avec vérification de son identité dans une session valide. Dans localstorage, l'utilisateur fixe l'autorisation de stockage ou pas dans les préférences et peut agir aussi sur son navigateur. Par défaut les données ne sont pas stockées dans local storage. L'utilisateur peut l'autoriser dans ses préférences</p>
+<p>Sur le serveur, le dossier commun pour les données chiffrées groupées d'utilisateurs ou communes à plusieurs utilisateurs sont dans le dossier .consignel-base/0/.consignel... protégés par .htaccess</p>
+
+<h3>Préférences de l'utilisateur pour autoriser le stockagelocal</h3>
+<p class="soustitre">uniquement pour local storage consignelu39382</p>
+<table class="tableau">
+<thead><tr><td>fichiers pour tous</td><td>fichiers personnels</td><td>non défini</td></tr></thead>
+<tbody>
+<tr><td>1,</td><td>0,</td><td>0</td></tr>
+</tbody>
+</table>
+<p>1 pour autorise le stockage des fichiers dans localstorage<br>
+0 pour n'autorise pas le stockage des fichiers dans localstorage<br>
+Un utilisateur non identifié à ses préférences dans consignelu0. Aucun fichier de cet utilisateur anonyme n'est transféré vers le serveur.</p>
+
+<h3>Résumé de compte</h3>
+<p class="soustitre">39382-resune.json / u39382resume</p>
+<table class="tableau">
+<thead><tr><td>disponible</td><td>un jour de consommation</td><td>minimum du compte dans les 30 derniers jours<td>maximum du compte dans les 30 derniers jours</td></tr></thead>
+<tbody>
+<tr><td>[653.25,</td><td>76.71,</td><td>0,<td>1412.1]</td></tr>
+</tbody>
+</table>
+<p>Le nom du fichier contient le lien<br>
+Le résumé est le dernier état connu</p>
+
+<h3>Suivi du résumé de compte</h3>
+<p class="soustitre">39382_resune_2018.json / u39382resume2018</p>
+<table class="tableau">
+<thead><tr><td>jour</td><td>disponible</td><td>un jour de consommation</td><td>minimum du compte dans les 30 derniers jours<td>maximum du compte dans les 30 derniers jours</td></tr></thead>
+<tbody>
+<tr><td>[20180623,</td><td>653.25,</td><td>76.71,</td><td>0,<td>1412.1]</td></tr>
+<tr><td>[20180623,</td><td>643.25,</td><td>76.71,</td><td>0,<td>1412.1]</td></tr>
+<tr><td>[20180703,</td><td>603.25,</td><td>76.71,</td><td>0,<td>1412.1]</td></tr>
+<tr><td>[20180705,</td><td>583.25,</td><td>76.71,</td><td>0,<td>1412.1]</td></tr>
+</tbody>
+</table>
+<p>Le nom du fichier contient le lien<br>
+Le résumé du compte est le dernier enregistrement</p>
+<p></p>
+<p></p>
+
+<!-- éléments choisis -->
+<h3 id="elemchoisi">Éléments choisis</h3>
+<p class="soustitre">Identifiées par javascript</p>
+<p>La liste des offres et des demandes est dans un div. &lt;div class="utilisation offre deuxcolonnesA3"> &lt;div class="utilisation demande deuxcolonnesB3"><br>
+L'identifiant du div est act000 suivi du chiffre du quoi. L'identifiant est vérifié unique avant d'être inclus dans le html<br>
+Un élément ayant la même description peut être choisi. Son identifiant commencera par act001 etc. Si un élément est retiré, il laisse un trou dans les identifiants qui sera rempli par le prochain élément de même description.<br>
+<ul>
+<li>div identifiant
+  <ul>
+  <li>span quoi texte modifiable</li>
+  <li>span quantité nombre modifiable, 1 par défaut</li>
+  <li>span unité texte modifiable, h par défaut</li>
+  <li><details> <summary>span poubelle icone visible uniquement lors des modifications</summary>élimine le div identifiant</details></li>
+  <li><details open> <summary>span precise activité ouvre et ferme le span preciseact contenant les span de valeurs par défaut</summary>
+  <li>span preciseact caché ou visible
+    <ul>
+    <li>span codedunom identifiant modifé automatiquement au changement du span quoi</li>
+    <li>span codeactivité identifiant modifé automatiquement au changement d'un span</li>
+    <li>span argent nombre modifiable, -15 $ par défaut</li>
+    <li>span monnaie locale nombre modifiable, -15 mlc par défaut</li>
+    <li>span environnement nombre modifiable, -56,4 *E par défaut (-1,88*($+mlc) à Marieville)</li>
+    <li>span durée nombre modifiable, 1 h par défaut</li>
+    <li>span social nombre modifiable, 1 *S par défaut</li>
+    <li>span fois par an nombre modifiable, 1 /a par défaut</li>
+    <li>span durée de vie nombre modifiable, 1 a par défaut</li>
+    </ul>
+  </li>
+  </details>
+  </li>
+  </ul>
+</li>
+</ul>
+
+
+</p>
+<p></p>
+<p></p>
+
+<!-- liste des éléments choisis -->
+<h3>Liste des éléments à choisir dans le input et afficher dans les choix</h3>
+<p class="soustitre">Variables javascript / cherchequoimini.json / u39382quoi</p>
+<p>Pour le input id="chercheoffre" avec fonction autocomplete exemple de liste<br>
+var listequoimini = [ "heure d'expert", "vérification de compte" ,"inscription consignel", "manger", "logement", "etc.", "Autres"];<br>
+Un fichier de base public cherchequoimini.json est disponible pour tous dans le répertoire de l'app. Cette liste est remplacée par la liste quoi de l'utilisateur s'il autorise localstorage dans ses préférences. </p>
+<p></p>
+<p></p>
+
+<!-- liste des éléments choisis -->
+<h3>Liste des éléments permettant de fabriquer un choix plus descriptif à partir de mots clés tout prêts</h3>
+<p class="soustitre">Variables javascript / cherchefaire.json cherchequoi.json cherchepourqui.json chercheparqui.json</p>
+<p>Des input id="cherchefaire" id="cherchequoi" id="cherchepourqui" id="chercheparqui" avec fonction autocomplete sont disponibles dans des fichiers publics listefaire.json listequoi.json listepourqui.json listeparqui.json récupérables dans les variables exemples de listes<br>
+var listefaire = [ "initier", "inspecter", "interpréter", "jouer", "labourer", "etc.", "Autres"];<br>
+var listequoi = [ "bain", "base de données", "batterie", "bicyclette", "bois", "etc.", "Autres"];<br>
+var listepourqui = [ "amateur", "ami", "bébé", "collectivité", "collègue", "etc.", "Autres"];<br>
+var listeparqui = [ "ignorant", "initié", "maître", "moi", "musicien", "etc.", "Autres"];</p>
+<p>L'utilisateur peut autoriser le localstorage. Les permissions de stockage sont liées aux utilisateurs. Un utilisateur non identifié u0 stocke les préférences pour permettre l'utilisation en mode démonstration</p>
+<p></p>
+<p></p>
+
+<!-- offres et demandes -->
+<h3>La liste des offres et demandes avec les valeurs moyennes</h3>
+<p class="soustitre">valeursref.json / u39382valeursref</p>
+</div>
+<table class="tableau">
+<thead>
+<tr><td>code activité</td><td>élément</td><td>q</td><td>u</td><td>&#8634;</td><td>$</td><td>*E</td><td>durée</td><td>*S</td><td>fois/an</td></tr></thead>
+<tbody>
+<tr><td>{"valeursref":<br>{</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>"act219268":</td><td>["Épicerie de la semaine",</td><td>1,</td><td>"u",</td><td>-264.52,</td><td>-140.7,</td><td>-264.52,</td><td>0.8,</td><td>0.8,</td><td>52],</td></tr>
+<tr><td>"act249642":</td><td>["Épicerie de la journée",</td><td>1,</td><td>"u",</td><td>-31.77,</td><td>-16.90,</td><td>-31.77,</td><td>0.2,</td><td>0.8,</td><td>30],</td></tr>
+<tr><td>"act259556":</td><td>["Épicerie d'anniversaire",</td><td>1,</td><td>"u",</td><td>-395.43,</td><td>-210.34,</td><td>-395.43,</td><td>1,</td><td>1,</td><td>3],</td></tr>
+<tr><td>"act40213":</td><td>["Expertise",</td><td>1,</td><td>"h",</td><td>-5.28,</td><td>120,</td><td>-0.1,</td><td>1,</td><td>1,</td><td>60]<br>}<br>}</td></tr>
+</tbody>
+</table>
+<div class="chapitre">
+<p>code activité: spécifique au &#8634;onsignel. Le code activité du &#8634;onsignel est calculé par chiffrage de la description de l'élément précédée de act. (act249642) Il ne tient pas compte des quantités et des valeurs. Le code activité d'une activité particulière (act249642p23983274) contient un deuxième code incluant la quantité, l'unité et les valeurs. Pour les correspondances avec d'autres classification, il y a des fichiers de traduction. Les catégories sont des éléments. <br>
+q: quantité<br>
+u: unité pour les quantités<br>
+&#8634;: Valeur de compensation en &#8634;onsignel (montant dépendant du calcul du da&#8634; avec les 3 autres valeurs)<br>
+$: Valeur marchande en $ (1&#8634;onsignel=1$CAN au Canada) (montant lié à la quantité)<br>
+*E: Valeur environnementale en McaEE (montant lié à la quantité)<br>
+durée: Quantité en heures décimales<br>
+*S: Valeur sociale (montant lié à la durée)<br>
+Fois/an: Récurrence</p>
+
+
+
+<!-- transactions -->
+
+<h3>La liste des proposition de transactions base générale</h3>
+<p class="soustitre">tra20181124_09-suivi.json, u39382tra20181124_09-suivi.json.</p>
+<p>La liste sert à retrouver la transaction lors d'une demande de lecture avant acceptation. Elle contient le code de la transaction, les codes des offres et demandes qui la composent, le numéro du proposeur et du destinataire. Elle contient aussi la durée de validité, le montant de &#8634;onsignel à compenser et le code de la transaction proposition précédente. L'acceptation et la vérification de la transaction est dans d'autres fichiers.</p>
+<p>Un fichier par heure. Le nom de fichier contient la date et l'heure de transaction. Les fichiers de suivi sont rangés dans des répertoires selon la date 2/2018/11/24/09/</p>
+</div>
+<table class="tableau">
+<thead><tr><td>code transaction</td><td>code offre</td><td>code demande</td><td>date</td><td>code pour qui</td><td>durée</td><td>&#8634;onsignel à compenser</td><td>code dequi</td></tr></thead>
+<tbody>
+<tr><td>[tra20181124_0913_93981,</td><td>511799,</td><td>447527,</td><td>20181124_0913,</td><td>43841,</td><td>1,</td><td>-33.5,</td><td>39382]</td></tr>
+</tbody>
+</table>
+<div class="chapitre">
+<h3>La liste des proposition de transactions base de l'utilisateur</h3>
+<p class="soustitre">39382-transactions.json, 39382_2017-transactions.json / u39382transactions, u39382transactions</p>
+
+
+<h3>Liste de contrôle des transactions</h3>
+<p class="soustitre">201801-controletransactions.json / u39382controletransactions</p>
+<table class="tableau">
+<thead><tr><td>code transaction</td><td>date</td><td>personnes</td></tr></thead>
+<tbody>
+<tr><td>["75544_117645",</td><td>"20180705_20180705",</td><td>"39382_43841"]</td></tr>
+<tr><td>["74981_93981",</td><td>"20180712_20180712",</td><td>"39382_43841"]</td></tr>
+<tr><td>["75820_117432",</td><td>"20180824_20180827",</td><td>"39382_43841"]</td></tr>
+<tr><td>["65688_75706",</td><td>"20180825_20180903",</td><td>"39382_43841"]</td></tr>
+</tbody>
+</table>
+<p>code transaction: spécifique au &#8634;onsignel. Codage du code élément avec la date de la proposition tiret codage de l'élément en contrepartie avec la date d'acceptation. Une transaction en attente d'acceptation n'a pas de tiret.<br>
+date: date de la proposition titret date de l'acceptation<br>
+personnes: codede la personne qui offre tiret code de la personne qui accepte</p>
+</div>
+<!--  -->
+
+<!--  -->
+<footer class="pieddepage">
+<p>Tester et mettre en &oelig;uvre des idées</p>
+<p class="soustitre"><a href="../../../index.html">Bruno Gadrat <span class="design">Design</span> <span class="vegetal">V&eacute;g&eacute;tal</span></a> / <a href="//www.mieuxvivreici.com"> <span class="mieux">Mieux</span> <span class="vivre">Vivre</span> <span class="ici">ici</span>: Jardins et  paysages durables</a></p>
+</footer>   
+<!--  -->
+<aside class="refdocument">
+<p class="auteur">Bruno Gadrat</p>
+<p class="revision">Orig: 2018/06 Rev: 2018/09/14</p>
+<p class="nomdufichier">consignel-notes.html</p>
+<p class="discret">Design et gestion du site B.Gadrat</p>
+<p class="verification"><a href="//validator.w3.org/check?uri=referer">Contr&ocirc;le qualit&eacute;</a></p>
+</aside>
+<!--  -->
+<div class="pubbandeau">
+<script> 
+$(".pubbandeau").load("../../../vip/pubbandeau.html");
+</script>
+<p><a href="../../../vip/soutien-vetp.html"><img src="../../../gadrat/index.ref/jaime.gif" alt="pub"></a></p>
+</div>
+<!--  -->
+<div id="margebasse"></div>
+<div id="cadre1"><div><span></span></div></div>
+<div id="cadre2"><div><span></span></div></div>
+<div id="cadre3"><div><span></span></div></div>
+<div id="cadre4"><div><span></span></div></div>
+</body>
+</html>
