@@ -8,6 +8,9 @@ if(($donnee1=="undefined") || ($donnee1=="")){$donnee1=1;}else{$donnee1 = preg_r
 if(($donnee2=="undefined") || ($donnee2=="")){$donnee2=1;}else{$donnee2 = preg_replace( '/\D*/', '', $donnee2);}; // pas de code utilisateur ou de code session utilisateur
 if(($donnee3=="undefined") || ($donnee3=="")){$donnee3=1;}else{$donnee3 = preg_replace( '/\D*/', '', $donnee3);}; // pas de mot de passe ou de truc en plus
 date_default_timezone_set('America/New_York');
+$base = constante("base");
+$baseutilisateurs = constante("baseutilisateurs");
+
 // vérification de l'utilisateur et du code
 // Pas de code utilisateur
 if($donnee1==1){echo (" , 0 , Inconnu , Inconnu , Inconnu , efface l'entrée");}; // session nulle demande remise à zéro et renvoi
@@ -19,9 +22,7 @@ echo (" , 0 , Inconnu , Inconnu , Inconnu , secret seul"); // session nulle code
 
 // Code utilisateur sans code mot de passe
 if(($donnee1==$donnee2) and ($donnee3==1)){
-//   $donnee2 = preg_replace( '/\D*/', '', $donnee2); // garde les nombres de la chaine 
-//  $cheminfichier = "../../projets/2018-consignel/consignel-base/0/.baseconsignel3";
-  $cheminfichier = tracelechemin("0","../consignel-base/",".baseconsignel3");
+  $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel3");
   if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
     $existe = FALSE; // Testeur de boucle
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
@@ -43,9 +44,10 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
     $nombrealeatoire = mt_rand(1,9999); // prépare le numéro de session
     $avatar = substr($var4,1,6);
     if($avatar=="avatar"){ // image ou avatar prendre l'avatar
-    $cheminfichierimage = "\"../consignel-base/avatars/".substr($var4,1);
+    $baseavatars = constante("baseavatars");
+    $cheminfichierimage = $baseavatars.substr($var4,1);
     }else{ // image ou avata prendre l'image
-    $cheminfichierimage = "\"".tracelechemin($donnee2,"../consignel-base/",substr($var4,1));
+    $cheminfichierimage = "\"".tracelechemin($donnee2,$base,substr($var4,1));
     }; // fin de image ou avatar
 // hache le hache d'utilisateur avec le numéro de session idem motdepasse et clef
     $nomsession = codelenom($var1*$nombrealeatoire); 
@@ -54,7 +56,7 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
     $today = getdate();  $heuresession = $today[hours]*60+$today[minutes];
     $chainecontenu = $nomsession.",".$codesession.",".$clesession.",".$nombrealeatoire.",".$heuresession;
 // Stoke le fichier temporaire de session avant mot de passe
-    $cheminfich2 = tracelechemin("0","../consignel-base/",".baseconsignel0");
+    $cheminfich2 = tracelechemin("",$baseutilisateurs,".baseconsignel0");
     ajoutelesconnexions($cheminfich2,$chainecontenu);
 // renvoie les variables de session
     echo (" ,".$nombrealeatoire.",".$var3.",".$cheminfichierimage.",".$var5.", ");} // session numéroté demande code secret
@@ -73,7 +75,7 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
 //   $donnee3 = preg_replace( '/\D*/', '', $donnee3); // garde les nombres de la chaine 
   $today = getdate();  $heureutilise = $today[hours]*60+$today[minutes];
 //  $cheminfichier = "../consignel-base/0/.baseconsignel0";
-  $cheminfichier = tracelechemin("0","../consignel-base/",".baseconsignel0");
+  $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel0");
   if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
     $existe = FALSE; // Testeur de boucle
     $nettoyage = FALSE; // Testeur de session expiré
@@ -234,7 +236,7 @@ if (($soldeconsigneldisponible + $consigneldemande)<0){ return "DTMC - Refus sol
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
     $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38chaine);
-    $cheminsansfichier = tracelechemin($noaccepteur,"../consignel-base/",$noaccepteur); 
+    $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
     ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraacc."\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
@@ -459,7 +461,8 @@ function dernieretat($codecompte){
 function fichierperso($var3,$nomfichier){
   $identifiantlocal=$var3; 
   $nomfichierlocal=$nomfichier; 
-  $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-".$nomfichierlocal.".json");
+  $base=constante("base");
+  $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");
   if (file_exists($cheminfichier)) { // vérification du résumé le fichier existe
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
     while (!feof($fichierencours) ) { // cherche dans les lignes
@@ -562,7 +565,8 @@ return $acclocal;
 function nettoyagerefsessions(){
   $today = getdate();  $heureutilise = $today[hours]*60+$today[minutes];
   $heureobsolete = $heureutilise-20; // sessions obsolete 20 minutes
-  $cheminfichier = tracelechemin("0","../consignel-base/",".baseconsignel0");
+  $baseutilisateurs = constante("baseutilisateurs");
+  $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel0");
   if (file_exists($cheminfichier)) { // vérification fichier sessions obsoletes existe
     $fichierencours = fopen($cheminfichier, 'r+'); // ouverture en lecture ecriture autorisée pointeur au début
     while (!feof($fichierencours) ) { // cherche dans les lignes
@@ -575,7 +579,7 @@ function nettoyagerefsessions(){
     }; // Fin de cherche dans les lignes
     fclose($fichierencours); // fermeture du fichier
   }else{
-    die("fichier inconnu Fichier non trouvé pas de fichier session"); // Fichier non trouvé pas de fichier session
+    die("fichier inconnu Fichier non trouvé pas de fichier session "); // Fichier non trouvé pas de fichier session
   };
 };
 
@@ -659,10 +663,11 @@ if (($soldeconsigneldisponible + $consigneloffre)<0){ return "DTMC - Refus solde
     $transaction = preg_replace( "/(],\")|(] ,\")/", "],\n\"", $transaction);
     $transaction = preg_replace( "/^({ )/", "", $transaction);
     $transaction = preg_replace( "/(] })/", "],\n", $transaction);
-    $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-".$nomfichierlocal.".json");  
+    $base=constante("base");
+    $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");  
     ajouteaufichier($cheminfichier,$transaction);
     // fichier de l'ordre des transaction
-    $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-resume2dates.json");  
+    $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume2dates.json");  
     $dernieresidtra = ajouteaufichier2dates($cheminfichier,$idtra);
     $idtraprecedente = $dernieresidtra[0];
     $anciennete = $dernieresidtra[4];
@@ -672,19 +677,19 @@ if (($soldeconsigneldisponible + $consigneloffre)<0){ return "DTMC - Refus solde
     $nouveausoldeconsignel = ($derniercompte[0]+$consigneloffre);
     // note le solde de consignel sur les 31 derniers jours
     // donne le solde minimum = $minimax[0], et maximum = $minimax[1];
-    $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-suivi31jours.json");
+    $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suivi31jours.json");
     $minimax = suivi31jours($cheminfichier, $idtraprecedente, $idtra, $nouveausoldeconsignel);
 // met à jour le fichier des gains dans l'acceptation de la transaction et récupère le gain journalier
 //   $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre, $anciennete);
     //  récupère le gain journalier en mettant le gain à 0
-    $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-gain365jours.json");
+    $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-gain365jours.json");
     $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre, $anciennete);
     // met à jour le résumé de compte
     $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
-    $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-resume.json");  
+    $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");  
     remplacefichier($cheminfichier, $nouveauresume);
     // met à jour l'archivage des résumés de compte consignel
-    $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-suiviresume.json");  
+    $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
     ajouteaufichier($cheminfichier,$idtra.",".$nouveauresume."\n");
     // envoi le retour à l'utilisateur - La proposition est en attente d'acceptation
   return "PEAA - ".$nouveauresume;
@@ -694,7 +699,8 @@ if (($soldeconsigneldisponible + $consigneloffre)<0){ return "DTMC - Refus solde
 // crée un nouveau chemin de répertoire en fonction de la transaction
 function ouvrelechemin($nomtransaction){
 $chemin = $nomtransaction;
-$chemin = "../consignel-base/2/".substr($nomtransaction, 3, 4)."/"; if(!is_dir($chemin)){ mkdir($chemin); };
+$basehistorique = constante("basehistorique");
+$chemin = $basehistorique.substr($nomtransaction, 3, 4)."/"; if(!is_dir($chemin)){ mkdir($chemin); };
 $chemin .= substr($nomtransaction, 7, 2)."/"; if(!is_dir($chemin)){ mkdir($chemin); };
 $chemin .= substr($nomtransaction, 9, 2)."/"; if(!is_dir($chemin)){ mkdir($chemin); };
 $chemin .= substr($nomtransaction, 12, 2)."/"; if(!is_dir($chemin)){ mkdir($chemin); };
@@ -717,7 +723,8 @@ fclose($fichierencours);
 // Renvoi le résumé du compte
 function resumecompte($var3){
   $identifiantlocal=$var3; 
-  $cheminfichier = tracelechemin($identifiantlocal,"../consignel-base/",$identifiantlocal."-resume.json");
+  $base=constante("base");
+  $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");
   if (file_exists($cheminfichier)) { // vérification du résumé le fichier existe
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
     $resumeducompte = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
@@ -818,7 +825,8 @@ function tracelechemin($numerofichier,$sousrep,$nomfichier,$defriche="") {
 // pour tester un chemin de répertoire en fonction de la transaction
 function testelechemin($nomtransaction){
 $chemin = $nomtransaction;
-$chemin = "../consignel-base/2/".substr($nomtransaction, 3, 4)."/"; 
+$basehistorique = constante("basehistorique");
+$chemin = $basehistorique.substr($nomtransaction, 3, 4)."/"; 
 $chemin .= substr($nomtransaction, 7, 2)."/"; 
 $chemin .= substr($nomtransaction, 9, 2)."/"; 
 $chemin .= substr($nomtransaction, 12, 2)."/";
@@ -919,6 +927,10 @@ return $typetroc;
 function constante($nom){
 if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
 if($nom == "ouverturecompte"){ return '"182.5,10,0,365"'; };
+if($nom == "base"){ return "../consignel-base/"; };
+if($nom == "baseutilisateurs"){ return "../consignel-base/0/"; };
+if($nom == "basehistorique"){ return "../consignel-base/2/"; };
+if($nom == "baseavatars"){ return "\"../consignel-base/avatars/"; };
 
 };
 
