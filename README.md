@@ -1,8 +1,7 @@
 # ↺onsignél
 Le but du ↺onsignel est de compenser systématiquement les impacts et d'avoir les moyens de le faire.  
 C'est un projet qui a commencé par une question triviale "Comment financer l'environnement ?"  
-Cette vidéo fait une présentation rapide du projet  
-<iframe width="560" height="315" src="https://www.youtube.com/embed/k4FObtWEjmw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
+[Cette vidéo](https://youtu.be/k4FObtWEjmw) fait une présentation rapide du projet  
 Vous en saurez plus sur le projet en visitant la page du [↺onsignél](https://www.designvegetal.com/gadrat/a/argent/consignel.html)
 
 La conclusion de la recherche c'est que l'argent (moyen économique) et la bonne volonté (moyen social) ne suffiront pas pour regagner ce qu'on perd en environnement. 
@@ -39,13 +38,14 @@ Il y en a 6. C'est impératif que l'application produise ces valeurs. Ce n'est p
 * Les humains et la nature ne sont pas à vendre
 * Zéro dette, zéro spéculation, zéro accumulation toxique
 
-Dans cette vidéo, on montre des exemples de mise en oeuvre des valeurs fondamentales dans l'application. 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/j-MQmvKdn8Y" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Dans [cette vidéo](https://youtu.be/j-MQmvKdn8Y), on montre des exemples de mise en oeuvre des valeurs fondamentales dans l'application. 
 
 
 ##La structure du site web
 
-* consignel-app : fichiers html et css [application](consignel-app/consignel-app.html)* consignel-base : fichiers (cvs, json, ...) des données* consignel-ref : [documentation](consignel-ref/consignel-notes.html)
+* consignel-app : fichiers html et css application
+* consignel-base : fichiers (cvs, json, ...) des données
+* consignel-ref : documentation
 * consignel-scp : scripts js et php
 
 ## Participez
