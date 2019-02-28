@@ -1,7 +1,9 @@
 # ↺onsignél
 Le but du ↺onsignel est de compenser systématiquement les impacts et d'avoir les moyens de le faire.  
+Regardez [Cette vidéo de 45 secondes](https://youtu.be/iCckGt08Deo).
+ 
 C'est un projet qui a commencé par une question triviale "Comment financer l'environnement ?"  
-[Cette vidéo](https://youtu.be/k4FObtWEjmw) fait une présentation rapide du projet  
+[Cette vidéo de 8mn38](https://youtu.be/k4FObtWEjmw) fait une présentation rapide du projet  
 Vous en saurez plus sur le projet en visitant la page du [↺onsignél](https://www.designvegetal.com/gadrat/a/argent/consignel.html)
 
 La conclusion de la recherche c'est que l'argent (moyen économique) et la bonne volonté (moyen social) ne suffiront pas pour regagner ce qu'on perd en environnement. 
@@ -16,7 +18,7 @@ C'est le dépôt pour faire l'application web.
 Le projet est en cours. Même incomplet, ce qui existe déjà doit fonctionner correctement. Ce qui manque est à inventer au fur et à mesure dans le respect des valeurs fondamentales.
 
 La version actuelle fonctionne avec un serveur web + PHP. Une fois le dépôt copié sur le serveur. Il faut dupliquer le répertoire consignel-base-demarrage et le renommer consignel-base. 
-Il y a trois utilisateurs déjà enregistrés pour faire vos tests: moi, autre et testeur. Les trois ont le mot de passe test.
+Il y a deux utilisateurs déjà enregistrés pour faire vos tests: moi et autre. Les deux ont le mot de passe test.
 
 Le code est ouvert pour pouvoir évoluer vers différents types de serveurs, sans serveur ou tout ce que votre imagination et votre savoir faire pourra créer. 
 
@@ -38,12 +40,12 @@ Il y en a 6. C'est impératif que l'application produise ces valeurs. Ce n'est p
 * Les humains et la nature ne sont pas à vendre
 * Zéro dette, zéro spéculation, zéro accumulation toxique
 
-Dans [cette vidéo](https://youtu.be/j-MQmvKdn8Y), on montre des exemples de mise en oeuvre des valeurs fondamentales dans l'application. 
+La vidéo qui montre ces valeurs est en cours de fabricaiton. On peut regarder [cette vidéo de 6 minutes sur le don, le troc et la compensation avec le ↺onsignél ](https://youtu.be/j-MQmvKdn8Y). 
 
 
 ## La structure du site web
 
-* consignel-app : fichiers html et css application
+* consignel-app : fichiers html et css application (restructuration pour bientôt)
 * consignel-base : fichiers (cvs, json, ...) des données
 * consignel-ref : documentation
 * consignel-scp : scripts js et php
