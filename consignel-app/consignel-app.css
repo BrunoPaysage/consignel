@@ -248,8 +248,20 @@ p { text-align: justify ;}
 .deuxcolonnesB3 {display: block; float: right; width: 48%;}
 
 /* Fin de Héritage de designvegetal  */
+
+
+
+
+
+
 /* mise en forme générale */
-/* .application {border:solid 1px #555; width:320px; height:568px;overflow-y: auto; overflow-x: hidden; }  */
+
+a, button {cursor: pointer;}
+
+/* .appentete */
+h2.localisation {cursor: pointer;}
+
+/* .application */
 .application {border:solid 0px #555; width:98%; height:auto;overflow-y: auto; overflow-x: hidden; margin-left:auto; margin-right:auto;}
 div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 
@@ -266,7 +278,7 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 .suivi .cible {margin:0px; float:left; position: absolute; top:0; left:0; margin-left:135px;  width: 24px; height: 24px; border-radius: 14px; background: transparent; border: dotted 3px green;}
 .suivi .rond {position: absolute; top:0; left:0; margin-left:139px; margin-top:4px; width: 22px; height: 22px; border-radius: 14px; background: #0a0; border: solid 0px #000; }
 
-/* inscription b*/
+/* inscription */
 .inscription {}
 
 /* Entête avec identification */
@@ -286,7 +298,8 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 .ui-menu {list-style-type: none;  background: #fff ; width:270px;}
 .ui-menu-item {  padding-left:1em; border-bottom:solid 1px #aaa; }
 .ui-helper-hidden-accessible {display:none;}
-.offre h3, .demande h3 {padding-top:5px; padding-left:1.5em;} 
+.offre h3, .demande h3 {padding-top:5px; padding-left:1.5em;}
+h3 .utilisation { cursor: pointer; } 
 .utilisation .recherche {padding-left:20px;padding-right:20px;}
 .utilisation .recherche input {}
 .utilisation #poubelle {min-height:10em; width:5px; height:calc(80vh - 11em  );  background:#eee; float:left; padding:0em;}
@@ -326,15 +339,14 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 
 .statutfichierspourtous * {width:2em;}
 
+/* .validation */
 .validation { margin-top: 5px;}
-/* .validation .utilisateur {display:block; float:right; border:solid 1px; padding:5px;} */
 .validation .qr {float:left; padding:5px; background:#ffdd99; opacity:0.25;}
 .validation .qr1 {float:right; padding:5px; background:#eeee99; opacity:0.25;}
 .validation .qr2 {float:left; padding:5px; background:#eeffee; opacity:1;}
 .validation .qr3 {float:left; padding:5px; background:#eeffdd; opacity:1;} 
 .validation .qr .qrcodetexte, .validation .qr2 .qrcodetexte , .validation .qr3 .qrcodetexte  {float:left; width:240px;  margin:0px; }   
 .validation .qr1 .qrcodetexte  {float:right; width:240px;  margin:0px; }   
-/* .validation .codebarre {float:right; width:200px; height:40px; border:solid 1px;padding:5px;}  */ 
 
 .actif {background:#fff; opacity:1;}
 .attente {color:blue; background:#eeee99; opacity:0.25;}
