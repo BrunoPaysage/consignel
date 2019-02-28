@@ -41,7 +41,7 @@ Il y en a 6. C'est impératif que l'application produise ces valeurs. Ce n'est p
 Dans [cette vidéo](https://youtu.be/j-MQmvKdn8Y), on montre des exemples de mise en oeuvre des valeurs fondamentales dans l'application. 
 
 
-##La structure du site web
+## La structure du site web
 
 * consignel-app : fichiers html et css application
 * consignel-base : fichiers (cvs, json, ...) des données
