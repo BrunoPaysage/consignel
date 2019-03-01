@@ -466,7 +466,7 @@ function charge(nomdonnees){
   $(".statut"+nomdonnees).html("...");
   var dansdiv="#stocke"+nomdonnees;
   var dansinput="#input"+nomdonnees;
-  var fichierserveur=nomdonnees+".json";
+  var fichierserveur=constante("localite")+nomdonnees+".json";
   var storageoui = $("#localstoragepublic").prop("checked");
   var storagedisponible=testestorage(); 
   var nomfichierlocal="consignel"+nomdonnees;
@@ -796,7 +796,7 @@ function confirmationchangeaide(){
   alert("confirmationchangeaide à écrire ");
 };
 
-/* au chargement de la page */
+/* au chargement de la page initialise l'application */
 function debuter(){
 /* masque le champs secret pour l'inscription */
 $(".secret").hide();
@@ -1046,7 +1046,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
 
   var nomcodephp = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
   $("#suiviappli").prepend("script php nomcodephp envoyé au serveur <br>");
-  $.get("../consignel-scp/consignel.php", nomcodephp , function(responseTxt, statusTxt, xhr){
+  $.get("consignel-scp/consignel.php", nomcodephp , function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success") {
       $("#suiviappli").prepend("fichier "+nomdonnees+" arrivé depuis le serveur<br>");
       responseTxt = decryptetransfert(responseTxt);
@@ -1171,7 +1171,7 @@ function effacelentete(){
   $("#suiviappli").prepend("effacelentete() <br>");
   $('.appentete .localisation .lieu').html(""); 
   $('.appentete .utilisateur .nomutilisateur').html("... mode démo ..."); 
-  $('.appentete .localisation img.utilisateur').attr('src', "photoidentite.jpg");
+  $('.appentete .localisation img.utilisateur').attr('src', "consignel-app/photoidentite.jpg");
   $('.alerte').html(""); 
   changegraphsuivi(182.5,1,0,365);
   videlediv(".stockedansdiv"); videlediv(".mstockdansdiv"); videautocomplete(); 
@@ -1833,7 +1833,7 @@ var nomcode4 = codelenom(nomutil2+nomutil3); //chiffre le code d'acces local
 };
 var nomcodephp = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
 var retourdansdiv = ".retourserveur";
-$(retourdansdiv).load("../consignel-scp/consignel.php", nomcodephp , function(responseTxt, statusTxt, xhr){
+$(retourdansdiv).load("consignel-scp/consignel.php", nomcodephp , function(responseTxt, statusTxt, xhr){
   /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
   if(statusTxt == "success") {
     /* le chargement est fait par le .load dans le div .retourserveur et dans la variable reponseTxt */
@@ -2023,4 +2023,11 @@ function videlocalstorageperso(nomdonnees){
 /* vide #poubelle et #poubelle2 */
 function videlespoubelles(){$("#poubelle").html("");$("#poubelle2").html("");miseajourdesvaleurs();};
 
+// définition des constantes selon la localité pour les calculs
+function constante($nom){
+if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
+if($nom == "ouverturecompte"){ return '"182.5,10,0,365"'; };
+if($nom == "localite"){ return "localite/"; };
+
+};
 

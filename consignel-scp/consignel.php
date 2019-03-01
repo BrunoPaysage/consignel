@@ -930,7 +930,8 @@ if($nom == "ouverturecompte"){ return '"182.5,10,0,365"'; };
 if($nom == "base"){ return "../consignel-base/"; };
 if($nom == "baseutilisateurs"){ return "../consignel-base/0/"; };
 if($nom == "basehistorique"){ return "../consignel-base/2/"; };
-if($nom == "baseavatars"){ return "\"../consignel-base/avatars/"; };
+if($nom == "baseavatars"){ return "\"consignel-base/avatars/"; };
+// if($nom == "baselocalite"){ return "../localite/"; };
 
 };
 

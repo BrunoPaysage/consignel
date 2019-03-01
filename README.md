@@ -17,8 +17,9 @@ C'est le dépôt pour faire l'application web.
 
 Le projet est en cours. Même incomplet, ce qui existe déjà doit fonctionner correctement. Ce qui manque est à inventer au fur et à mesure dans le respect des valeurs fondamentales.
 
-La version actuelle fonctionne avec un serveur web + PHP. Une fois le dépôt copié sur le serveur. Il faut dupliquer le répertoire consignel-base-demarrage et le renommer consignel-base. 
+La version actuelle fonctionne avec un serveur web + PHP. Une fois le dépôt copié sur le serveur. Il faut dupliquer le répertoire consignel-base-demarrage et le renommer consignel-base. Il faut faire la même chose avec le répertoire localite-demarrage et le renommer localite.
 Il y a deux utilisateurs déjà enregistrés pour faire vos tests: moi et autre. Les deux ont le mot de passe test.
+Attention, les fichiers dans localite seront à adapter à votre localité. Ils vont s'améliorer avec l'utilisation et la connaissance des impacts et des compensations locales.
 
 Le code est ouvert pour pouvoir évoluer vers différents types de serveurs, sans serveur ou tout ce que votre imagination et votre savoir faire pourra créer. 
 
@@ -45,10 +46,12 @@ La vidéo qui montre ces valeurs est en cours de fabricaiton. On peut regarder [
 
 ## La structure du site web
 
-* consignel-app : fichiers html et css application (restructuration pour bientôt)
-* consignel-base : fichiers (cvs, json, ...) des données
-* consignel-ref : documentation
-* consignel-scp : scripts js et php
+* index.html : l'application
+* /consignel-app : les images et autres fichiers de l'application
+* /css : feuille de style
+* /consignel-base : fichiers (cvs, json, ...) des données
+* /consignel-ref : documentation
+* /consignel-scp : scripts js et php
 
 ## Participez
 

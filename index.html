@@ -5,12 +5,12 @@
 <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.8">
 <title>&#8634;onsignél, l'application</title>
-<link rel="stylesheet" href="consignel-app.css" type="text/css">
-<script src="../consignel-scp/consignel.js"></script>
-<script src="../consignel-scp/jquery.js"></script> 
-<script src="../consignel-scp/jquery-ui.min.js"></script> 
-<script src="../consignel-scp/jquery.ui.touch-punch.min.js"></script> 
-<script src="../consignel-scp/qrcode.min.js"></script> 
+<link rel="stylesheet" href="css/consignel-app.css" type="text/css">
+<script src="consignel-scp/consignel.js"></script>
+<script src="consignel-scp/jquery.js"></script> 
+<script src="consignel-scp/jquery-ui.min.js"></script> 
+<script src="consignel-scp/jquery.ui.touch-punch.min.js"></script> 
+<script src="consignel-scp/qrcode.min.js"></script> 
 
 <style>
 .inscription, .arretesession, .confirmation, .preferences {display:none;}
@@ -31,7 +31,7 @@
 <!-- visible dans tous les cas et ajustement des variables selon l'étape -->
 <div class="appentete">
 <!-- localisation, utilisateur, photo, lieu -->
-<h2 class="localisation"><img class="utilisateur" src="photoidentite.jpg" alt="?"> &#8634;onsignél <span class="lieu">...</span></h2>
+<h2 class="localisation"><img class="utilisateur" src="consignel-app/photoidentite.jpg" alt="?"> &#8634;onsignél <span class="lieu">...</span></h2>
 <p class="utilisateur">
 <span class="nomutilisateur">... mode démo ...</span>
 
@@ -44,7 +44,7 @@
 </span>
 
 <!-- Alerte sur les problèmes -->
-<span class="alerte"><span class="pbjavascript eval0">Javascript est désactivé sur votre navigateur.<br>Activez javascript dans les préférences de votre navigateur pour pouvoir utiliser cette webapp<br><span class="fondleger">&nbsp;<a href="../consignel-ref/consignel-notes.html#securite">Voir la sécurité du &#8634;onsignél avant d'autoriser javascript</a></span><script>$(".alerte .pbjavascript").remove();</script></span></span>
+<span class="alerte"><span class="pbjavascript eval0">Javascript est désactivé sur votre navigateur.<br>Activez javascript dans les préférences de votre navigateur pour pouvoir utiliser cette webapp<br><span class="fondleger">&nbsp;<a href="consignel-ref/consignel-notes.html#securite">Voir la sécurité du &#8634;onsignél avant d'autoriser javascript</a></span><script>$(".alerte .pbjavascript").remove();</script></span></span>
 </p>
 <!-- Menu général adapté selon la page -->
 <p class="inscription menugeneral">Inscription</p>
@@ -93,7 +93,7 @@ Secret<br>
 <div class="inscription detection">
 <p>&nbsp;</p>
 <p>Mode démo <input id="modedemo" type="checkbox"  value="oui" checked> <span class="modedemocomment">Utilisez les menus</span><br></p>
-<p><a href="consignel-app.html?var1=20181212_0903_481542"><img src="20181212_0903_481542.png" alt="Code QR pour mode démo"></a></p>
+<p><a href="index.html?var1=20181212_0903_481542"><img src="consignel-app/20181212_0903_481542.png" alt="Code QR pour mode démo"></a></p>
 </div>
 
 <!-- Utilisation -->
@@ -330,7 +330,7 @@ Fichiers personnels <input id="localstoragemoi" type="checkbox" value="non"> <sp
 <h4>mes proposition</h4><div id="mstockmespropositions" class="mstockdansdiv">...</div> 
 <h4>demande une proposition</h4><div id="mstockdemandeuneproposition" class="mstockdansdiv">...</div> 
 </details>
-<hr><div class="refdocument"> <p class="auteur">Auteur: Bruno Gadrat</p> <p class="revision">Orig: 2018/04 Rev: 2019/02/28</p> <p class="nomdufichier">Fichier: consignel-app.html</p>
+<hr><div class="refdocument"> <p class="auteur">Auteur: Bruno Gadrat</p> <p class="revision">Orig: 2018/04 Rev: 2019/02/28</p> <p class="nomdufichier">Fichier: index.html</p>
 <p class="verification"><sub><a href="//validator.w3.org/check?uri=referer">Contr&ocirc;le html</a> - <a href="//jigsaw.w3.org/css-validator/check/referer">Contr&ocirc;le css</a></sub></p> </div>
 <hr>
 <details><summary>Suivi fonctionnement application</summary>
