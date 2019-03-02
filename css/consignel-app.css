@@ -1,5 +1,7 @@
-/* styles particuliers pour le consignel dans le même répertoire */
-/* Héritage de designvegetal  */
+/* styles particuliers pour le consignel  */
+
+/* Héritage de css designvegetal besoin de réorganisation mais prudement car certaines balises et class sont utilisées pour le consignel */
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -43,10 +45,7 @@ h3 {font-size:1.17em;}   /* corps 14 */
 h4, h5, h6 {font-size:1.08em;} /* corps 13 */
 h4 {font-style:oblique;}
 
-
 p, figurecaption {font-size: 0.92em;line-height: 1.17em; text-align:justify; padding-top:0.17em; padding-bottom:0.17em;}
-
-
 
 blockquote {font-style:oblique;border-left:1px solid #008;padding-left:1em;} /* citation longue */
 pre {font-family: courier;font-size:0.92em; overflow: auto;}  /* corps 11 *//* texte préformaté */
@@ -156,6 +155,7 @@ img.large {width:100%}
 .fondmoyen   {background-color:#98f; } 
 .fondfort   {background-color:#78f; } 
 
+/* classes de visibilité */
 .voit   {display:block; border-left: solid 5px red; margin-left:7px;}
 .voit  .voit {display:block; border-left: solid 5px green; margin-left:7px;}
 .voit  .voit  .voit  {display:block; border-left: solid 5px blue; margin-left:7px;}
@@ -207,7 +207,7 @@ table.tableenligne {display: inline-table; }
 .facture .totalavanttaxes {font-weight: bold;}
 .facture tfoot  {background-color:#ccf; border-top: #007 solid 1px; font-weight: bold; padding-top:0.25px;}
 .facture tfoot td{ padding-top:0.5em;}
-/* coloration pour form avec 7 botons radio pour jugement majoritaire */
+/* coloration pour form avec 7 boutons radio pour jugement majoritaire */
 div.jugemaffiche span {display:inline-block; width:2em; text-align:center;}
 .jugem0 { background: url(eval0.png); padding:3px;}
 .jugem1 { background: url(eval1.png); padding:3px;}
@@ -235,8 +235,6 @@ h3 { color:#335;}
 p.soustitre { margin-top: -0.25em; margin-bottom: 0.5em; font-size: 0.75em ;}
 p { text-align: justify ;}
 
-
-
 .unecolonne {width: 100%;}
 .deuxcolonnesA {display: block; float: left; width: 40%;}
 .deuxcolonnesB {display: block; float: right; width: 55%;}
@@ -252,7 +250,7 @@ p { text-align: justify ;}
 
 
 
-
+/* partie spécifique pour le consignel dans l'ordre des div du index.html */
 
 /* mise en forme générale */
 
@@ -314,11 +312,20 @@ h3 .utilisation { cursor: pointer; }
 #offrechoisi *, #demandechoisi * , #offreconfirme * , #demandeconfirme * { padding:0;}
 #offrechoisi div, #demandechoisi div , #offreconfirme div , #demandeconfirme div { padding-top:0.5em;}
 #offrechoisi div .environnement, #demandechoisi div .environnement, #offreconfirme div .environnement, #demandeconfirme div .environnement {background:#cfc; }
+#offrechoisi, #demandechoisi { cursor: move; }
+#offrechoisi span, #demandechoisi span { cursor: text; }
+#offrechoisi span[id$="preciseact"], #demandechoisi span[id$="preciseact"] { cursor: default; }
+#offrechoisi span[id$="preciseact"] span, #demandechoisi span[id$="preciseact"] span { cursor: text; }
+#offrechoisi span[id$="preciseact"] span.codedunom, #demandechoisi span[id$="preciseact"] span.codedunom { cursor: default; }
+#offrechoisi span[id$="preciseact"] span.codedetailactivite, #demandechoisi span[id$="preciseact"] span.codedetailactivite { cursor: default; }
+#offrechoisi span[id$="preciseact"] span.consignel, #demandechoisi span[id$="preciseact"] span.consignel { cursor: default; }
+#offrechoisi span.supprime, #demandechoisi span.supprime { cursor: pointer; }
+#offrechoisi span.preciseactivite, #demandechoisi span.supprime { cursor: pointer; }
 #dacoffre h3, #dacdemande h3 {padding-top:5px; padding-left:1.5em; }
 #dacoffre div, #dacdemande div {padding-left:0.9em; }
 
-.doubletroc { background-color:#fee;}
-.simpletroc {}
+.doubletroc { background-color:#fee; }
+.simpletroc { }
 .fraude { background-color:#f00;}
 
 
