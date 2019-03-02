@@ -123,9 +123,10 @@ function afficheproposition(ou,id,valeurs,numproposetra){
 
 /* repérage d'un paiement double troc ou d'un simple échange */
 function queltypetroc(notransaction){
+var noact= notransaction;
 var typetroc = "doubletroc";
-var listespeculation = "[,18702,25343,41642,51083,629160,721781,]";
-if (listespeculation.indexOf(","+notransaction+",")==-1){typetroc = "simpletroc";};
+var listepaiement = constante("paiements"); 
+if (listepaiement.indexOf("_"+notransaction+"\"")==-1){typetroc = "simpletroc";};
 return typetroc;
 }
 
@@ -1046,7 +1047,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
 
   var nomcodephp = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
   $("#suiviappli").prepend("script php nomcodephp envoyé au serveur <br>");
-  $.get("consignel-scp/consignel.php", nomcodephp , function(responseTxt, statusTxt, xhr){
+  $.get(constante("php"), nomcodephp , function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success") {
       $("#suiviappli").prepend("fichier "+nomdonnees+" arrivé depuis le serveur<br>");
       responseTxt = decryptetransfert(responseTxt);
@@ -1171,7 +1172,7 @@ function effacelentete(){
   $("#suiviappli").prepend("effacelentete() <br>");
   $('.appentete .localisation .lieu').html(""); 
   $('.appentete .utilisateur .nomutilisateur').html("... mode démo ..."); 
-  $('.appentete .localisation img.utilisateur').attr('src', "consignel-app/photoidentite.jpg");
+  $('.appentete .localisation img.utilisateur').attr('src', constante("app")+"photoidentite.jpg");
   $('.alerte').html(""); 
   changegraphsuivi(182.5,1,0,365);
   videlediv(".stockedansdiv"); videlediv(".mstockdansdiv"); videautocomplete(); 
@@ -1460,7 +1461,7 @@ function modifie2(){alert("Pour modifier des éléments appuyez sur le bouton N�
 
 function modifieqr(nouveautexte){
   $("#suiviappli").prepend("modifieqr("+nouveautexte+") <br>");
-  var siteconsignel="www.designvegetal.com/projets/consignel/consignel-app/consignel-app.html";
+  var siteconsignel=constante("siteweb");
   if(!nouveautexte){
     var nouveautextelocal=siteconsignel; $(".qr").hide();
   }else{
@@ -1769,10 +1770,10 @@ return datechiffre ;
 function valeurconsignel(quelact){
   $("#suiviappli").prepend("valeurconsignel("+quelact+") <br>");
   var nomdudiv = "#"+quelact;
-  var minimumviable = 15; /* salaire horaire minimum pour la viabilité durable (Montérégie 2018) */
-  var valrefenviro=1.88; /* valeur absolue environnementale de la région pour 1 $, 1 mlc ou 1 ↺ */
-  var coefsalairemoyen = 2; /* calcul du salaire moyen par rapport au minimumviable*/
-  var coefsalaireindecent = 20; /* calcul du salaire maximum accpetable*/
+  var minimumviable = constante("minimumviable"); /* salaire horaire minimum pour la viabilité durable */
+  var valrefenviro = constante("valrefenviro"); /* valeur absolue environnementale de la région pour 1 $, 1 mlc ou 1 ↺ */
+  var coefsalairemoyen = constante("coefsalairemoyen"); /* calcul du salaire moyen par rapport au minimumviable*/
+  var coefsalaireindecent = constante("coefsalaireindecent"); /* calcul du salaire maximum accpetable*/
   var valabsargent = Math.abs( Number($(nomdudiv+" .argent").text()) + Number($(nomdudiv+" .mlc").text()) ); /* valeur cumulée des $ et des mlc de l'activité dont on garde la valeur absolue */
   var valenviron =Number($(nomdudiv+" .environnement").text()) ; /* valeur de l'environnement de l'activité */
 var coefgainenvironnement = 1.1; /* gain environnemental 10% */
@@ -1833,7 +1834,7 @@ var nomcode4 = codelenom(nomutil2+nomutil3); //chiffre le code d'acces local
 };
 var nomcodephp = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
 var retourdansdiv = ".retourserveur";
-$(retourdansdiv).load("consignel-scp/consignel.php", nomcodephp , function(responseTxt, statusTxt, xhr){
+$(retourdansdiv).load(constante("php"), nomcodephp , function(responseTxt, statusTxt, xhr){
   /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
   if(statusTxt == "success") {
     /* le chargement est fait par le .load dans le div .retourserveur et dans la variable reponseTxt */
@@ -2028,6 +2029,15 @@ function constante($nom){
 if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
 if($nom == "ouverturecompte"){ return '"182.5,10,0,365"'; };
 if($nom == "localite"){ return "localite/"; };
+if($nom == "siteweb"){ return "www.designvegetal.com/projets/consignel/index.html"; };
+if($nom == "php"){ return "consignel-scp/consignel.php"; };
+if($nom == "app"){ return "consignel-app/"; };
+if($nom == "scp"){ return "consignel-scp/"; };
+if($nom == "minimumviable"){ return 15; }; /* salaire horaire minimum pour la viabilité durable (Montérégie 2018) */
+if($nom == "valrefenviro"){ return 1.88; }; /* valeur absolue environnementale de la région pour 1 $, 1 mlc ou 1 ↺ */
+if($nom == "coefsalairemoyen"){ return 2; }; /* calcul du salaire moyen par rapport au minimumviable*/
+if($nom == "coefsalaireindecent"){ return 20; }; /* calcul du salaire maximum accpetable*/
+if($nom == "coefgainenvironnement"){ return 1.1; };  /* gain environnemental 10% */
 
 };
 
