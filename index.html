@@ -25,13 +25,12 @@
 
 <body>
 
-<!-- début application visible-->
+<!-- début application -->
 
-<!-- début entête  -->
-<!-- visible dans tous les cas et ajustement des variables selon l'étape -->
+<!-- entête visible sur toutes les pages -->
 <div class="appentete">
-<!-- localisation, utilisateur, photo, lieu -->
-<h2 class="localisation"><img class="utilisateur" src="consignel-app/photoidentite.jpg" alt="?"> &#8634;onsignél <span class="lieu">...</span></h2>
+<!-- localisation, utilisateur, photo, lieu change selon l'utilisateur-->
+<h2 class="localisation"><img class="utilisateur" src="consignel-app/photoidentite.jpg" alt="Image selon l'utilisateur"> &#8634;onsignél <span class="lieu">...</span></h2>
 <p class="utilisateur">
 <span class="nomutilisateur">... mode démo ...</span>
 
@@ -43,16 +42,18 @@
 <a id="menuprefpreferences">Préf</a>
 </span>
 
-<!-- Alerte sur les problèmes -->
+<!-- Alerte sur les problèmes au chargement de la page -->
 <span class="alerte"><span class="pbjavascript eval0">Javascript est désactivé sur votre navigateur.<br>Activez javascript dans les préférences de votre navigateur pour pouvoir utiliser cette webapp<br><span class="fondleger">&nbsp;<a href="consignel-ref/consignel-notes.html#securite">Voir la sécurité du &#8634;onsignél avant d'autoriser javascript</a></span><script>$(".alerte .pbjavascript").remove();</script></span></span>
 </p>
-<!-- Menu général adapté selon la page -->
+
+<!-- Indication de la page choisie -->
 <p class="inscription menugeneral">Inscription</p>
 <p class="utilisation menugeneral">Utilisation</p>
 <p class="confirmation menugeneral">Confirmation de transaction</p>
 <p class="preferences menugeneral">Préférences</p>
 
 </div> <!-- Fin div appentete -->
+
 <!-- indicateur de suivi de compte visible dans tous les cas -->
 <div class="suivicompte">
 <div class="suivi">
@@ -71,7 +72,6 @@
 </div> <!-- Fin div suivicompte -->
 
 
-<!-- <div class="corps">mise en forme particulière hauteur -->
 <!-- inscription -->
 <form class="inscription" name="formulaireacces" id="formulaireacces" method="post" onsubmit="return false">
 <span class="alerte"></span>
@@ -97,7 +97,7 @@ Secret<br>
 </div>
 
 <!-- Utilisation -->
-<div class="utilisation choix">                  <!-- Entrée choix avec input -->
+<div class="utilisation choix"> <!-- Entrée choix avec input -->
   <div class="recherche centre">
   <div><a id="rechercheoptionvoitcache" >&#9064;</a><span id="rechercheoption" class="cache"><input type=search id="inputcherchefaire" placeholder="faire " value="" size="15"><input type=search id="inputcherchequoi" placeholder="quoi " value="" size="15"><input type=search id="inputcherchepourqui" placeholder="pour qui " value="" size="15"><input type=search id="inputchercheparqui" placeholder="par qui " value="" size="15"></span></div>
 <!-- Øø &#216; &#248; ǗǛ &#471;&#475;  Ϋ &#939; ÿ &#255; ŏ õ ö &#335; &#245; &#246; ȏȯȫ &#527; &#559; &#555; ǘǜ &#472;&#476; ᐹᐴ &#5177; &#5172; ᐵ ᑈ &#5173; &#5192; https://unicode-table.com/fr/ -->
@@ -105,14 +105,14 @@ Secret<br>
   </div> <!-- Fin recherche centre -->
 </div> <!-- Fin utilisation choix -->
 
-
-<div class="confirmation choix">                  <!-- Entrée choix avec input -->
+<div class="confirmation choix"> <!-- Entrée choix avec input -->
   <div class="recherche centre">
   <div id="confirmationrecherche" class="actif">
   <a id="changeaideinputconfirmation">&#248;</a> <a id="aidepropositions"> - </a><input type=search id="confirmationinputcode" placeholder="&#128270; code qr de la proposition" value="" size="40"><a id="confirmationokinputcode"> <sub>ok</sub> </a>
   </div>
   </div> <!-- Fin recherche centre -->
 </div> <!-- Fin confirmation choix -->
+
 <div class="confirmation acceptetransaction">
   <div id="confirmationacceptetransaction" class="attente">
     <div class="matransaction">
