@@ -4,9 +4,9 @@ $donnee2 = $_REQUEST['var2']; // code undefined, code utilisateur ou code mot de
 $donnee3 = $_REQUEST['var3']; // code undefined, code mot de passe ou code un truc en plus
 $donnee4 = antitagnb($_REQUEST['var4']);
 $donnee5 = antitaghtml($_REQUEST['var5']); // entrée de texte ou de fichier
-if(($donnee1=="undefined") || ($donnee1=="")){$donnee1=1;}else{$donnee1 = preg_replace( '/\D*/', '', $donnee1);}; // pas de imput ni de numéro de session
-if(($donnee2=="undefined") || ($donnee2=="")){$donnee2=1;}else{$donnee2 = preg_replace( '/\D*/', '', $donnee2);}; // pas de code utilisateur ou de code session utilisateur
-if(($donnee3=="undefined") || ($donnee3=="")){$donnee3=1;}else{$donnee3 = preg_replace( '/\D*/', '', $donnee3);}; // pas de mot de passe ou de truc en plus
+if(($donnee1=="undefined") || ($donnee1=="")){$donnee1=1;}else{$donnee1 = preg_replace( '/\D*/', '', $donnee1);}; // pas de imput ni de numéro de session  garde les nombres de la chaine 
+if(($donnee2=="undefined") || ($donnee2=="")){$donnee2=1;}else{$donnee2 = preg_replace( '/\D*/', '', $donnee2);}; // pas de code utilisateur ou de code session utilisateur  garde les nombres de la chaine 
+if(($donnee3=="undefined") || ($donnee3=="")){$donnee3=1;}else{$donnee3 = preg_replace( '/\D*/', '', $donnee3);}; // pas de mot de passe ou de truc en plus garde les nombres de la chaine 
 date_default_timezone_set('America/New_York');
 $base = constante("base");
 $baseutilisateurs = constante("baseutilisateurs");
@@ -70,11 +70,7 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
 if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
 // déjà traité soit utilisateur inconnu soit mot de passe inconnu soit les 2 inconnus
 }else{
-//   $donnee1 = preg_replace( '/\D*/', '', $donnee1); // garde les nombres de la chaine 
-//   $donnee2 = preg_replace( '/\D*/', '', $donnee2); // garde les nombres de la chaine 
-//   $donnee3 = preg_replace( '/\D*/', '', $donnee3); // garde les nombres de la chaine 
   $today = getdate();  $heureutilise = $today[hours]*60+$today[minutes];
-//  $cheminfichier = "../consignel-base/0/.baseconsignel0";
   $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel0");
   if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
     $existe = FALSE; // Testeur de boucle
@@ -101,7 +97,7 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
   // Utilisateur correctement identifié avec son code
   if($existe==TRUE){ 
       if($donnee3==48){
-      // identification initiale renvoie les variables de session
+        // identification initiale renvoie les variables de session
         // $va4 numéro aléatoir de session
         $oklocal=1; // renvoyer 1 pour utilisateur identifié
         $resumejson=resumecompte($var3); // 4 variables du résumé (disponible, par jour, dispomini31jours, dispomaxi31jours)
@@ -156,17 +152,13 @@ function acceptetransaction($var3,$notransaction){
   $idtraacc = "acc".$notransaction; $nomfichieracc = "acc".$notransaction.".json"; 
   $nomfichierann = "ann".$notransaction.".json"; 
   $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
-  $resumecompe = resumecompte($var3); 
-  $derniercompte = explode( ',', $resumecompe );
-  $soldeconsigneldisponible = $derniercompte[0];
-  $soldeconsignelparjour = $derniercompte[1];
-  // $soldedollardisponible = ; $soldemlcdisponible = ;
-  $notetra = "non" ; // on n'enregistre pas sauf si indication contraire
-  // cherche la transaction dans -suivi.json
+  // vérification préliminaires
+  // cherche si la transsaction a été annulée
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
   if (file_exists($cheminfichier.$nomfichierann)) {
       return "TNDI - Cette proposition n'est pas disponible -";
   };
+  // cherche si la transaction a déjà été acceptée
   if (file_exists($cheminfichier.$nomfichieracc)) {
     $fichierencours = fopen($cheminfichier.$nomfichieracc, 'r');
     $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
@@ -177,6 +169,7 @@ function acceptetransaction($var3,$notransaction){
       return "TNDI - Cette proposition n'est pas disponible -";
     };
   };
+  // cherche si la proposition existe et peut être acceptée par le demandeur
   if (file_exists($cheminfichier.$nomfichiersuivi)) { // vérification que la proposition existe
     $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
     $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
@@ -188,16 +181,15 @@ function acceptetransaction($var3,$notransaction){
         $ligneexiste = TRUE;
         $var3chaine = "\"".$noaccepteur."\"\n"; // attention au " et à la fin de ligne
         if ($var38 == $var3chaine){ 
-          return "DTAO - C'est ma proposition ";  // $notetra = "non"; 
+          return "DTAO - C'est ma proposition ";  
         }else{ 
           if(testeexpiration($var31,$var36) == "expire"){
-            return "TEXP - Proposition expirée"; // $notetra = "non"; 
+            return "TEXP - Proposition expirée"; 
           }else{
             if( testdestinataire($var35,$var3chaine) == "autorise"){
             // vérification disponibilité de consignel et du flux autorisé
-            $notetra = "oui";
             }else{
-            return "TRIN - Transaction inconnue erreur destinataire " ;// destinataire non autorisé  $notetra = "non";
+            return "TRIN - Transaction inconnue erreur destinataire " ;// destinataire non autorisé ;
             };
           }; // fin de trouvée d'un autre non expiré
         }; // fin de proposition trouvée et proposition d'un autre
@@ -206,26 +198,29 @@ function acceptetransaction($var3,$notransaction){
       }; 
     }; // Fin de while cherche dans les lignes
   }else{
-    return "DTMR - Vérifiez le numéro de la proposition"; // le fichier n'existe pas $notetra = "non"; par défaut
+    return "DTMR - Vérifiez le numéro de la proposition"; // le fichier n'existe pas; par défaut
   };
 // vérifications complémentaires avant d'enregistrer la transaction
-//  $cheminfichier = ouvrelechemin($idtra); déjà fait pour le fichier -suivi
-//  $nomfichiertra = $idtra.".json";
-  // Lecture de la transaction
-//  $jsonenphp = json_decode(decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra)),true);
-//  $idoff = "off".$var34."_".$var32; // identification de l'offre
-//  $consigneloffre = $jsonenphp[$idoff][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
-//  $iddem = "dem".$var34."_".$var33; // identification de la demande
-  $consigneldemande = preg_replace( "/\"/", "", $var37); 
-  // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
-if ((($soldeconsignelparjour * 7) + $consigneldemande)<0){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = ""; $notetra = "non"; };
-if (($soldeconsigneldisponible + $consigneldemande)<0){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = ""; $notetra = "non"; };
+  $resumecpt = resumecompte($var3); 
+  $derniercompte = explode( ',', $resumecpt );
+  $soldeconsigneldisponible = $derniercompte[0];
+  $soldeconsignelparjour = $derniercompte[1];
+  // $soldedollardisponible = ; $soldemlcdisponible = ; à faire
 
-//  if (($soldedollardisponible + $dollaroffre)<0){ echo "solde dollar insuffisant"; $transaction = ""; $notetra = "non"; };
-//  if (($soldemlcdisponible + $mlcoffre)<0){ echo "solde mlc insuffisant"; $transaction = ""; $notetra = "non"; };
+  $consigneldemande = preg_replace( "/\"/", "", $var37); 
+  $paiement = paiement($jsonenphp,$idtra);
+  if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
+  $consigneldemandepaiement = $paiement[1] - $paiement[4]; // propositions de dons en consignel du proposeur moins demande de consignel à l'accepteur 
+
+  // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
+if ((($soldeconsignelparjour * 7) + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = ""; };
+if (($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = ""; };
+
+//  if (($soldedollardisponible + $dollaroffre)<0){ echo "solde dollar insuffisant"; $transaction = ""; };
+//  if (($soldemlcdisponible + $mlcoffre)<0){ echo "solde mlc insuffisant"; $transaction = ""; };
 
 // on peut enregistrer le suivi dans les fichiers
-  if ($notetra == "oui"){
+//  if ($notetra == "oui"){
     // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
     $dateaccepte = date("Ymd_Hi");
     $var38chaine = "\"".preg_replace( "/\D/", "", $pourqui)."\"";
@@ -247,12 +242,14 @@ if (($soldeconsigneldisponible + $consigneldemande)<0){ return "DTMC - Refus sol
     // nettoyage et mise à jour fichier xxxxx-suivi31jours.json dans la base de l'accepteur et du proposeur
     // Récupère la proposition de transaction déjà fait $contenufichiertra
     // Calcul nouveau solde accepteur $soldeconsigneldisponible
-    $paiementconsignel = 0;
-    $nouveausoldeconsignel = ($soldeconsigneldisponible+$consigneldemande+$paiementconsignel);
+    $nouveausoldeconsignel = ($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement);
+    // Mise à jour des fichiers accepteur suivi31jours, gain365jours, -resume.json et -suiviresume.json
+    
+    
     // Calcul nouveau solde proposeur
     // 
 
-    // return "TEST - \nsolde disponible:".$soldeconsigneldisponible."<br>demande:".$consigneldemande."<br>paiement:".$paiementconsignel."<br>solde:".$nouveausoldeconsignel;
+    // return "TEST - \nsolde disponible:".$soldeconsigneldisponible."<br>demande:".$consigneldemande."<br>paiement:".$consigneldemandepaiement."<br>solde:".$nouveausoldeconsignel;
     // ajoute 
 
     // change 
@@ -260,7 +257,7 @@ if (($soldeconsigneldisponible + $consigneldemande)<0){ return "DTMC - Refus sol
     $nouveauresume = "";
     $contenuvalide = "TACC - ".$nouveauresume;
     return $contenuvalide;
-  }else{return "DTMR - Vérifiez le numéro de la proposition";};
+//  }else{return "DTMR - Vérifiez le numéro de la proposition";};
 };
 
 // ajoute au fichier le chemin doit exister la chaine fichier doit inclure son retour chariot
@@ -596,14 +593,10 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $idtra = substr($chainejson,$debut,$fin-$debut);
   $jsonenphp = json_decode($chainejson,true);
   if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
-  $speculation = paiement($jsonenphp,$idtra);
-  if ($speculation[0] == "speculation"){ return "DTIN - erreur speculation"; };
+  $paiement = paiement($jsonenphp,$idtra);
+  if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
+  $consigneloffrepaiement = -$paiement[1]; // propositions de paiements en consignel du proposeur à déduire au moment de la proposition 
 
-  $resumecompe = resumecompte($var3); 
-  $derniercompte = explode( ',', $resumecompe );
-  $soldeconsigneldisponible = $derniercompte[0];
-  $soldeconsignelparjour = $derniercompte[1];
-  // $soldedollardisponible = ; $soldemlcdisponible = ;
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
   $nomfichier = substr($idtra,0,14)."-suivi.json";
   
@@ -631,19 +624,18 @@ function notetransaction($var3,$nomfichier,$contenufichier){
     // le fichier n'existe pas $notetra = "oui"; par défaut
   };
 // vérifications complémentaires
-// echo "numéro de la transaction ".$idtra.'<br>'; // numéro de la transaction
-// echo "contenu de l'offre ".$jsonenphp[$idtra].'<br>'; // tableau utiliser implode pour la chaine
-// echo "numéro de l'offre ".$jsonenphp[$idtra][0].'<br>'; // numéro de l'offre
-// echo "numéro de la demande ".$jsonenphp[$idtra][1].'<br>'; // numéro de la demande
-// echo "date de la transaction ".$jsonenphp[$idtra][2].'<br>'; // date de la transaction
-// echo "pour qui ".$jsonenphp[$idtra][3].'<br>'; // transaction destinée à qui
-// echo "durée périmé ".$jsonenphp[$idtra][4].'<br>'; // durée avant périmé
+  $resumecpt = resumecompte($var3); 
+  $derniercompte = explode( ',', $resumecpt );
+  $soldeconsigneldisponible = $derniercompte[0];
+  $soldeconsignelparjour = $derniercompte[1];
+  // $soldedollardisponible = ; $soldemlcdisponible = ; à faire
   $idoff = "off".$jsonenphp[$idtra][2]."_".$jsonenphp[$idtra][0]; // identification de l'offre
   $consigneloffre = $jsonenphp[$idoff][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
+  
   $iddem = "dem".$jsonenphp[$idtra][2]."_".$jsonenphp[$idtra][1]; // identification de la demande
   $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
-if ((($soldeconsignelparjour * 7) + $consigneloffre)<0){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = "";  };
-if (($soldeconsigneldisponible + $consigneloffre)<0){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = "";  };
+if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = "";  };
+if (($soldeconsigneldisponible + $consigneloffre + $consigneloffrepaiement)<0){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = "";  };
 
 //  if (($soldedollardisponible + $dollaroffre)<0){ echo "solde dollar insuffisant"; $transaction = "";  };
 //  if (($soldemlcdisponible + $mlcoffre)<0){ echo "solde mlc insuffisant"; $transaction = "";  };
@@ -674,7 +666,7 @@ if (($soldeconsigneldisponible + $consigneloffre)<0){ return "DTMC - Refus solde
     // fichier de chainage des transaction bloc à écrire
     
     // met à jour le solde de consignel
-    $nouveausoldeconsignel = ($derniercompte[0]+$consigneloffre);
+    $nouveausoldeconsignel = ($derniercompte[0]+$consigneloffre +$consigneloffrepaiement);
     // note le solde de consignel sur les 31 derniers jours
     // donne le solde minimum = $minimax[0], et maximum = $minimax[1];
     $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suivi31jours.json");
@@ -683,7 +675,7 @@ if (($soldeconsigneldisponible + $consigneloffre)<0){ return "DTMC - Refus solde
 //   $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre, $anciennete);
     //  récupère le gain journalier en mettant le gain à 0
     $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-gain365jours.json");
-    $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre, $anciennete);
+    $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre+$consigneloffrepaiement, $anciennete);
     // met à jour le résumé de compte
     $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
     $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");  
@@ -852,7 +844,6 @@ if($tesqui == $desti){ $autorise = "autorise" ; };
 return $autorise;
 };
 
-
 // teste si la proposition de transaction comporte un achat ou vente de monnaie
 function paiement($propositionenphp,$nompropostion){
 $paiement = ["test",0,0,0,0,0,0];
@@ -875,9 +866,9 @@ $nombreactes = count($tableaulisteactsoff);
       $idact = "off".$nodatetra."_act".$tableaulisteactsoff[$i] ;
       $idactquantite = $propositionenphp[$idact][1];
 //      print_r($idact." ".$idactquantite."<br>");
-      if($typetroc == "↺"){$paiement[1] -= $idactquantite; $paiement[4] += $idactquantite;};
-      if($typetroc == "mlc"){$paiement[2] -= $idactquantite; $paiement[5] += $idactquantite;};
-      if($typetroc =="$"){$paiement[3] -= $idactquantite; $paiement[6] += $idactquantite;};
+      if($typetroc == "↺"){$paiement[1] += $idactquantite;};
+      if($typetroc == "mlc"){$paiement[2] += $idactquantite;};
+      if($typetroc =="$"){$paiement[3] += $idactquantite;};
     };
   };
   if ($monnaiedansoffre == 0){ $paiement[0]= "nonspeculation"; };
@@ -897,9 +888,9 @@ $nombreactes = count($tableaulisteactsdem);
       $idact = "dem".$nodatetra."_act".$tableaulisteactsdem[$i] ;
       $idactquantite = $propositionenphp[$idact][1];
 //      print_r($idact." ".$idactquantite."<br>");
-      if($typetroc=="↺"){$paiement[4] -= $idactquantite; $paiement[1] += $idactquantite;};
-      if($typetroc=="mlc"){$paiement[5] -= $idactquantite; $paiement[2] += $idactquantite;};
-      if($typetroc=="$"){$paiement[6] -= $idactquantite; $paiement[3] += $idactquantite;};
+      if($typetroc=="↺"){$paiement[4] += $idactquantite;};
+      if($typetroc=="mlc"){$paiement[5] += $idactquantite;};
+      if($typetroc=="$"){$paiement[6] += $idactquantite;};
     };
   };
   if ($monnaiedansdemande == 0){ $paiement[0]= "nonspeculation"; };
@@ -907,7 +898,6 @@ $nombreactes = count($tableaulisteactsdem);
 
 return $paiement;
 };
-
 
 // retourne doubletroc = achat ou vente de monnaie; simple troc = troc ou achat ou vente de produits
 function queltypetroc($noact){

@@ -1141,6 +1141,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Problème php "+responseTxt); break; 
         case "DTBR":
         responseTxt = responseTxt.substring(4);
+        $("#confirmationacceptetransaction").attr("class","actif");
         affichedetailproposition(responseTxt);
         // "Demande de transaction bien reçue");   
         /* break; */
