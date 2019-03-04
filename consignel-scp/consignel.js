@@ -689,7 +689,7 @@ cachetout(); $('.preferences').show(); $('#suiviappli').prepend('clic menu -----
 };
 
 function clicpageweb(){
-window.open("index.html"); return false;
+window.open(constante("app")+"index.html"); return false;
 };
 /* code l'activité nom et unité */
 function codeact(lenom,lunite){

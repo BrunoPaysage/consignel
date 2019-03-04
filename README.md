@@ -12,10 +12,13 @@ Il faut **un moyen de compensation systémique.** Ça n'existe pas alors, on le 
 
 Le projet est ambitieux. Il s'agit de faire quelque chose qui soit aussi commun et facile à utiliser que l'argent. Systémique: On l'utilise et ça le fait. Sans avoir à y penser ou faire un effort particulier, il doit produire plus de nature que ce que l'on consomme et améliorer la qualité de vie pour tout le monde.
 
+Le suivi global du projet dont cette application fait partie regardez la page de [suivi du ↺onsignél](https://www.designvegetal.com/gadrat/c/consignel/consignel-suivi.html) Le suivi du développement de l'application c'est sur github.
+
+
 ## Le dépôt GIT
 C'est le dépôt pour faire l'application web.  
 
-Le projet est en cours. Même incomplet, ce qui existe déjà doit fonctionner correctement. Ce qui manque est à inventer au fur et à mesure dans le respect des valeurs fondamentales.
+Le projet est en cours. Même incomplet, ce qui existe déjà doit fonctionner correctement. Ce qui manque est à inventer au fur et à mesure dans le respect des valeurs fondamentales. 
 
 La version actuelle fonctionne avec un serveur web + PHP. Une fois le dépôt copié sur le serveur. Il faut dupliquer le répertoire consignel-base-demarrage et le renommer consignel-base. Il faut faire la même chose avec le répertoire localite-demarrage et le renommer localite.
 Il y a deux utilisateurs déjà enregistrés pour faire vos tests: moi et autre. Les deux ont le mot de passe test.
