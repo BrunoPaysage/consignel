@@ -46,9 +46,9 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
     if($avatar=="avatar"){ // image ou avatar prendre l'avatar
     $baseavatars = constante("baseavatars");
     $cheminfichierimage = $baseavatars.substr($var4,1);
-    }else{ // image ou avata prendre l'image
-    $base2=constante("base2");
-    $cheminfichierimage = "\"".tracelechemin($donnee2,$base2,substr($var4,1));
+    }else{ // image ou avatar prendre l'image
+    $cheminfichierimage = tracelechemin($donnee2,$base,substr($var4,1));
+    // insérer une fonction qui change le chemin et le nom de fichier de l'avatar personnel
     }; // fin de image ou avatar
 // hache le hache d'utilisateur avec le numéro de session idem motdepasse et clef
     $nomsession = codelenom($var1*$nombrealeatoire); 
@@ -931,11 +931,9 @@ function constante($nom){
 if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
 if($nom == "ouverturecompte"){ return '"182.5,10,0,365"'; };
 if($nom == "base"){ return "../consignel-base/"; }; // pour utilisation depuis le php
-if($nom == "base2"){ return "consignel-base/"; }; // pour utilisation depuis le index.html
 if($nom == "baseutilisateurs"){ return "../consignel-base/0/"; };
 if($nom == "basehistorique"){ return "../consignel-base/2/"; };
-if($nom == "baseavatars"){ return "\"consignel-base/avatars/"; }; // autre façon de noter utilisastion depuis le index.html
-// if($nom == "baselocalite"){ return "../localite/"; };
+if($nom == "baseavatars"){ return "../consignel-app/"; }; 
 
 };
 
