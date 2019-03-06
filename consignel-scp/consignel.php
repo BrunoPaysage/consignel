@@ -243,6 +243,7 @@ if (($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement)<
     // ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
     ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi); 
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
+    $base=constante("base");
     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38chaine);
     $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
     ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraacc."\n");
@@ -254,11 +255,22 @@ if (($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement)<
     
     // Calcul nouveau solde accepteur $soldeconsigneldisponible
     $nouveausoldeconsignel = ($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement);
-    // Mise à jour des fichiers  suivi31jours, gain365jours, -resume.json et -suiviresume.json  dans la base de l'accepteur
+    // Mise à jour du fichier  suivi31jours dans la base de l'accepteur
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suivi31jours.json");
     $minimax = suivi31jours($cheminfichier, $idtraprecedente, $idtra, $nouveausoldeconsignel);
-    
-    
+    // Mise à jour du fichier  gain365jours, -resume.json et -suiviresume.json  dans la base de l'accepteur
+
+
+
+
+// vérifier si et comment on met les gains à jours dans l'acceptation
+    $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-gain365jours.json");
+    $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre+$consigneloffrepaiement, $anciennete);
+    // vérifier le gain 365jours
+
+
+
+
     // Calcul nouveau solde proposeur $var38 numéro du proposeur
     $nouveausoldeconsignelproposeur = 0; // à écrire
     // Mise à jour des fichiers  -resume2dates.json suivi31jours, gain365jours, -resume.json et -suiviresume.json  dans la base de l'accepteur
@@ -684,11 +696,18 @@ if (($soldeconsigneldisponible + $consigneloffre + $consigneloffrepaiement)<0){ 
     // donne le solde minimum = $minimax[0], et maximum = $minimax[1];
     $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suivi31jours.json");
     $minimax = suivi31jours($cheminfichier, $idtraprecedente, $idtra, $nouveausoldeconsignel);
-// met à jour le fichier des gains dans l'acceptation de la transaction et récupère le gain journalier
-//   $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre, $anciennete);
-    //  récupère le gain journalier en mettant le gain à 0
+
+
+
+
+// vérifier si et comment on met à jour les gains dans la proposition
     $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-gain365jours.json");
     $revenujournalier = gain365jours($cheminfichier, $idtraprecedente, $idtra, $consigneloffre+$consigneloffrepaiement, $anciennete);
+    // vérifier le gain 365jours
+
+
+
+
     // met à jour le résumé de compte
     $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
     $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");  

@@ -285,7 +285,9 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 .pied {}
 
 
-.appentete img.utilisateur {height:3em; float:left; margin-right:0.5em; } .appentete p {border-bottom: solid 1px;}
+.appentete img.utilisateur {height:3em; float:left; margin-right:0.5em; } 
+.appentete p {border-bottom: solid 1px;}
+
 .appentete .menupref {display:block; float: right; margin-right:1em;} 
 .appentete p.connexionmenu {} .appentete .connexionmenu span {display: inline-block; margin-left:1em; margin-right:1em;} 
 
