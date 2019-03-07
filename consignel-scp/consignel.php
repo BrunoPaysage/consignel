@@ -9,6 +9,7 @@ if(($donnee2=="undefined") || ($donnee2=="")){$donnee2=1;}else{$donnee2 = preg_r
 if(($donnee3=="undefined") || ($donnee3=="")){$donnee3=1;}else{$donnee3 = preg_replace( '/\D*/', '', $donnee3);}; // pas de mot de passe ou de truc en plus garde les nombres de la chaine 
 date_default_timezone_set('America/New_York');
 $base = constante("base");
+if (!file_exists($cheminfichier)) {baseminimale();};
 $baseutilisateurs = constante("baseutilisateurs");
 
 // vérification de l'utilisateur et du code
@@ -545,6 +546,18 @@ $revenuconsignel = round(array_sum( $gainconsignel )/$duree,2);
 return $revenuconsignel;
 };
 
+// initialise la base de données
+function initialisefichier($numerofichier="",$nombase="",$nomfichier=""){
+$base = constante($nombase);
+$numfichier= $numerofichier;
+$lefichier= $nomfichier;
+$basedemarrage=substr($base,0,strlen($base)-1)."-demarrage/";
+$cheminfichier = tracelechemin($numfichier,$base,"","ouvre");
+$cheminfichier1 = tracelechemin($numfichier,$basedemarrage,$lefichier);
+$cheminfichier2 = tracelechemin($numfichier,$base,$lefichier);
+copy($cheminfichier1,$cheminfichier2);
+};
+
 // nettoie les entrées texte qui doivent avoir un format json et ne pas poser de problème javascript
 function inputvalide($entree){
   if(($entree=="undefined") || ($entree=="")){
@@ -956,6 +969,18 @@ if($nom == "baseavatars"){ return "../consignel-app/"; };
 
 };
 
+function baseminimale(){
+initialisefichier("","base",".htaccess");
+initialisefichier("0","base",".baseconsignel0");
+initialisefichier("0","base",".baseconsignel3");
+initialisefichier("3535","base","3535-resume.json");
+initialisefichier("11495","base","11495-resume.json");
+initialisefichier("","baselocalite","cherchefaire.json");
+initialisefichier("","baselocalite","chercheparqui.json");
+initialisefichier("","baselocalite","cherchepourqui.json");
+initialisefichier("","baselocalite","cherchequoi.json");
+initialisefichier("","baselocalite","valeursref.json");
+};
 
 // inscription d'un nouvel utilisateur
 // function nouvelutilisateur(){
