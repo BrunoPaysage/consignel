@@ -20,10 +20,14 @@ C'est le dépôt pour faire l'application web.
 
 Le projet est en cours. Même incomplet, ce qui existe déjà doit fonctionner correctement. Ce qui manque est à inventer au fur et à mesure dans le respect des valeurs fondamentales. 
 
-La version actuelle fonctionne avec un serveur web + PHP. Une fois le dépôt copié sur le serveur. Il faut dupliquer le répertoire consignel-base-demarrage et le renommer consignel-base. Il faut faire la même chose avec le répertoire localite-demarrage et le renommer localite.
+Récupérez le dépôt et copiez le sur un serveur web + PHP. Lancez le fichier index.html sur votre navigateur.
 Il y a deux utilisateurs déjà enregistrés pour faire vos tests: moi et autre. Les deux ont le mot de passe test.
-Attention, les fichiers dans localite seront à adapter à votre localité. Ils vont s'améliorer avec l'utilisation et la connaissance des impacts et des compensations locales.
+Les fichiers dans localite seront à adapter à votre localité. Ils vont s'améliorer avec l'utilisation du site et la connaissance des impacts et des compensations locales.
 
+L'application est en une seule page web. index.html  
+Côté utilisateur, le html, le css et le javacript mettent en forme les données reçues du serveur au fur et à mesure des actions de l'utilisateur. Le javascript fait les demandes au serveur.  
+Tous les transferts et les stockages sont codés.  
+Côté serveur le php identifie le demandeur à chaque demande. Il vérifie la validité des demandes et renvoit la réponse au javascript. Il s'occupe de la maintenance des demandes et des réponses dans des fichiers de données.  
 Le code est ouvert pour pouvoir évoluer vers différents types de serveurs, sans serveur ou tout ce que votre imagination et votre savoir faire pourra créer. 
 
 Quelle que soit son aspect, son support ou sa programmation dans le futur, le ↺onsignél sera solidement installé sur ses valeurs fondamentales.  
@@ -47,14 +51,6 @@ Il y en a 6. C'est impératif que l'application produise ces valeurs. Ce n'est p
 La vidéo qui montre ces valeurs est en cours de fabricaiton. On peut regarder [cette vidéo de 6 minutes sur le don, le troc et la compensation avec le ↺onsignél ](https://youtu.be/j-MQmvKdn8Y). 
 
 
-## La structure du site web
-
-* index.html : l'application
-* /consignel-app : les images et autres fichiers de l'application
-* /css : feuille de style
-* /consignel-base : fichiers (cvs, json, ...) des données
-* /consignel-ref : documentation
-* /consignel-scp : scripts js et php
 
 ## Participez
 
@@ -64,6 +60,6 @@ Les idées à la base de ce projet sont parfois complexes. Il faut que ça march
 
 On ne se laisse pas dépasser par notre passé. Il est probable que les bonnes idées d'hier soient encore bonnes, mais les temps changent. Alors, on corriges les bonnes solutions d'hier qui sont devenues des mauvaises solutions dans le contexte d'aujourd'hui. 
 
-On veut aller vite, alors on avance sans se presser ni presser les autres. 
+On veut aller vite, donc on avance sans se presser ni presser les autres. 
 
 Merci à toutes et tous. 
