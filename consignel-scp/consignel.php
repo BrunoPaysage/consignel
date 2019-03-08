@@ -10,6 +10,8 @@ if(($donnee3=="undefined") || ($donnee3=="")){$donnee3=1;}else{$donnee3 = preg_r
 date_default_timezone_set('America/New_York');
 $base = constante("base");
 $baseutilisateurs = constante("baseutilisateurs");
+$cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel3");
+if (!file_exists($cheminfichier)) {baseminimale();};
 
 // vérification de l'utilisateur et du code
 // Pas de code utilisateur
@@ -545,6 +547,18 @@ $revenuconsignel = round(array_sum( $gainconsignel )/$duree,2);
 return $revenuconsignel;
 };
 
+// initialise la base de données
+function initialisefichier($numerofichier="",$nombase="",$nomfichier=""){
+$base = constante($nombase);
+$numfichier= $numerofichier;
+$lefichier= $nomfichier;
+$basedemarrage=substr($base,0,strlen($base)-1)."-demarrage/";
+$cheminfichier = tracelechemin($numfichier,$base,"","ouvre");
+$cheminfichier1 = tracelechemin($numfichier,$basedemarrage,$lefichier);
+$cheminfichier2 = tracelechemin($numfichier,$base,$lefichier);
+copy($cheminfichier1,$cheminfichier2);
+};
+
 // nettoie les entrées texte qui doivent avoir un format json et ne pas poser de problème javascript
 function inputvalide($entree){
   if(($entree=="undefined") || ($entree=="")){
@@ -953,9 +967,23 @@ if($nom == "base"){ return "../consignel-base/"; }; // pour utilisation depuis l
 if($nom == "baseutilisateurs"){ return "../consignel-base/0/"; };
 if($nom == "basehistorique"){ return "../consignel-base/2/"; };
 if($nom == "baseavatars"){ return "../consignel-app/"; }; 
+if($nom == "baselocalite"){ return "../localite/"; }; 
 
 };
 
+function baseminimale(){
+initialisefichier("","base",".htaccess");
+initialisefichier("0","base",".baseconsignel0");
+initialisefichier("0","base",".baseconsignel3");
+initialisefichier("2","base","");
+initialisefichier("3535","base","3535-resume.json");
+initialisefichier("11495","base","11495-resume.json");
+initialisefichier("","baselocalite","cherchefaire.json");
+initialisefichier("","baselocalite","chercheparqui.json");
+initialisefichier("","baselocalite","cherchepourqui.json");
+initialisefichier("","baselocalite","cherchequoi.json");
+initialisefichier("","baselocalite","valeursref.json");
+};
 
 // inscription d'un nouvel utilisateur
 // function nouvelutilisateur(){

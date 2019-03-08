@@ -846,6 +846,10 @@ $("#formulaireaccespass").change(function() { valideutilisateur(nettoieinput($("
 $("#formulairearretcontinue").click(function() { arretesessionclic("continue"); });
 $("#formulairearretarrete").click(function() { arretesessionclic("arrete"); });
 $("#modedemo").change(function() { changemodedemo(); });
+/* boutons pour les testeurs */
+$(".inscriptiontesteurs button").click(function() { var text = $( this ).text(); $("#formulaireaccesutilisateur").val(text); valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
+$(".inscriptiontesteurssecrets button").click(function() { var text = $( this ).text(); $("#formulaireaccespass").val(text); valideutilisateur(nettoieinput($("#formulaireaccespass").val())); });
+
 
 /* ajout des onclick et comportement input sur le html recherche */
 $("#rechercheoptionvoitcache").click(function() { changeClass(rechercheoption,'voit','cache'); });
