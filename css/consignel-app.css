@@ -278,6 +278,7 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 
 /* inscription */
 .inscription {}
+.boutonsclic span {display inline-box; padding: 0.05em 1em; border:solid 1px #aaa; cursor:pointer; border-radius: 0.25em;}
 
 /* Entête avec identification */
 .appentete {width:100%; }

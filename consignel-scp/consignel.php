@@ -495,7 +495,7 @@ function fichierperso($var3,$nomfichier){
     }; // Fin de cherche dans les lignes
     fclose($fichierencours); // fermeture du fichier
   }else{
-    die($cheminfichier." fichier non trouvé"); // Fichier non trouvé pas d'utilisateur
+//   ne rien renvoyer Fichier non trouvé pas d'utilisateur
   };
   return $contenufichier;
 };

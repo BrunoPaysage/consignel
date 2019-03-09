@@ -493,6 +493,7 @@ function charge(nomdonnees){
       function(responseTxt, statusTxt, xhr){
         if(statusTxt == "success") { 
           $("#suiviappli").prepend(" fichier "+nomdonnees+" arrivé depuis le serveur <br>");
+          // responseTxt = decryptetransfert(responseTxt);
           $responseTxtcrypte = encryptepourdiv(responseTxt);
           $(dansdiv).text($responseTxtcrypte);
           $('.fichierspourtous .statut'+nomdonnees).html("<i class='eval4'> - "+nomdonnees+" chargé depuis le serveur" + " -</i>"); 
@@ -847,9 +848,8 @@ $("#formulairearretcontinue").click(function() { arretesessionclic("continue"); 
 $("#formulairearretarrete").click(function() { arretesessionclic("arrete"); });
 $("#modedemo").change(function() { changemodedemo(); });
 /* boutons pour les testeurs */
-$(".inscriptiontesteurs button").click(function() { var text = $( this ).text(); $("#formulaireaccesutilisateur").val(text); valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
-$(".inscriptiontesteurssecrets button").click(function() { var text = $( this ).text(); $("#formulaireaccespass").val(text); valideutilisateur(nettoieinput($("#formulaireaccespass").val())); });
-
+$(".inscriptiontesteurs span").click(function() { var text = $( this ).text(); $("#formulaireaccesutilisateur").val(text); valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
+$(".inscriptiontesteurssecrets span").click(function() { var text = $( this ).text(); $("#formulaireaccespass").val(text); valideutilisateur(nettoieinput($("#formulaireaccespass").val())); });
 
 /* ajout des onclick et comportement input sur le html recherche */
 $("#rechercheoptionvoitcache").click(function() { changeClass(rechercheoption,'voit','cache'); });
@@ -1154,11 +1154,19 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $(retourdansdiv).html(encryptepourdiv(responseTxt));
         $(dansspansuivi).html("<i class='eval4'> - "+demandefich+" chargé depuis le serveur" + " -</i>"); 
         $(dansspansuivi2).html("<i class='eval4'>&nbsp;</i>"); 
+        if(responseTxt.length ==1){
+          $(dansspansuivi).html("<i class='eval2'> - "+demandefich+" fichier vide sur le serveur" + " -</i>"); 
+          $(dansspansuivi2).html("<i class='eval2'>&nbsp;</i>"); 
+        };
         if(nomdonnees=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
         var storageoui = $("#localstoragemoi").prop("checked");
         var storagedisponible=testestorage(); 
         if(storageoui==1 && storagedisponible == "oui"){ /* met le div dans localstorage */
           $("#suiviappli").prepend("stokage local du fichier "+nomdonnees+" arrivé du serveur <br>");
+        if(responseTxt.length ==1){
+          $(dansspansuivi).html("<i class='eval2'> - "+demandefich+" fichier vide sur le serveur et dans le stokage local" + " -</i>"); 
+          $(dansspansuivi2).html("<i class='eval2'>&nbsp;</i>"); 
+        };
           localStorage.setItem(nomfichierlocal, encryptepourlocalstorage(responseTxt)); 
           $(dansspansuivi).html("<i class='eval3'> - "+demandefich+" chargé depuis le serveur et mis dans le stockage local" + " -</i>"); 
           $(dansspansuivi2).html("<i class='eval3'>&nbsp;</i>"); 
@@ -1848,6 +1856,7 @@ $(retourdansdiv).load(constante("php"), nomcodephp , function(responseTxt, statu
       /* tableauretour[0]="u"+nomcode4; /* identifiant local u+code(utilisateur+pass) */
       /* suite à écrire pour utiliser en local sans vérification serveur de l'utilisateur */
     }; 
+//    responseTxt = decryptetransfert(responseTxt);
 // séparation des variables renvoyées dans le div .retourserveur par le serveur
 try { var tableauretour = $(".retourserveur").html().split(","); }
   catch(err) {$(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};
