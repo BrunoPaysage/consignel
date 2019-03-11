@@ -4,5 +4,5 @@ htaccess*
 .htaccess-*
 /tests
 /localite
-/*-test
+*-test
 
