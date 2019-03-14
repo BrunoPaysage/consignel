@@ -1,8 +1,12 @@
+# indispensable pour préserver la base existante dans une mise à jour
 /consignel-base
-/precedents
-htaccess*
-.htaccess-*
-/tests
 /localite
+
+# Fichiers personnels qui doivent le rester
+htaccess*
+.htaccess*
+/tests
+/perso
+/precedents
 *-test
 

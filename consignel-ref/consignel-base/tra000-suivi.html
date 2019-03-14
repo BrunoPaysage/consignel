@@ -1,0 +1,34 @@
+<h3>tra000-suivi.html : Suivi des transactions pour l'heure en cours </h3> 
+<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base/2</a>/suivi transactions</p>
+<p class="utilisation">Le script php écrit ce fichier pour chaque proposition et acceptation de transaction. Il le lit pour chaque demande d'acceptation de transaction. Le script php renvoie l'information le code de suivi accompagné du contenu de la proposition au demandeur autorisé.</p>
+<p class="identification">
+Le nom du fichier se lit<br>
+<b>tra</b>00000000_00-suivi.json : identifiant de proposition<br>
+tra<b>00000000</b>_00-suivi.json : identifiant de date. Année en 4 chiffres, mois en 2 chiffres et jour en 2 chiffres<br>
+tra00000000_<b>00</b>-suivi.json : identifiant d'heure des transactions en 2 chiffres<br>
+tra00000000_00<b>-suivi</b>.json : identifiant de la nature du fichier<br>
+tra00000000_00-suivi<b>.json</b> : extension du fichier simplifiant la protection .htaccess. <br>
+Le contenu des enregistrements successifs dans le fichier est du json incomplet crypté. Le format incomplet est suffisant pour le script php.
+</p>
+<p class="structure">Le fichier contient:<br>
+encode pour stokage "transaction","offre","demande","moment","pourqui","duréevalide","montant↺demandé","dequi"<br>
+encode pour stokage "transaction","offre","demande","moment","pourqui","duréevalide","montant↺demandé","dequi"<br>
+etc.
+</p>
+<div class="contenu"><p>Les éléments des enregistrements sont les suivants:</p>
+<ul>
+<li>"transaction" : Nom du fichier de la proposition de transaction "tra00000000_0000_0000000" sans l'extension ".json". <br>
+"tra" Préfixe pour une proposition. <br>
+"acc" Préfixe pour une acceptation de proposition. <br>
+"ann" Préfixe pour une annulation de proposition. <br>
+Le nom comporte le moment de la proposition initiale dans les deux premières séries de chiffres et la nature de la transaction dans la dernière série de chiffres.</li>
+<li>"offre" : Code de l'offre. "00000" nombre de chiffres variable</li>
+<li>"demande" : Code de la demande. "00000" nombre de chiffres variables</li>
+<li>"moment" : Identifiant de date. "00000000_0000" année en 4 chiffres, mois en 2 chiffres et jour en 2 chiffres souligné heure et minutes 2 chiffres chacun. Moment de la proposition, de l'acceptation ou de l'annulation selon le préfixe de la transaction.</li>
+<li>"pourqui" : Code pour restreindre l'acceptation de la proposition à un utilisateur pour un identifiant commençant par "tra". "00000" nombre de chiffres variable, 0 pour ouvrir la proposition à tous. Code du proposeur initial pour un identifiant commençant par "acc". Code du proposeur initial pour un identifiant commençant par "ann". </li>
+<li>"duréevalide" : Nombre de jours de validité de la proposition "000" maximum 365</li>
+<li>"montant↺demandé" : Montant de ↺onsignel demandés "000.00" accepte les nombres décimaux mais inscription sous forme de chaîne</li>
+<li>"dequi" : Code du proposeur initial pour les préfixes "tra", "ann". Code de l'accepteur pour le prefixe "acc". "00000" nombre de chiffres variable.
+</li>
+</ul>
+</div>

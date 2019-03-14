@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+<title>&#8634;onsignél, références</title>
+<link rel="stylesheet" href="../css/consignel-app.css" type="text/css" id="cssdefaut" title="bgdvsite" >
+<script src="../consignel-scp/consignel-ref.js"></script>
+<script src="../consignel-scp/jquery.js"></script> 
+</head>
+
+<body class="references">
+<div class="entete">
+</div>
+
+<div class="titre">
+<h1>Références sur le ↺onsignel</h1>
+</section>
+<!-- -->
+<div class="corps">
+
+<nav class="menupage">
+<a onclick="$('section').hide(); $('#decouvrir').show();">Découvrir</a> 
+<a onclick="$('section').hide(); $('#idees').show();">Valeurs</a> 
+<a onclick="$('section').hide(); $('#technique').show();">Technique</a>
+</nav>
+<!--  -->
+
+<!-- début partie decouvrir -->
+<section id="decouvrir">
+<h2>Découvrir le ↺onsignel</h2>
+<p>Le but du ↺onsignel est de compenser systématiquement les impacts et d'avoir les moyens de le faire. <br> 
+</p>
+<div class="centre">
+<div id="lavideo01" class="voit"><iframe width="560" height="315" src="https://www.youtube.com/embed/iCckGt08Deo" frameborder="0" allow="gyroscope; picture-in-picture" allowfullscreen></iframe><br></div>
+<div id="lavideo02" class="cache"><iframe width="560" height="315" src="https://www.youtube.com/embed/k4FObtWEjmw" frameborder="0" allow="gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+</div>
+<p><a onclick="changeClass(lavideo01,'voit','cache');changeClass(lavideo02,'cache','voit');">Changer entre la vidéo de 45 secondes qui donne un aperçu </a><a onclick="changeClass(lavideo01,'cache','voit');changeClass(lavideo02,'voit','cache');">et la vidéo de 8mn38 de présentation rapide du projet</a></p>
+ 
+<p>C'est un projet qui a commencé par une question triviale "Comment financer l'environnement ?" </p> 
+<p>La conclusion de la recherche c'est que l'argent (moyen économique) et la bonne volonté (moyen social) ne suffiront pas pour regagner ce qu'on perd en environnement.</p> 
+<p>Il faut <b>un moyen de compensation systémique.</b> Ça n'existe pas alors, on le fait.</p> 
+<p>Le projet est ambitieux. Il s'agit de faire quelque chose qui soit aussi commun et facile à utiliser que l'argent. Systémique: On l'utilise et ça le fait. Sans avoir à y penser ou faire un effort particulier, il doit produire plus de nature que ce que l'on consomme et améliorer la qualité de vie pour tout le monde.</p> 
+<p>
+<details>
+<summary>En savoir plus sur le projet</summary>
+<ul>
+<li><a href="//www.designvegetal.com/gadrat/a/argent/consignel.html">La page de description d'origine du projet ↺onsignél</a></li>
+<li>La liste des vidéos (à venir)</li>
+<li></li>
+</ul>
+</details> 
+
+<details>
+<summary>Comment faire avec l'application</a>.</summary>
+</details> 
+</section> 
+<!-- fin partie decouvrir -->
+<!-- début partie idees -->
+<section id="idees">
+<h2>Principes, valeurs et fondements du ↺onsignel</h2>
+<h3 id="valeursfondamentales">Les valeurs fondamentales</h3>
+<p>Il y en a 6. C'est impératif que l'application produise ces valeurs. Ce n'est pas négociable.</p>
+<p>&nbsp;</p>
+<h3 class="titreliste"><b>3 valeurs pour garantir la durabilité</b> économique, environnemental et sociale </h3>
+<ul>
+<li>Les offres et les demandes sont équilibrées.</li>
+<li>Les impacts environnementaux, sociaux et économiques sont systématiquement compensés</li>
+<li>Le minimum pour exister est inconditionnel</li>
+</ul>
+<h3 class="titreliste"><b>3 valeurs pour éviter les dérives</b></h3>
+<ul>
+<li>On fait des gains ici et mainteant sans pertes ailleurs ou plus tard</li>
+<li>Les humains et la nature ne sont pas à vendre</li>
+<li>Zéro dette, zéro spéculation, zéro accumulation toxique</li>
+</ul>
+<p>&nbsp;</p>
+
+<div id="lavideo03" class="centre voit"><iframe width="560" height="315" src="https://www.youtube.com/embed/j-MQmvKdn8Y" frameborder="0" allow="gyroscope; picture-in-picture" allowfullscreen></iframe><br></div>
+<p>La vidéo qui montre ces valeurs est en cours de fabricaiton. On peut regarder cette vidéo de 6 minutes sur le don, le troc et la compensation avec le ↺onsignél en attendant la sortie de la vidéo sur les valeurs. </p>
+
+<details>
+<summary>En savoir plus sur le concepts</summary>
+<ul>
+<li>En attendant de développer cette section, il y a des <a href="//www.designvegetal.com/gadrat/a/argent/consignel.html#chap5">éléments sur la page de description d'origine du projet ↺onsignél</a></li>
+<li>La liste des vidéos (à venir)</li>
+<li></li>
+</ul>
+</details> 
+
+
+</section> 
+<!-- fin partie idees -->
+<!-- début partie technique -->
+<section id="technique">
+<h2>Technique et informatique du ↺onsignel</h2>
+<p>Le projet <a href="https://github.com/BrunoPaysage/consignel">consignel est sur Github</a> sous licence GPL3.0</p>
+<p>Le but est de rendre évident et pratique la réalisation <a href="#valeursfondamentales">des 6 valeurs fondamentales du ↺onsignel</a>. C'est systémique. On l'utilise et ça le fait.</p>
+<details>
+<summary>Côté utilisateur</summary>
+<p>Le programme (html css javascript) encode les demandes pour le serveur, décode les résultats obtenus du serveur, présente les résultats à l'utilisateur et lui permet d'interagir avec ses informations pour faire de nouvelles demandes.</p>
+<p>L'utilisateur interagit avec le programme de son point de vue sur l'échange. Il voit simultanément son offre et sa demande ainsi que les impacts pour chacun.</p>
+<p>L'utilisateur interagit avec d'autres utilisateurs par l'intermédiaire d'un code facile à utiliser. Chacun peut envoyer ce code au serveur. Chacun reçoit son offre et sa demande pour ce code. L'offre de l'un devient la demande de l'autre. </p>
+<ul>
+<li>html</li>
+<li>css</li>
+<li>javascript</li>
+</ul>
+</details> 
+
+<details>
+<summary>Côté serveur</summary>
+<p>Le programme (serveur web php système de gestion de fichiers) décode, vérifie la validité de connexion, la validité de la demande, encode les données demandées, vérifie et stocke le suivi des interactions.</p>
+<ul>
+<li>serveur web et accès fichiers</li>
+<li>php</li>
+<li><a href="consignel-base.html">base de données</a></li>
+</ul>
+</details> 
+
+<details>
+<summary>Liaison entre l'utilisateur et le serveur</summary>
+<p>Toutes les données sont codées et transmises sans connaissance.</p>
+<ul>
+<li>Identification</li>
+<li>Variables transmises</li>
+<li>Codage</li>
+</ul>
+</details> 
+
+<details>
+<summary>La section des références</summary>
+<p>La section des références est organisée hiérarchiquement avec un fichier html par sujet et un dossier contenant les éléments du sujet traité. Chaque élément est un fichier html. Chaque élement peut devenir lui-même un sujet avec son dossier d'éléments. Le sujet et le dossier on le même nom.</p>
+<ul>
+<li><a href="consignel-ref.html">Les références</a></li>
+</ul>
+
+</section> 
+<!-- fin partie technique -->
+
+</div>
+<div class="pied">
+<hr><div class="refdocument"> <p class="auteur">Auteur: Bruno Gadrat + Communauté GIT</p> <p class="revision">Orig: 2019/03 Rev: 2019/03/14</p> <p class="nomdufichier">Fichier: consignel-ref.html</p>
+<p class="verification"><sub><a href="//validator.w3.org/check?uri=referer">Contr&ocirc;le html</a> - <a href="//jigsaw.w3.org/css-validator/check/referer">Contr&ocirc;le css</a></sub></p> </div>
+<hr>
+</div>
+<script> (function(){ debuter(); })() ; </script>
+</body>
+</html>

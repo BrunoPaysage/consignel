@@ -1,0 +1,16 @@
+<h3>consignel-base/2 : Base des données de suivi des transactions </h3> 
+<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base/2</a>/suivi des transactions</p>
+<p class="utilisation">Le script php utilise cette base pour servir aux utilisateurs autorisés les transactions offertes par les autres utilisateurs et en faire le suivi.</p>
+<p class="structure">Cette base est organisée par date. <br>
+2/année/mois/jour/heure/<br>
+année: 4 chiffres, mois: 2 chiffres, jour: 2 chiffres, heure: 2 chiffres</p>
+<div class="contenu"><p>Le répertoire de l'heure contient les fichiers permettant le suivi des transactions pour la date et l'heure indiquée</p>
+<ul>
+<li>Suivi des transactions <a href="tra000-suivi.html">tra00000000_00-suivi.json</a> Un seul fichier pour toutes les transactions à cette heure</li>
+<li>Proposition de transaction <a href="tra000.html">tra00000000_0000_0000000.json</a> Un fichier par proposition</li>
+<li>Transaction acceptée <a href="acc000.html">acc00000000_0000_0000000.json</a> Un fichier d'acceptation par proposition</li>
+<li>Transaction annulée <a href="ann000.html">ann00000000_0000_0000000.json</a> Un fichier d'annulation par proposition</li>
+</ul>
+<p>Les numéros sont les mêmes pour le suivi de la transaction dans ses deux états possibles: proposée, acceptée ou annulée. Ces fichiers ne sont pas modifiés après leur inscription initiale.<p>
+</div>
+

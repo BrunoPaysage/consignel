@@ -1,0 +1,116 @@
+<h3>tra00000000_0000_0000000.json : Proposition de transaction</h3> 
+<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base/2</a>/proposition de transaction</p>
+<p class="utilisation">Le script php enregistre la proposition de transaction dans le répertoire horaire des transactions si elle n'est pas déjà présente. Le script php lit cette transaction pour la fournir au demandeur autorisé ou pour enregistrer une acceptation de cette proposition.</p>
+<div class="identification">
+<p>Le nom du fichier se lit</p>
+<ul>
+<li><b>tra</b>00000000_0000_0000000.json : identifiant de proposition</li>
+<li>tra<b>00000000</b>_0000_0000000.json : identifiant de date. Année en 4 chiffres, mois en 2 chiffres et jour en 2 chiffres</li>
+<li>tra00000000_<b>0000</b>_0000000.json : identifiant d'heure et la minute de la proposition de transactions. 2 chiffres chaque</li>
+<li>tra00000000_0000_<b>0000000</b>.json : code de la transaction en lien avec son contenu. Nombre de chiffres variables</li>
+<li>tra00000000_0000_0000000<b>.json</b> : extension du fichier simplifiant la protection .htaccess. <br>
+La combinaison de la date et du codage du contenu permet d'identifier de façon unique une transaction.</li>
+</ul>
+</div>
+<div class="structure">
+<p>La structure est un fichier json. Le stockage est crypté et décrypté pour son utilisation par le script php</p>
+<p>La proposition contient au minimum 5 éléments avec un identifiant (clé) et un tableau (valeur) :</br>
+<ul><li>transaction,</li><li>groupe offre,</li><li>groupe demande,</li><li>les offres du groupe offre,</li><li>les demandes du groupe demande</li></ul>
+<p>Le nombre d'offres dans les groupes est variable mais au minimum 1 élément.<br>
+Le fichier comporte une seule chaine sans retour à la ligne dans le json.</p>
+<p>
+{ "identifianttransaction" : ["codeidentifiantgroupeoffre","codeidentifiantgroupedemande","datetransaction","codeaccepteur","duréevalide"],"identifiantgroupeoffre" : ["listedesoffres",quantité,"unité",↺,$,mlc,*E,durée,*S] ,"identifiantgroupedemande" : ["listedesdemandes",quantité,"unité",↺,$,mlc,*E,durée,*S] ,"identifiantoffre" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,1,1],"identifiantdemande" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,0,0] }
+</p>
+</div>
+<div class="contenu">
+<p>Transaction<br>
+"identifianttransaction" : ["codeidentifiantgroupeoffre","codeidentifiantgroupedemande","datetransaction","codeaccepteur","duréevalide"],</p>
+<ul>
+<li>"identifianttransaction" : "tra00000000_0000_0000000" nom de la transaction identique au nom de fichier sans l'extension<ul>
+<li>"codeidentifiantgroupeoffre" : "0000000" code permettant de former l'identifiant du groupeoffre avec la date et l'heure de la transaction</li>
+<li>"codeidentifiantgroupedemande" : "0000000" code permettant de former l'identifiant du groupedemande avec la date et l'heure de la transaction</li>
+<li>"datetransaction" : "00000000_0000" date et heure de la même manière que dans l'identifiant de transaction et du nom de fichier</li>
+<li>"codeaccepteur" : "00000" 0 si la proposition est pour tous, sinon code d'accepteur autorisé. Nombre de chiffres variable</li>
+<li>"duréevalide" : "000" durée en jours pour la période d'acceptation de la proposition maximum 365 jours. Nombre de chiffres variable</li>
+</li></ul>
+</ul>
+<p>Groupe offre<br>
+"identifiantgroupeoffre" : ["listedesoffres",quantité,"unité",↺,$,mlc,*E,durée,*S] ,</p>
+<ul>
+<li>"identifiantgroupeoffre" : "off00000000_0000_0000000" nom de l'offre.<br>
+<b>"off</b>00000000_0000_0000000" pour différencier l'offre de la demande.<br>
+"off<b>00000000_0000</b>_0000000" date et heure de la transaction.<br>
+"off00000000_0000_<b>0000000</b>" codage du contenu du groupe offre<ul>
+<li>"listedesoffres" : "act0010000act0010000..."<br> Chaque  <a href="../consignel-activites/act0010000.html">"act0010000"</a> est la référence à une activité du groupe offre permettant de reconstituer son identifiant</li>
+<li>quantité : typiquement 1</li>
+<li>"unité" : typiquement "u"</li>
+<li>↺ : Nombre de ↺onsignél total en plus ou en moins pour les offres</li>
+<li>$ : Nombre de monnaie du pays total en plus ou en moins pour les offres</li>
+<li>mlc : Nombre de monnaie locale total en plus ou en moins pour les offres</li>
+<li>*E : Valeur de l'impact environnemental total local pour les offres</li>
+<li>durée : durée totale pour les offres</li>
+<li>*S : Valeur de l'impact social total pour les offres</li>
+</li></ul>
+</ul>
+<p>Groupe demande<br>
+"identifiantgroupedemande" : ["listedesdemandes",quantité,"unité",↺,$,mlc,*E,durée,*S] ,</p>
+<ul>
+<li>"identifiantgroupedemande" : "off00000000_0000_0000000" nom de la demande.<br>
+<b>"off</b>00000000_0000_0000000" pour différencier la demande de la demande.<br>
+"off<b>00000000_0000</b>_0000000" date et heure de la transaction.<br>
+"off00000000_0000_<b>0000000</b>" codage du contenu du groupe demande<ul>
+<li>"listedesdemandes" : "act0010000act0010000..." <br> Chaque <a href="../consignel-activites/act0010000.html">"act0010000"</a> est la référence à une activité du groupe demande permettant de reconstituer son identifiant</li> 
+<li>quantité : typiquement 1</li>
+<li>"unité" : typiquement "u"</li>
+<li>↺ : Nombre de ↺onsignél total en plus ou en moins pour les demandes</li>
+<li>$ : Nombre de monnaie du pays total en plus ou en moins pour les demandes</li>
+<li>mlc : Nombre de monnaie locale total en plus ou en moins pour les demandes</li>
+<li>*E : Valeur de l'impact environnemental total local pour les demandes</li>
+<li>durée : durée totale pour les demandes</li>
+<li>*S : Valeur de l'impact social total pour les demandes</li>
+</li></ul>
+</ul>
+<p>Offre<br>
+"identifiantoffre" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,0,0] ,<br>
+"identifiantoffre" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,0,0] ,<br>
+... ,</p>
+<ul>
+<li>"identifiantoffre" : "off00000000_0000_act0010000" nom de l'offre.<br>
+<b>"off</b>00000000_0000_act0010000" pour différencier l'offre de la demande.<br>
+"off<b>00000000_0000</b>_act0010000" date et heure de la transaction.<br>
+"off00000000_0000_<b>act0010000</b>" <a href="../consignel-activites/act0010000.html">codage du contenu de l'offre</a><ul>
+<li>"description" : "blablabla"<br> Description de l'activité</li>
+<li>quantité : nombre entier ou décimal</li>
+<li>"unité" : selon le choix de l'utilisateur</li>
+<li>↺ : Nombre de ↺onsignél en plus ou en moins par unité pour cette offre</li>
+<li>$ : Nombre de monnaie du pays en plus ou en moins par unité pour cette offre</li>
+<li>mlc : Nombre de monnaie locale  en plus ou en moins par unité pour cette offre</li>
+<li>*E : Valeur de l'impact environnemental en plus ou en moins par unité pour cette offre</li>
+<li>durée : durée de cette activité</li>
+<li>*S : Valeur de l'impact social en plus ou en moins par unité pour cette offre</li>
+<li>2 chiffres sont réservés pour la gestion annualisée du cycle de vie de l'activité, typiquement nombre de fois par an et nombre d'années. En utilisation habituelle les deux sont à 1.</li>
+</li></ul>
+</ul>
+<p>Demande<br>
+"identifiantdemande" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,1,1] ,<br>
+... ,<br>
+"identifiantdemande" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,1,1]</p>
+<ul>
+<li>"identifiantdemande" : "dem00000000_0000_act00000" nom de la demande.<br>
+<b>"dem</b>00000000_0000_act00000" pour différencier la demande de l'offre.<br>
+"dem<b>00000000_0000</b>_act0010000" date et heure de la transaction.<br>
+"dem00000000_0000_<b>act0010000</b>" <a href="../consignel-activites/act0010000.html">codage du contenu de la demande</a><ul>
+<li>"description" : "blablabla"<br> Description de l'activité</li>
+<li>quantité : nombre entier ou décimal</li>
+<li>"unité" : selon le choix de l'utilisateur</li>
+<li>↺ : Nombre de ↺onsignél en plus ou en moins par unité pour cette demande</li>
+<li>$ : Nombre de monnaie du pays en plus ou en moins par unité pour cette demande</li>
+<li>mlc : Nombre de monnaie locale  en plus ou en moins par unité pour cette demande</li>
+<li>*E : Valeur de l'impact environnemental en plus ou en moins par unité pour cette demande</li>
+<li>durée : durée de cette activité</li>
+<li>*S : Valeur de l'impact social en plus ou en moins par unité pour cette demande</li>
+<li>2 chiffres sont réservés pour la gestion annualisée du cycle de vie de l'activité, typiquement nombre de fois par an et nombre d'années En utilisation habituelle les deux sont à 1.</li>
+</li></ul>
+</ul>
+</div>
+

@@ -254,6 +254,17 @@ p { text-align: justify ;}
 
 /* mise en forme générale */
 
+/* pour les fichiers de reférences */
+.references h1 { margin:auto; padding: 1em 1em 0.5em 1em; text-align:center;}
+/* .references iframe {width="560" height="315"} */
+.references section {margin: 0.5em 0.5em 1em 0.5em; }
+.references section * {margin: 0 0 0 0;}
+.references section ul {margin: 0.5em 0.5em 1em 1.5em; }
+.references .menupage, .references .menutournepage {display:block; margin:auto; text-align:center;}
+.references .menupage a, .references .menutournepage a {padding: 0 0.5em 0 0.5em;  }
+.references .menupage a+a, .references .menutournepage a+a {border-left: solid 1px; }
+
+
 a, button {cursor: pointer;}
 
 /* .appentete */
