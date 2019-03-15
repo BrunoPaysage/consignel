@@ -326,7 +326,8 @@ h3 .utilisation { cursor: pointer; }
 #offrechoisi *, #demandechoisi * , #offreconfirme * , #demandeconfirme * { padding:0;}
 #offrechoisi div, #demandechoisi div , #offreconfirme div , #demandeconfirme div { padding-top:0.5em;}
 #offrechoisi div .environnement, #demandechoisi div .environnement, #offreconfirme div .environnement, #demandeconfirme div .environnement {background:#cfc; }
-#offrechoisi, #demandechoisi { cursor: move; }
+#offrechoisi .simpletroc, #demandechoisi .simpletroc { cursor: move; }
+#offrechoisi .doubletroc, #demandechoisi .doubletroc { cursor: move; }
 #offrechoisi span, #demandechoisi span { cursor: text; }
 #offrechoisi span[id$="preciseact"], #demandechoisi span[id$="preciseact"] { cursor: default; }
 #offrechoisi span[id$="preciseact"] span, #demandechoisi span[id$="preciseact"] span { cursor: text; }

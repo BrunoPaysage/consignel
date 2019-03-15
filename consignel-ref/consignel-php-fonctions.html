@@ -8,6 +8,7 @@
 <details> <summary>acceptetransaction</summary> <p>Note l'acceptation d'une transaction</p></details>
 <details> <summary>baseminimale</summary> <p>Initialise la base de donnée minimale lors de la première utilisation</p></details>
 <details> <summary>codelenom</summary> <p>Code la variable</p></details>
+<details> <summary>consignelsuivi</summary> <p>renvoie les montants de compensation en consignel de la proposition</p></details>
 <details> <summary>constante</summary> <p>Indique les constantes locales et les chemin d'accès aux répertoires de l'application</p></details>
 <details> <summary>cryptepourstockage</summary> <p>Crypte avant inscription dans le fichier texte</p></details>
 <details> <summary>cryptepourtransfert</summary> <p>Crypte avant transfert</p></details>
@@ -21,12 +22,15 @@
 <details> <summary>nettoyagerefsessions</summary> <p>Supprime les références aux sessions obsoletes</p></details>
 <details> <summary>notetransaction</summary> <p>Note la transaction proposée après activation du code qr</p></details>
 <details> <summary>ouvrelechemin</summary> <p>Retourne le chemin du suivi de transaction en le créant s'il n'existe pas</p></details>
+<details> <summary>paiement</summary> <p>Renvoie un tableau [0] "speculation" s'il y a un achat vente entre deux activités identifiées comme paiement ou don de monnaies. Renvoie "nonspeculation" dans les autres cas de [1] à [6] renvoie les quantités pour les paiement ↺, mlc, $ d'abord pour le proposeur puis pour l'accepteur</p>
+</details>
+<details> <summary>queltypetroc</summary> <p>Renvoie "simpletroc" si ce n'est pas un paiement sinon renvoie l'unité de paiement  ↺, mlc, $</p></details>
 <details> <summary>rangetransaction</summary> <p>Archive les transactions</p></details>
 <details> <summary>resumecompte</summary> <p>Renvoi le résumé du compte</p></details>
 <details> <summary>stockelefichiertemporaire</summary> <p>Ajoute la variable au bon fichier</p></details>
 <details> <summary>suivi31jours</summary> <p>Fichier des soldes de consignel sur les 31 derniers jours et renvoi du minimum et maximum</p></details>
-<details> <summary>tracelechemin</summary> <p>Crée et renvoie le chemin d'accès en fonction de l'identifiant</p></details>
-<details> <summary>testelechemin</summary> <p>Renvoie le chemin d'accès en fonction de l'identifiant</p></details>
 <details> <summary>testeexpiration</summary> <p>Renvoie "expire" ou "nonexpiree"</p></details>
-<details> <summary>paiement</summary> <p>Renvoie un tableau [0] "speculation" s'il y a un achat vente entre deux activités identifiées comme paiement ou don de monnaies. Renvoie "nonspeculation" dans les autres cas de [1] à [6] renvoie les quantités pour les paiement ↺, mlc, $ d'abord pour le proposeur puis pour l'accepteur</p></details>
-<details> <summary>queltypetroc</summary> <p>Renvoie "simpletroc" si ce n'est pas un paiement sinon renvoie l'unité de paiement  ↺, mlc, $</p></details>
+<details> <summary>testelechemin</summary> <p>Renvoie le chemin d'accès en fonction de l'identifiant</p></details>
+<details> <summary>tracelechemin</summary> <p>Crée et renvoie le chemin d'accès en fonction de l'identifiant</p></details>
+<details> <summary>transactionacc</summary> <p>Renvoi le double de la proposition avec l'identifiant "tra" changé en "acc", en modifiant le moment de la transaction par le moment de l'acceptation et en mettant à jour le code de l'accepteur</p></details>
+
