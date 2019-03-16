@@ -45,7 +45,7 @@ function affichedetailproposition(noproposition){
     var numproposetra = inputdemande.substring(14);
     var numtra = "tra"+inputdemande
     try {var objson = JSON.parse(nomproposition); }
-    catch {return;}; // proposition mal écrite ou inexisatnte
+    catch {return;}; // proposition mal écrite ou inexistante
     // $("#demandeconfirme").append( numtra+"<br>"); // nom de la transaction
     // $("#demandeconfirme").append( objson[numtra][0]+"<br>"); // numéro de l'offre
     var numoff = "off"+objson[numtra][2]+"_"+objson[numtra][0]; // id de l'offre
@@ -71,9 +71,8 @@ function affichedetailproposition(noproposition){
       nomact = "dem"+objson[numtra][2]+"_"+"act"+tableaudem[i];
       // $("#demandeconfirme").append( nomact+"<br>");
       afficheproposition("#offreconfirme",tableaudem[i],objson[nomact]);
-};
-    
-    
+    };
+
   };
 };
 
@@ -296,7 +295,7 @@ function changegraphsuivi(disponible,unjour,dispomini,dispomaxi){
   $(".suivi .rond").css({"background-color":dispocol});
 };
 
-/* met à jour le graphique de suivi du compte */
+/* met à jour le graphique de suivi du compte pour le test dans la page de préférences */
 function changesuivi(){
   $("#suiviappli").prepend("changesuivi() <br>");
   var testd=$('#disponible').val(); var testj=$('#unjour').val(); var testmi=$('#dispomin').val(); var testma=$('#dispomax').val(); changegraphsuivi(testd,testj,testmi,testma); 
@@ -1115,8 +1114,9 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Il y a plusieurs proposition avec le même identifiant"); break; 
         case "TACC":
-        responseTxt = responseTxt.substring(4); propositionacceptee(responseTxt);
-        alert("Transaction acceptée"); break; 
+        responseTxt = responseTxt.substring(7); propositionacceptee(responseTxt);
+        alert("Transaction acceptée"); 
+        break; 
         case "TDAC":
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Transaction déjà acceptée par vous"); break; 
@@ -1568,9 +1568,12 @@ function proposechoix(){
 
 /* proposition acceptée avec message du serveur */
 function propositionacceptee(responseduserveur){
-$("#confirmationinputcode").val("2019"); 
-$("#confirmationokinputcode").click();
+  $("#confirmationinputcode").val("2019"); 
+  $("#confirmationokinputcode").click();
+  //  changegraphsuivi(disponible,dispomini,unjour,dispomaxi);
+  // mise à jour du stockage local à faire
 };
+
 /* proposition annulée par l'auteur */
 function propositionannulee(responseduserveur){
 };
