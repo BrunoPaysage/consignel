@@ -5,8 +5,8 @@
 function acceptetransaction(accepteouinon){
   $("#suiviappli").prepend("acceptetransaction("+accepteouinon+") <br>");
   var acceptation = accepteouinon;
-  $utilisateur = codequiutilise();
-  if($utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
+  utilisateur = codequiutilise();
+  if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
 /* proposition venat de moi */
   if(acceptation == "actualisemoi"){alert("actualisemoi");}; /* fin du actualisemoi */
   if(acceptation == "annulemoi"){alert("annulemoi");}; /* fin du annulemoi */
@@ -785,8 +785,8 @@ function confirmationokinputcode(){
   $("#suiviappli").prepend("confirmationokinputcode() <br>");
   var entree=nettoieinputtra($('#confirmationinputcode').val()); 
   if (entree == "" ){verifieurlpropose(); entree=nettoieinputtra($('#confirmationinputcode').val()); $('#confirmationinputcode').focus();};
-  $utilisateur = codequiutilise();
-  if($utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
+  utilisateur = codequiutilise();
+  if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
   $("#confirmationinputcode").css('color', '');
   effacedemandeproposition();
   chargemoi('demandeuneproposition'); 
@@ -1879,7 +1879,8 @@ if(tableauretour[0] == " "){
   /* (vide,numerosession,pseudoutilisateur,cheminimageouavatar,localiteconsignel,vide) */
   if(($("#appentetesession").html())==tableauretour[1]){ 
     /* début de si utilisateur connu et mot de passe connu */
-    tableauretour[0]="u"+nomcode4; $(".retourserveur").prepend(tableauretour[0]); /* identifiant local u+code(utilisateur+pass) */
+    tableauretour[0]="u"+nomcode4; 
+    $(".retourserveur").html(tableauretour[0]+$(".retourserveur").text()); /* identifiant local u+code(utilisateur+pass) */
     verifiepreflocalstorage();
     activeutilisation(tableauretour);
   }else{ /* début de si utilisateur connu et mot de passe inconnu */
@@ -2046,7 +2047,10 @@ function constante($nom){
 if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
 if($nom == "ouverturecompte"){ return '"182.5,10,0,365"'; };
 if($nom == "localite"){ return "localite/"; };
-if($nom == "siteweb"){ return "www.designvegetal.com/projets/consignel/index.html"; };
+if($nom == "siteweb"){ 
+  return nettoieinput(window.location.host + window.location.pathname) ;  /* automatique */
+  /*  return "www.designvegetal.com/projets/consignel/index.html";  /* forcé */
+};
 if($nom == "php"){ return "consignel-scp/consignel.php"; };
 if($nom == "app"){ return "consignel-app/"; };
 if($nom == "scp"){ return "consignel-scp/"; };

@@ -161,7 +161,7 @@ function acceptetransaction($var3,$notransaction){
   // cherche si la transsaction a été annulée
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
   if (file_exists($cheminfichier.$nomfichierann)) {
-      return "TNDI - Cette proposition n'est pas disponible -";
+      return "TANN - Cette proposition n'est pas disponible -";
   };
   // cherche si la transaction a déjà été acceptée
   if (file_exists($cheminfichier.$nomfichieracc)) {

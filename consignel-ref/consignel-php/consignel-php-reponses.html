@@ -1,0 +1,37 @@
+<h3>consignel.php : Liste des réponses fournies par le script php </h3> 
+<p class="cheminref"><a href="../consignel-php-reponses.html">Références</a>/consignel-php-reponses</p>
+<p class="utilisation">Le script serveur consignel.php renvoie une chaîne codée après vérification de l'identification des utilisateurs</p>
+<div class="structure">
+<p>La réponse est codée pour le transfert.<br>
+Liste de variables séparées par des virgules pour l'identification<br>
+Chaine commençant par un identifiant "AAAA -" suivi du contenu de la réponse</p>
+</div>
+<div class="contenu">
+<table>
+<tr><th>4 premiers caractères</th> <th>php</th> <th>chaine renvoyée</th> <th>js</th> </tr>
+<tr><td>PEAA -</td> <td>Proposition de transaction enregistrée</td> <td>Nouveau résumé de compte</td> <td>Présentez le code qr Mise à jour du résumé</td> </tr>
+<tr><td>PDEN -</td> <td>Proposition de transaction déjà enregistrée</td> <td>Rien</td> <td>Présentez le code qr Ne rien faire</td> </tr>
+<tr><td>ERDP -</td> <td>Manque le code de la transaction demandée</td> <td></td> <td>Focus sur le imput où on entre le code de transaction</td> </tr>
+<tr><td>NULL -</td> <td>Fichier inconnu</td> <td>Nom du fichier demandé</td> <td>Alerte fichier inconnu</td> </tr>
+<tr><td>&lt;?ph</td> <td>Problème php ne fonctionne pas mais le fichier consignel.php existe</td> <td>Contenu du script php</td> <td>Vérification d'utilisateur indisponible sur le serveur</td> </tr>
+<tr><td> , 0</td> <td>Session trop longue annulée par le php</td> <td>Variables d'utilisateur déconnecté</td> <td>Annulation de codes et réidentification</td> </tr>
+<tr><td>DTMR -</td> <td>Transaction inconnue (pas de fichier ou fichier vide)</td> <td></td> <td>Cette transaction n'existe pas</td> </tr>
+<tr><td>DTAO -</td> <td>La proposition a été faite par le demandeur</td> <td>Fichier de la proposition de transaction</td> <td>C'est moi qui l'ai faite cette proposition afficher la proposition pour le proposeur</td> </tr>
+<tr><td>DTMC -</td> <td>Proposition non enregistrée - Manque de ↺onsignel pour faire la transaction</td> <td></td> <td></td> </tr>
+<tr><td>DTCE -</td> <td>Proposition non enregistrée dépense de ↺onsignel supérieure à 7 jours</td> <td></td> <td></td> </tr>
+<tr><td>DTNO -</td> <td>Proposition non enregistrée non autorisée erreur calcul ↺onsignel</td> <td></td> <td></td> </tr>
+<tr><td>DTRT -</td> <td>Proposition non enregistrée transaction non autorisée genre réécrire l'histoire</td> <td></td> <td></td> </tr>
+<tr><td>DTNC -</td> <td>Proposition non enregistrée Proposition non conforme.</td> <td></td> <td>Proposition non conforme. Relancer la page et reformulez la proposition</td> </tr>
+<tr><td>DTIN -</td> <td>Proposition non enregistrée Proposition interdite. Spéculation, etc.</td> <td></td> <td></td> </tr>
+<tr><td>DTAP -</td> <td>Il y a plusieurs proposition avec le même identifiant</td> <td></td> <td></td> </tr>
+<tr><td>TACC -</td> <td>Proposition enregistrée et acceptée</td> <td>Nouveau résumé de compte</td> <td>Transaction acceptée</td> </tr>
+<tr><td>TDAC -</td> <td>Proposition déjà acceptée par l'accepteur</td> <td></td> <td>Transaction déjà acceptée par vous</td> </tr>
+<tr><td>TREF -</td> <td>Transaction refusée</td> <td></td> <td>Transaction refusée</td> </tr>
+<tr><td>TRIN -</td> <td>Transaction demandée par un accepteur non autorisé</td> <td></td> <td>Transaction inconnue</td> </tr>
+<tr><td>TEXP -</td> <td>La transaction demandée est expirtée</td> <td></td> <td>Proposition expirée</td> </tr>
+<tr><td>TNDI -</td> <td>Proposition déjà acceptée</td> <td></td> <td>Proposition non disponible</td> </tr>
+<tr><td>TANN -</td> <td>Proposition annulée par le proposeur</td> <td></td> <td>Transaction annulée</td> </tr>
+<tr><td>TEST -</td> <td>Arrêt volontaire du PHP pour vérification pendant le développement</td> <td>Contenu dépendant du développeur</td> <td>Affichage contenu du développeur</td> </tr>
+<tr><td>DTBR -</td> <td>Demande de proposition bien reçue</td> <td>Contenu de la proposition</td> <td>Affiche la proposition</td> </tr>
+<tr><td>autres (default)</td> <td>Pas d'entête</td> <td>Contenu du fichier demandé</td> <td>Stocker le fichier et agir selon le contenu</td> </tr>
+</table></div>
