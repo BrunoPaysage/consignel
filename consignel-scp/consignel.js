@@ -1048,9 +1048,9 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     };
   };
 
-  var nomcodephp = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
-  $("#suiviappli").prepend("script php nomcodephp envoyé au serveur <br>");
-  $.get(constante("php"), nomcodephp , function(responseTxt, statusTxt, xhr){
+  var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
+  $("#suiviappli").prepend("script php demandeauserveur envoyé au serveur <br>");
+  $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success") {
       $("#suiviappli").prepend("fichier "+nomdonnees+" arrivé depuis le serveur<br>");
       responseTxt = decryptetransfert(responseTxt);
@@ -1848,18 +1848,20 @@ var nomcode2 = codelenom(codelenom(nomutil3)*tableauretour[1]+""); //chiffre le 
 var nomcode3 = codelenom("0"); //chiffre la demande de fichier avec le code de session
 var nomcode4 = codelenom(nomutil2+nomutil3); //chiffre le code d'acces local
 };
-var nomcodephp = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
+var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
 var retourdansdiv = ".retourserveur";
-$(retourdansdiv).load(constante("php"), nomcodephp , function(responseTxt, statusTxt, xhr){
+$.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
   /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
   if(statusTxt == "success") {
     /* le chargement est fait par le .load dans le div .retourserveur et dans la variable reponseTxt */
     if (responseTxt.indexOf("?php")==1) {
       $('.alerte').html("<br><i class='eval2'>Vérification d'utilisateur indisponible sur le serveur</i><br>"); 
-      /* tableauretour[0]="u"+nomcode4; /* identifiant local u+code(utilisateur+pass) */
       /* suite à écrire pour utiliser en local sans vérification serveur de l'utilisateur */
+      return;
+    }else{
+    //    responseTxt = decryptetransfert(responseTxt);
+    $(retourdansdiv).html(responseTxt);
     }; 
-//    responseTxt = decryptetransfert(responseTxt);
 // séparation des variables renvoyées dans le div .retourserveur par le serveur
 try { var tableauretour = $(".retourserveur").html().split(","); }
   catch(err) {$(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};
