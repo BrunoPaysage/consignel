@@ -692,6 +692,16 @@ function clicpageweb(){
 window.open(constante("app")+"index.html"); return false;
 };
 /* code l'activité nom et unité */
+
+/* click sur graphique suivi DD */
+function clicsuividd(elementclic=""){
+var demande = elementclic; 
+$("#suiviappli").prepend("clic graphiquesuiviDD "+elementclic+" <br>");
+var tableauretour = tableauretourquiutilise();
+if (demande == "suivibarre"){ alert(tableauretour[3]+" ↺ disponibles"); };
+if (demande == "rond"){ alert(tableauretour[4]+" ↺ minimum récent\n"+tableauretour[5]+" ↺ autorisés par jour\n"+tableauretour[6]+" ↺ maximum récent"); };
+};
+
 function codeact(lenom,lunite){
   $("#suiviappli").prepend("codeact("+lenom+","+lunite+") <br>");
   var lenomact=nettoieinput(lenom)+" 1"+lunite;
@@ -839,6 +849,11 @@ $("#menuprefinscription").click(function() { clicmenuinscription(); });
 $("#menuprefutilisation").click(function() { clicmenuutilisation(); });
 $("#menuprefconfirmation").click(function() { clicmenuconfirmation(); });
 $("#menuprefpreferences").click(function() { clicmenupreferences(); });
+
+
+/* ajout des onclick sur le html suivi indicateur de développement durable */
+$(".suivicompte .rond").click(function() { clicsuividd("rond"); });
+$(".suivicompte .barredisponible").click(function() { clicsuividd("suivibarre"); });
 
 /* ajout des onchange sur le html incription et arretesession*/
 $("#formulaireaccesutilisateur").change(function() { valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
@@ -2047,10 +2062,10 @@ function videlespoubelles(){$("#poubelle").html("");$("#poubelle2").html("");mis
 // définition des constantes selon la localité pour les calculs
 function constante($nom){
 if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
-if($nom == "ouverturecompte"){ return '"182.5,10,0,365"'; };
+if($nom == "ouverturecompte"){ return '"150,90,30,360"'; };
 if($nom == "localite"){ return "localite/"; };
 if($nom == "siteweb"){ 
-  return nettoieinput(window.location.host + window.location.pathname) ;  /* automatique */
+  return nettoieinput(window.location.protocol+"//"+window.location.host + window.location.pathname) ;  /* automatique */
   /*  return "www.designvegetal.com/projets/consignel/index.html";  /* forcé */
 };
 if($nom == "php"){ return "consignel-scp/consignel.php"; };
