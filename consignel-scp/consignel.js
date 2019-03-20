@@ -7,7 +7,7 @@ function acceptetransaction(accepteouinon){
   var acceptation = accepteouinon;
   utilisateur = codequiutilise();
   if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
-/* proposition venat de moi */
+/* proposition venant de moi */
   if(acceptation == "actualisemoi"){alert("actualisemoi");}; /* fin du actualisemoi */
   if(acceptation == "annulemoi"){alert("annulemoi");}; /* fin du annulemoi */
 /* proposition venant d'un autre */
@@ -34,13 +34,13 @@ changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaude
 
 /* affiche le détail de la proposition (venant du serveur ?) */
 function affichedetailproposition(noproposition){
-  $("#suiviappli").prepend("affichedetailproposition(noproposition) <br>");  
+  $("#suiviappli").prepend("affichedetailproposition(noproposition) <br>"); 
+  effaceconfirmation();
   var nomproposition = noproposition;
   if (nomproposition == "demandeuneproposition"){
     $("#offreconfirme").html("demande "+$("#mstockdemandeuneproposition").text());
   }else{
     // contenu de la proposition
-    // $("#offreconfirme").html(nomproposition+"<br>ok tout va bien"); // contenu json de l'offre
     var inputdemande = nettoieinputtra($("#confirmationinputcode").val()) ;
     var numproposetra = inputdemande.substring(14);
     var numtra = "tra"+inputdemande
@@ -99,6 +99,10 @@ function afficheproposition(ou,id,valeurs,numproposetra){
     break;
     case "#offremontantsconfirme":
       $("#offrecompensationconfirme .montant").html(variableslocales[3]);
+      var resumetemp = $(".retourserveur").text();
+      var paramgraph = resumetemp.split(",");
+      var disponibletemp = Number(paramgraph[3])+ Number(variableslocales[3]);
+      changegraphsuivi(disponibletemp,Number(paramgraph[4]),Number(paramgraph[5]),Number(paramgraph[6]));
       $("#offremontantsconfirme .argent").html(variableslocales[4]);
       $("#offremontantsconfirme .mlc").html(variableslocales[5]);
       $("#offremontantsconfirme .environnement").html(variableslocales[6]);
@@ -1101,7 +1105,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $('#preferences').attr("class","attente"); identification();
         break;
         case "DTMR":
-        responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
+        responseTxt = responseTxt.substring(4); 
+        affichedetailproposition(responseTxt);
         alert("Cette transaction n'existe pas"); break;
         case "DTAO":
         responseTxt = responseTxt.substring(4);
@@ -1163,7 +1168,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#confirmationacceptetransaction").attr("class","actif");
         affichedetailproposition(responseTxt);
         // "Demande de transaction bien reçue");   
-        /* break; */
+        break;
         default :
         /* Fichier demandé au serveur et chargé */
         $(retourdansdiv).html(encryptepourdiv(responseTxt));
@@ -1240,7 +1245,17 @@ function effaceutilisation(){
   effaceoffresdemandes();
   effaceutilisationrechercheinput();
   videlespan(".compensation");
+  videlespan(".demandecompensation");
   $("#demandeaqui").val("");
+};
+
+/* nettoyage interface */
+function effaceconfirmation(){
+  $("#suiviappli").prepend("effaceutilisation() <br>");
+  $("#offreconfirmation").html("");
+  $("#demandeconfirmation").html("");
+  videlespan(".compensation .confirmation");
+  videlespan(".demandecompensation .confirmation");
 };
 
 /* affiche l'entête utilisateur, stocke identité en attendant la validation du mot de passe */
@@ -2016,7 +2031,7 @@ function videlediv(balise){
 /* vide ledivselon la balise envoyée "#poubelle" ".stockedansdiv" */
 function videlespan(balise){
   $("#suiviappli").prepend("videlespan("+balise+") <br>");
-  var balise2=balise; $(balise2 .span).html("");
+  var balise2=balise; $(balise2+" span").html("");
 };
 
 /* vide le localstorage */
