@@ -1080,8 +1080,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "PEAA":
         alert("Présentez le code qr"); $('#validqr').attr("class","qr3"); // en attente scan par client
         // reçoit nouveau résumé de compte et change le graphique
-        var nouveauresume = responseTxt.substring(7,);
-        $(".retourserveur").html( tableauretour[0]+","+tableauretour[1]+","+tableauretour[2]+","+nouveauresume+",,");
+        var nouveauresume = responseTxt.substring(7);
+        $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+nouveauresume+",,");
         // changegraphsuivi(disponible,unjour,dispomini,dispomaxi);
         var paramgraph = nouveauresume.split(","); 
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
@@ -1089,6 +1089,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "PDEN":
         alert("Présentez le code qr"); //ne rien faire proposition déjà enregistrée
         break;
+        case "TACC":
+        responseTxt = responseTxt.substring(7); propositionacceptee(responseTxt);
+        alert("Transaction acceptée"); 
+        break; 
         case "ERDP":
         $('#confirmationinputcode').focus(); break; // ("Manque le code de la transaction");  
         case "NULL":
@@ -1105,8 +1109,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $('#preferences').attr("class","attente"); identification();
         break;
         case "DTMR":
-        responseTxt = responseTxt.substring(4); 
-        affichedetailproposition(responseTxt);
+        responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Cette transaction n'existe pas"); break;
         case "DTAO":
         responseTxt = responseTxt.substring(4);
@@ -1133,10 +1136,6 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "DTAP":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Il y a plusieurs proposition avec le même identifiant"); break; 
-        case "TACC":
-        responseTxt = responseTxt.substring(7); propositionacceptee(responseTxt);
-        alert("Transaction acceptée"); 
-        break; 
         case "TDAC":
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Transaction déjà acceptée par vous"); break; 
@@ -1151,7 +1150,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Proposition expirée"); break; 
         case "TNDI":
-        responseTxt = responseTxt.substring(4); propositionrefusee("responseTxt");
+        responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Proposition non disponible"); break; 
         case "TANN":
         responseTxt = responseTxt.substring(4);
@@ -1165,8 +1164,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Problème php "+responseTxt); break; 
         case "DTBR":
         responseTxt = responseTxt.substring(4);
-        $("#confirmationacceptetransaction").attr("class","actif");
-        affichedetailproposition(responseTxt);
+        $("#confirmationacceptetransaction").attr("class","actif"); affichedetailproposition(responseTxt);
         // "Demande de transaction bien reçue");   
         break;
         default :
@@ -1596,11 +1594,19 @@ function proposechoix(){
   $("#inputactivite").val(variablelocale);
 };
 
-/* proposition acceptée avec message du serveur */
+/* proposition acceptée avec nouveau résumé en retour du serveur */
 function propositionacceptee(responseduserveur){
   $("#confirmationinputcode").val("2019"); 
   $("#confirmationokinputcode").click();
   //  changegraphsuivi(disponible,dispomini,unjour,dispomaxi);
+  // reçoit nouveau résumé de compte et change le graphique
+  var nouveauresume = responseduserveur;
+  var tableauretour = tableauretourquiutilise();
+  $(".retourserveur").html( tableauretour[0]+","+tableauretour[1]+","+tableauretour[2]+","+nouveauresume+",,");
+  // changegraphsuivi(disponible,unjour,dispomini,dispomaxi);
+  var paramgraph = nouveauresume.split(","); 
+   changegraphsuivi(Number(paramgraph[0]),Number(paramgraph[1]),Number(paramgraph[2]),Number(paramgraph[3]));
+   effaceconfirmation();
   // mise à jour du stockage local à faire
 };
 
