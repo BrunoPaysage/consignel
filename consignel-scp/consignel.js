@@ -288,6 +288,7 @@ function changegraphsuivi(disponible,unjour,dispomini,dispomaxi){
   var pxcol=Math.round((pxgauche-pxmin)/pxquartier);
 
   /*var pxcoleval=".suivi"+pxcol; if (pxcol<0 || pxcol>6){pxcoleval=".couleurmin";}; var milieu=(disponible-(dispomaxi-dispomini)/2)-dispomini; var tolerance= dispo1jour/2; if ((milieu > -tolerance) && (milieu < tolerance)){pxcoleval=".couleurcentre";};couleurexterieur*/
+  var pxcoleval=".couleurcentre";
   if (pxcol<0 || pxcol>8){pxcoleval=".couleurmin";};
   if (pxcol==0 || pxcol==8){pxcoleval=".suivi0";};
   if (pxcol==1 || pxcol==7){pxcoleval=".suivi1";};

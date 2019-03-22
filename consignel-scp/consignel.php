@@ -222,7 +222,7 @@ function acceptetransaction($var3,$notransaction){
   $consigneldemande = preg_replace( "/\"/", "", $var37); 
   $paiement = paiement($jsonenphp,$idtra);
   if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
-  $consigneldemandepaiement = $paiement[1] - $paiement[4]; // propositions de dons en consignel du proposeur moins demande de consignel à l'accepteur 
+  $consigneldemandepaiement = $paiement[1]; // propositions de dons en consignel du proposeur la dépense de l'accepteur  - $paiement[4] est déjà inclue dans le da↺ $consigneldemande 
   
   if ((($soldeconsignelparjour * 7) + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = ""; };
   if (($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = ""; };
@@ -294,7 +294,7 @@ function acceptetransaction($var3,$notransaction){
   $soldeconsignelparjourproposeur = $derniercompteproposeur[1];
 
   //   $paiement = paiement($jsonenphp,$idtra); déjà fait  
-  $consigneloffrepaiement = $paiement[4] - $paiement[1]; // dons en consignel de l'accepteur - dons du proposeur. 
+  $consigneloffrepaiement = $paiement[4] ; // dons en consignel de l'accepteur - les dons du proposeur- $paiement[1] ont déjà été comptés dans le da↺. 
   if($consigneloffrepaiement < 0){$consigneloffrepaiement = 0;}; //déjà déduit si négatif
 
   if($consigneldacoffre < 0){$consigneldacoffre = 0;}; //déjà déduit si négatif
@@ -683,7 +683,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
   $paiement = paiement($jsonenphp,$idtra);
   if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
-  $consigneloffrepaiement = -$paiement[1]; // propositions de paiements en consignel du proposeur à déduire au moment de la proposition 
+  $consigneloffrepaiement = 0; // -$paiement[1]; propositions de paiements en consignel du proposeur à déduire au moment de la proposition déjà compté par le da↺
 
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
   $nomfichier = substr($idtra,0,14)."-suivi.json";
