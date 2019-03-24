@@ -9,7 +9,7 @@ function acceptetransaction(accepteouinon){
   if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
 /* proposition venant de moi */
   if(acceptation == "actualisemoi"){alert("actualisemoi");}; /* fin du actualisemoi */
-  if(acceptation == "annulemoi"){alert("annulemoi");}; /* fin du annulemoi */
+  if(acceptation == "annulemoi"){ chargemoi('annuleuneproposition'); }; /* fin du annulemoi */
 /* proposition venant d'un autre */
   if(acceptation == "oui"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
   if(acceptation == "non"){alert("non");}; /* fin du non */
@@ -578,6 +578,7 @@ function chargemoi(nomdonnees){
       if (nomdonnees == "mespropositions" ){envoi = "oui";};
       if (nomdonnees == "demandeuneproposition" ){envoi = "oui";};
       if (nomdonnees == "accepteuneproposition" ){envoi = "oui";};
+      if (nomdonnees == "annuleuneproposition" ){envoi = "oui";};
       if(envoi=="oui"){
         /* envoi de données */
         fichierlocaljson = undefined;
@@ -1045,7 +1046,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
   };
 
   var var4="";
-  if((nomdonnees=="demandeuneproposition") || (nomdonnees=="accepteuneproposition")){
+  if((nomdonnees=="demandeuneproposition") || (nomdonnees=="accepteuneproposition") || (nomdonnees=="annuleuneproposition")){
     var nodemande = nettoieinputtra($("#confirmationinputcode").val()) ;
     if (nodemande.length <= 14){
       $("#confirmationinputcode").css('color', 'red');
@@ -1113,9 +1114,13 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Cette transaction n'existe pas"); break;
         case "DTAO":
-        responseTxt = responseTxt.substring(4);
+        responseTxt = responseTxt.substring(7);
         menudetailproposition("matransaction"); affichedetailproposition(responseTxt);
         alert("C'est moi qui l'ai faite cette proposition"); break; 
+        case "TDAC":
+        responseTxt = responseTxt.substring(4);
+        menudetailproposition("matransaction"); affichedetailproposition(responseTxt);
+        alert("C'est moi qui l'ai faite cette proposition et elle a déjà été acceptée"); break; 
         case "DTMC":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré - Manque de ↺onsignel pour faire la transaction"); break; 
@@ -1135,7 +1140,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Proposition interdite. Spéculation, etc."); break; 
         case "DTAP":
-        responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
+        responseTxt = responseTxt.substring(7); affichedetailproposition(responseTxt);
         alert("Il y a plusieurs proposition avec le même identifiant"); break; 
         case "TDAC":
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
@@ -1164,7 +1169,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         responseTxt = responseTxt.substring(4);
         alert("Problème php "+responseTxt); break; 
         case "DTBR":
-        responseTxt = responseTxt.substring(4);
+        responseTxt = responseTxt.substring(7);
         $("#confirmationacceptetransaction").attr("class","actif"); affichedetailproposition(responseTxt);
         // "Demande de transaction bien reçue");   
         break;

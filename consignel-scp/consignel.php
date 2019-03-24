@@ -135,6 +135,11 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
         $transactionacceptee = acceptetransaction($var3,$donnee4); 
         echo $transactionacceptee;
       };
+      if($lademande==211873){ 
+        // ,"annuleuneproposition"
+        $transactionannulee = annuleproposition($var3,$donnee4); 
+        echo $transactionannulee;
+      };
       
     };
   };  // Fin de utilisateur correctement identifié 
@@ -161,7 +166,7 @@ function acceptetransaction($var3,$notransaction){
   // cherche si la transsaction a été annulée
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
   if (file_exists($cheminfichier.$nomfichierann)) {
-      return "TANN - Cette proposition n'est pas disponible -";
+      return "TANN - Cette proposition n'est pas disponible";
   };
   // cherche si la transaction a déjà été acceptée
   if (file_exists($cheminfichier.$nomfichieracc)) {
@@ -171,7 +176,7 @@ function acceptetransaction($var3,$notransaction){
     if ($var48 == "\"".$noaccepteur."\"\n"){
       return "TDAC - Proposition déjà acceptée par vous";
     }else{
-      return "TNDI - Cette proposition n'est pas disponible -";
+      return "TNDI - Cette proposition n'est pas disponible";
     };
   };
   // cherche si la proposition existe et peut être acceptée par le demandeur
@@ -377,8 +382,72 @@ function ajoutelesconnexions($cheminfich2,$chainecontenu) {
 }
 
 // annule une transaction 
-function annuleproposition($idtransaction){
+function annuleproposition($var3,$notransaction){
+$demandeur = $var3;
+$statuttransaction = transactionstatut($demandeur, $notransaction);
+$statut = substr($statuttransaction,0,4);
+If ($statut == "DTAP"){ return "TEST - je vais l'annuler ... ".$statut; };
+If ($statut == "DTAO"){ return "TEST - non expirée voulez-vous vraiment l'annuler ... ".$statut; };
+If ($statut == "TDPA"){ return "TEST - impossible déjà acceptée ".$statut; };
+If ($statut == "TANN"){ return "TEST - impossible déjà annulée ".$statut; };
+If ($statut == "TEXP"){ return "TEST - impossible déjà expirée ".$statut; };
+If ($statut == "TDAC"){ return "TEST - impossible ce n'est pas votre proposition".$statut; };
+return "TEST - TNDI - Cette proposition n'est pas disponible";
 }; // fin d'anulation de la transaction
+
+
+// retourne le statut de la transaction TACC TANN TEXP TRAP TNDI
+function transactionstatut($demandeur, $notransaction){
+  $nodemandeur = $demandeur; 
+  $idtra = "tra".$notransaction; 
+  $cheminfichier = testelechemin($idtra); // chemin dans base2 par date
+  // l'orde des tests est important
+  if (file_exists($cheminfichier."acc".$notransaction.".json")) { 
+    $fichierencours = fopen($cheminfichier."acc".$notransaction.".json", 'r');
+    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
+    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+    if ($var48 == "\"".$nodemandeur."\"\n"){ return "TDAC - Proposition déjà acceptée par vous"; };
+    if ($var45 == "\"".$nodemandeur."\"\n"){ return "TDPA - Cette proposition faite par vous a déjà été acceptée"; };
+    return "TNDI - Cette proposition n'est pas disponible";
+  };
+  if (file_exists($cheminfichier."ann".$notransaction.".json")) { 
+    $fichierencours = fopen($cheminfichier."ann".$notransaction.".json", 'r');
+    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
+    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+    if ($var48 == "\"".$nodemandeur."\"\n"){ return "TANN - Proposition déjà annulée par vous"; };
+    return "TNDI - Cette proposition n'est pas disponible";
+  };
+  if (file_exists($cheminfichier."exp".$notransaction.".json")) {  
+    $fichierencours = fopen($cheminfichier."exp".$notransaction.".json", 'r');
+    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
+    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+    if ($var48 == "\"".$nodemandeur."\"\n"){ return "TEXP - Proposition de votre part expirée sans être acceptée"; };
+    return "TNDI - Cette proposition n'est pas disponible";
+  };
+  if (file_exists($cheminfichier.substr($idtra,0,14)."-suivi.json")) { 
+    // Vérifications dans le fichier -suivi.json proposition de qui pour qui
+    $ligneexiste = FALSE;
+    $fichierencours = fopen($cheminfichier.substr($idtra,0,14)."-suivi.json", 'r');
+    while (!feof($fichierencours) && !$ligneexiste) {
+      $ligne = decryptelestockage(fgets($fichierencours, 1024));
+      list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+      if ($var41 == "\"".$idtra."\""){
+        $memetransaction = TRUE; // transaction trouvée
+        $ligneexiste = TRUE;
+        $expiration = testeexpiration($var41,$var46);
+        if ($var48 == "\"".$nodemandeur."\"\n"){ 
+          if ($expiration == "pasexpire"){ return "DTAO - C'est ma proposition "; };
+          if ($expiration == "expire"){ return "TEXP - C'est ma proposition expirée "; };
+        }else{
+          $testdestinataire = testdestinataire($var35,$var3chaine);
+          if ($testdestinataire == "autorise"){ return "DTAC - J'ai le droit d'accepter cette proposition "; };
+          if ($testdestinataire == "nonautorise"){ return "TNDI - Cette proposition n'est pas disponible"; };
+        };
+      }; // fin de transaction trouvée
+    }; // fin du while
+  };
+  return "TRIN - Transaction inconnue";
+};
 
 // nettoie les entrées texte qui doivent avoir un format json et ne pas poser de problème javascript
 function antitagnb($entree){
@@ -441,14 +510,14 @@ function cherchetransaction($var3,$notransaction){
 
         $nbauteurstra = $nbauteurstra + 1;
         if ($memeauteur == TRUE) { // trouvé identique
-          if ($nbauteurstra == 1){$debut="DTAO";}else{$debut="DTAP";};
+          if ($nbauteurstra == 1){$debut="DTAO - ";}else{$debut="DTAP - ";};
           // $nomfichier2 = $notransactionlocal.".json";
           $nomfichier2 = $notransactionlocal.".json";
           $fichierencours2 = fopen($cheminfichier.$nomfichier2, 'r');
             $ligne2 = decryptelestockage(fgets($fichierencours2, 1024)); // ligne par ligne
           $contenutransaction = $debut.$ligne2;
         }else{
-          if ($nbauteurstra == 1){$debut="DTBR";}else{$debut="DTAP";}; // pas le même auteur
+          if ($nbauteurstra == 1){$debut="DTBR - ";}else{$debut="DTAP - ";}; // pas le même auteur
           $nomfichier2 = $notransactionlocal.".json";
           $fichierencours2 = fopen($cheminfichier.$nomfichier2, 'r');
             $ligne2 = decryptelestockage(fgets($fichierencours2, 1024)); // ligne par ligne
