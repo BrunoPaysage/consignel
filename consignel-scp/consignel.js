@@ -32,11 +32,12 @@ changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaude
   };
 };
 
-/* affiche le détail de la proposition (venant du serveur ?) */
-function affichedetailproposition(noproposition){
+/* affiche le détail de la proposition (venant du serveur par demandefichier) */
+function affichedetailproposition(noproposition, propositiondequi){
   $("#suiviappli").prepend("affichedetailproposition(noproposition) <br>"); 
   effaceconfirmation();
   var nomproposition = noproposition;
+  var dequi = propositiondequi; 
   if (nomproposition == "demandeuneproposition"){
     $("#offreconfirme").html("demande "+$("#mstockdemandeuneproposition").text());
   }else{
@@ -51,28 +52,33 @@ function affichedetailproposition(noproposition){
     var numoff = "off"+objson[numtra][2]+"_"+objson[numtra][0]; // id de l'offre
     // $("#demandeconfirme").append( objson[numoff][0]+"<br>"); // liste des act offerts
     // $("#demandeconfirme").append( objson[numoff]+"<br>"); // valeurs de l'offre
-    afficheproposition("#demandemontantsconfirme",numoff,objson[numoff],numproposetra);
+   var ou="#demandemontantsconfirme"; 
+   if(dequi=="matransaction"){ou="#offremontantsconfirme";};
+    afficheproposition(ou,numoff,objson[numoff],numproposetra);
     var tableauoff = objson[numoff][0].split("act");
     // $("#demandeconfirme").append( tableauoff.length+"<br>"); // nombre d'actes offerts (+1)
     var i; var nomact;
     for (i = 1; i < tableauoff.length; i++) { 
       nomact = "off"+objson[numtra][2]+"_"+"act"+tableauoff[i];
       // $("#demandeconfirme").append( nomact+"<br>"); // nom de l'act dans le json
-      afficheproposition("#demandeconfirme",tableauoff[i],objson[nomact]);
+      var ou="#demandeconfirme"; if(dequi=="matransaction"){ou="#offreconfirme";};
+      afficheproposition(ou,tableauoff[i],objson[nomact]);
     };
     var numdem = "dem"+objson[numtra][2]+"_"+objson[numtra][1];
     // $("#demandeconfirme").append( objson[numdem][0]+"<br>"); // liste des actes demandés
     // $("#demandeconfirme").append( objson[numdem]+"<br>"); // valeurs de la demande
-    afficheproposition("#offremontantsconfirme",numdem,objson[numdem]);
+   var ou="#offremontantsconfirme"; if(dequi=="matransaction"){ou="#demandemontantsconfirme";};
+    afficheproposition(ou,numdem,objson[numdem]);
     var tableaudem = objson[numdem][0].split("act");
     // $("#demandeconfirme").append( tableaudem.length+"<br>"); // nombre d'actes demandés (+1)
     var i;
     for (i = 1; i < tableaudem.length; i++) { 
       nomact = "dem"+objson[numtra][2]+"_"+"act"+tableaudem[i];
       // $("#demandeconfirme").append( nomact+"<br>");
-      afficheproposition("#offreconfirme",tableaudem[i],objson[nomact]);
+   var ou="#offreconfirme"; if(dequi=="matransaction"){ou="#demandeconfirme";};
+      afficheproposition(ou,tableaudem[i],objson[nomact]);
     };
-
+    
   };
 };
 
@@ -1044,7 +1050,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var nomcode3 = codelenom(demandefich)*tableauretour[1]; /* chiffre la demande de fichier avec le code de session */
     var nomcode4 = codelenom(nomutil2+nomutil3); /* chiffre le code d'acces local */
   };
-
+  
   var var4="";
   if((nomdonnees=="demandeuneproposition") || (nomdonnees=="accepteuneproposition") || (nomdonnees=="annuleuneproposition")){
     var nodemande = nettoieinputtra($("#confirmationinputcode").val()) ;
@@ -1076,8 +1082,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
       $("#suiviappli").prepend("fichier "+nomdonnees+" arrivé depuis le serveur<br>");
       responseTxt = decryptetransfert(responseTxt);
       var testebr = responseTxt.indexOf("<br>"); 
-      var testretour=responseTxt.substring(0,4);
+      var testretour = responseTxt.substring(0,4);
+      var contenuretour =  responseTxt.substring(7);
       menudetailproposition("pasmatransaction"); 
+      $("#acceptetransactionstatut").html(testretour);
       switch (testretour) {
         case "PEAA":
         alert("Présentez le code qr"); $('#validqr').attr("class","qr3"); // en attente scan par client
@@ -1092,8 +1100,11 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Présentez le code qr"); //ne rien faire proposition déjà enregistrée
         break;
         case "TACC":
-        responseTxt = responseTxt.substring(7); propositionacceptee(responseTxt);
-        alert("Transaction acceptée"); 
+        $("#acceptetransactionstatut").html("Transaction acceptée");
+        menudetailproposition("pasmatransactionfermee"); affichedetailproposition("","pasmatransaction"); 
+        $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+contenuretour+",,");
+        var paramgraph = contenuretour.split(","); 
+        changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
         break; 
         case "ERDP":
         $('#confirmationinputcode').focus(); break; // ("Manque le code de la transaction");  
@@ -1102,7 +1113,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break;
         case "<?ph":
         $('.alerte').html("<br><i class='eval2'>Vérification d'utilisateur indisponible sur le serveur</i><br>");
-/* suite à écrire pour utiliser en local sans vérification serveur de l'utilisateur */
+        /* suite à écrire pour utiliser en local sans vérification serveur de l'utilisateur */
         break;
         case " , 0":
         alert("session trop longue");
@@ -1111,16 +1122,34 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $('#preferences').attr("class","attente"); identification();
         break;
         case "DTMR":
+        $("#acceptetransactionstatut").html("Cette transaction n'existe pas");
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Cette transaction n'existe pas"); break;
         case "DTAO":
+        $("#acceptetransactionstatut").html("Transaction disponible");
         responseTxt = responseTxt.substring(7);
-        menudetailproposition("matransaction"); affichedetailproposition(responseTxt);
-        alert("C'est moi qui l'ai faite cette proposition"); break; 
-        case "TDAC":
-        responseTxt = responseTxt.substring(4);
-        menudetailproposition("matransaction"); affichedetailproposition(responseTxt);
-        alert("C'est moi qui l'ai faite cette proposition et elle a déjà été acceptée"); break; 
+        menudetailproposition("pasmatransaction"); affichedetailproposition(responseTxt);
+        break; 
+        case "PACT":
+        $("#acceptetransactionstatut").html("Ma proposition est encore active");
+        menudetailproposition("matransaction"); affichedetailproposition(contenuretour,"matransaction");
+        break; 
+        case "ADAC":
+        $("#acceptetransactionstatut").html("J'ai déja accepté cette proposition");
+        menudetailproposition(""); affichedetailproposition(contenuretour,""); 
+        break; 
+        case "PACC":
+        responseTxt = responseTxt.substring(7);
+        $("#acceptetransactionstatut").html("Ma proposition a déjà été acceptée");
+        menudetailproposition("matransactionfermee"); affichedetailproposition(responseTxt,"matransaction"); 
+        break; 
+        case "DABR":
+        $("#acceptetransactionstatut").html("Ma proposition a été annulée");
+        menudetailproposition("matransactionfermee"); affichedetailproposition("","matransaction"); 
+        $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+contenuretour+",,");
+        var paramgraph = contenuretour.split(","); 
+        changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
+        break; 
         case "DTMC":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré - Manque de ↺onsignel pour faire la transaction"); break; 
@@ -1141,24 +1170,31 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Proposition interdite. Spéculation, etc."); break; 
         case "DTAP":
         responseTxt = responseTxt.substring(7); affichedetailproposition(responseTxt);
+        $("#acceptetransactionstatut").html("Il y a plusieurs propositions appelées ainsi");
         alert("Il y a plusieurs proposition avec le même identifiant"); break; 
         case "TDAC":
+        $("#acceptetransactionstatut").html("Ancienne version du logiciel j'ai déjà accepté la transaction");
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Transaction déjà acceptée par vous"); break; 
         case "TREF":
+        $("#acceptetransactionstatut").html("Transaction refusée");
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Transaction refusée"); break; 
         case "TRIN":
+        $("#acceptetransactionstatut").html("Transaction inconnue");
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Transaction inconnue"); 
         break; 
-        case "TEXP":
-        responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
-        alert("Proposition expirée"); break; 
+        case "PEXP":
+        $("#acceptetransactionstatut").html("Ma proposition est expirée");
+        menudetailproposition("matransactionfermee"); affichedetailproposition(responseTxt,"matransaction"); 
+        break; 
         case "TNDI":
+        $("#acceptetransactionstatut").html("Proposition non disponible");
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Proposition non disponible"); break; 
-        case "TANN":
+        case "PANN":
+        $("#acceptetransactionstatut").html("Ma transaction est annulée");
         responseTxt = responseTxt.substring(4);
         menudetailproposition("matransaction"); propositionannulee(responseTxt);
         alert("Transaction annulée"); break; 
@@ -1169,6 +1205,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         responseTxt = responseTxt.substring(4);
         alert("Problème php "+responseTxt); break; 
         case "DTBR":
+        $("#acceptetransactionstatut").html("Demande de transaction bien reçue");
         responseTxt = responseTxt.substring(7);
         $("#confirmationacceptetransaction").attr("class","actif"); affichedetailproposition(responseTxt);
         // "Demande de transaction bien reçue");   
@@ -1328,7 +1365,7 @@ var contenuencode="encode pour transfert "+clairlocal;
 return contenuencode;
 };
 
-/* passe le code qr au vert et engage la proposition sur le serveur */
+/* affiche la page d'identification */
 function identification(){
   $("#suiviappli").prepend("identification() <br>");
 $(".utilisation").hide();
@@ -1407,9 +1444,14 @@ function listelesactdetails(span1,span2){
 /* affiche le menu selon l'origine de la transaction à confirmer*/
 function menudetailproposition(menutransaction){
 var menutra = menutransaction;
+$('#confirmationacceptetransaction').attr("class","actif"); 
 $("#confirmationacceptetransaction div").hide();
+$("#acceptetransactionstatut").show();
 if(menutra == "matransaction"){$("#confirmationacceptetransaction .matransaction").show();};
+if(menutra == "matransactionfermee"){$("#confirmationacceptetransaction .matransaction").show(); $("#acceptetransactionannuler").hide(); };
 if(menutra == "pasmatransaction"){$("#confirmationacceptetransaction .pasmatransaction").show();};
+if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasmatransaction").show();  $("#acceptetransactionoui").hide();  $("#acceptetransactionnon").hide(); };
+if(menutra == "attente"){$('#confirmationacceptetransaction').attr("class","attente");};
 };
 
 /* Fait la mise à jour des totaux des différentes valeurs */
@@ -1622,6 +1664,7 @@ function propositionannulee(responseduserveur){
 
 /* proposition refusée avec message du serveur */
 function propositionrefusee(responseduserveur){
+  menudetailproposition("attente");
 };
 
 /* proposition négociée */

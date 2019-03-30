@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+<title>&#8634;onsignél, références réponses du serveur</title>
+<link rel="stylesheet" href="../../css/consignel-app.css" type="text/css">
+<script src="../../consignel-scp/consignel-ref.js"></script>
+<script src="../../consignel-scp/jquery.js"></script> 
+</head>
+
+<body class="references">
 <h3>consignel.php : Liste des réponses fournies par le script php </h3> 
 <p class="cheminref"><a href="../consignel-php-reponses.html">Références</a>/consignel-php-reponses</p>
 <p class="utilisation">Le script serveur consignel.php renvoie une chaîne codée après vérification de l'identification des utilisateurs</p>
@@ -6,32 +17,54 @@
 Liste de variables séparées par des virgules pour l'identification<br>
 Chaine commençant par un identifiant "AAAA -" suivi du contenu de la réponse</p>
 </div>
+<p>&nbsp;</p>
 <div class="contenu">
-<table>
+<div class="menupage">
+<a onclick="$('table *').show()">Tout</a>
+<a onclick="$('table tr+tr').hide()">Rien</a>
+<a onclick="$('table tr+tr').hide();$('table tr.proposeur').show()">Proposeur</a>
+<a onclick="$('table tr+tr').hide();$('table tr.accepteur').show()">Accepteur</a>
+<a onclick="$('table tr+tr').hide();$('table tr.limite').show()">Limite</a>
+<a onclick="$('table tr+tr').hide();$('table tr.erreur').show()">Erreur</a>
+</div>
+<p>&nbsp;</p>
+<table class="tableau">
 <tr><th>4 premiers caractères</th> <th>php</th> <th>chaine renvoyée</th> <th>js</th> </tr>
-<tr><td>PEAA -</td> <td>Proposition de transaction enregistrée</td> <td>Nouveau résumé de compte</td> <td>Présentez le code qr Mise à jour du résumé</td> </tr>
-<tr><td>PDEN -</td> <td>Proposition de transaction déjà enregistrée</td> <td>Rien</td> <td>Présentez le code qr Ne rien faire</td> </tr>
-<tr><td>ERDP -</td> <td>Manque le code de la transaction demandée</td> <td></td> <td>Focus sur le imput où on entre le code de transaction</td> </tr>
-<tr><td>NULL -</td> <td>Fichier inconnu</td> <td>Nom du fichier demandé</td> <td>Alerte fichier inconnu</td> </tr>
-<tr><td>&lt;?ph</td> <td>Problème php ne fonctionne pas mais le fichier consignel.php existe</td> <td>Contenu du script php</td> <td>Vérification d'utilisateur indisponible sur le serveur</td> </tr>
-<tr><td> , 0</td> <td>Session trop longue annulée par le php</td> <td>Variables d'utilisateur déconnecté</td> <td>Annulation de codes et réidentification</td> </tr>
-<tr><td>DTMR -</td> <td>Transaction inconnue (pas de fichier ou fichier vide)</td> <td></td> <td>Cette transaction n'existe pas</td> </tr>
-<tr><td>DTAO -</td> <td>La proposition a été faite par le demandeur</td> <td>Fichier de la proposition de transaction</td> <td>C'est moi qui l'ai faite cette proposition afficher la proposition pour le proposeur</td> </tr>
-<tr><td>DTMC -</td> <td>Proposition non enregistrée - Manque de ↺onsignel pour faire la transaction</td> <td></td> <td></td> </tr>
-<tr><td>DTCE -</td> <td>Proposition non enregistrée dépense de ↺onsignel supérieure à 7 jours</td> <td></td> <td></td> </tr>
-<tr><td>DTNO -</td> <td>Proposition non enregistrée non autorisée erreur calcul ↺onsignel</td> <td></td> <td></td> </tr>
-<tr><td>DTRT -</td> <td>Proposition non enregistrée transaction non autorisée genre réécrire l'histoire</td> <td></td> <td></td> </tr>
-<tr><td>DTNC -</td> <td>Proposition non enregistrée Proposition non conforme.</td> <td></td> <td>Proposition non conforme. Relancer la page et reformulez la proposition</td> </tr>
-<tr><td>DTIN -</td> <td>Proposition non enregistrée Proposition interdite. Spéculation, etc.</td> <td></td> <td></td> </tr>
-<tr><td>DTAP -</td> <td>Il y a plusieurs proposition avec le même identifiant</td> <td></td> <td></td> </tr>
-<tr><td>TACC -</td> <td>Proposition enregistrée et acceptée</td> <td>Nouveau résumé de compte</td> <td>Transaction acceptée</td> </tr>
-<tr><td>TDAC -</td> <td>Proposition déjà acceptée par l'accepteur</td> <td></td> <td>Transaction déjà acceptée par vous</td> </tr>
-<tr><td>TREF -</td> <td>Transaction refusée</td> <td></td> <td>Transaction refusée</td> </tr>
-<tr><td>TRIN -</td> <td>Transaction demandée par un accepteur non autorisé</td> <td></td> <td>Transaction inconnue</td> </tr>
-<tr><td>TEXP -</td> <td>La transaction demandée est expirtée</td> <td></td> <td>Proposition expirée</td> </tr>
-<tr><td>TNDI -</td> <td>Proposition déjà acceptée</td> <td></td> <td>Proposition non disponible</td> </tr>
-<tr><td>TANN -</td> <td>Proposition annulée par le proposeur</td> <td></td> <td>Transaction annulée</td> </tr>
-<tr><td>TEST -</td> <td>Arrêt volontaire du PHP pour vérification pendant le développement</td> <td>Contenu dépendant du développeur</td> <td>Affichage contenu du développeur</td> </tr>
-<tr><td>DTBR -</td> <td>Demande de proposition bien reçue</td> <td>Contenu de la proposition</td> <td>Affiche la proposition</td> </tr>
-<tr><td>autres (default)</td> <td>Pas d'entête</td> <td>Contenu du fichier demandé</td> <td>Stocker le fichier et agir selon le contenu</td> </tr>
+<tr class="limite"><td> , 0</td> <td>Session trop longue annulée par le php</td> <td>Variables d'utilisateur déconnecté</td> <td>Annulation de codes et réidentification</td> </tr>
+<tr class="erreur inconnu"><td>&lt;?ph</td> <td>Problème php ne fonctionne pas mais le fichier consignel.php existe</td> <td>Contenu du script php</td> <td>Vérification d'utilisateur indisponible sur le serveur</td> </tr>
+<tr class="accepteur"><td>ADAC -</td> <td>Proposition déjà acceptée par l'accepteur</td> <td>Contenu de la proposition</td> <td>Transaction déjà acceptée par vous</td> </tr>
+<tr class="demandeur"><td>AEXP -</td> <td>La transaction est expirée renvoyer TNDI</td> <td>vide</td> <td>Proposition expirée</td> </tr>
+<tr class="erreur inconnu"><td>autres (default)</td> <td>Pas d'entête</td> <td>Contenu du fichier demandé</td> <td>Stocker le fichier et agir selon le contenu</td> </tr>
+<tr class="proposeur"><td>DABR -</td> <td>La demande d'annulation a été bien reçue et effectuée</td> <td>Nouveau résumé de compte</td> <td>Alerte proposition annulée</td> </tr>
+<tr class="accepteur"><td>DTAO -</td> <td>La proposition faite par un autre est autorisée pour de demandeur</td> <td>Contenu du fichier demandé</td> <td>Affiche la proposition</td> </tr>
+<tr class="proposeur"><td>DTAP -</td> <td>Il y a plusieurs proposition avec le même identifiant</td> <td>vide</td> <td></td> </tr>
+<tr class="accepteur"><td>DTBR -</td> <td>Demande de proposition bien reçue</td> <td>Contenu de la proposition</td> <td>Affiche la proposition</td> </tr>
+<tr class="proposeur"><td>DTCE -</td> <td>Proposition non enregistrée dépense de ↺onsignel supérieure à 7 jours</td> <td>vide</td> <td></td> </tr>
+<tr class="proposeur"><td>DTIN -</td> <td>Proposition non enregistrée Proposition interdite. Spéculation, etc.</td> <td>vide</td> <td></td> </tr>
+<tr class="proposeur"><td>DTMC -</td> <td>Proposition non enregistrée - Manque de ↺onsignel pour faire la transaction</td> <td>vide</td> <td></td> </tr>
+<tr class="erreur"><td>DTMR -</td> <td>Transaction inconnue (pas de fichier ou fichier vide)</td> <td>vide</td> <td>Cette transaction n'existe pas</td> </tr>
+<tr class="proposeur"><td>DTNC -</td> <td>Proposition non enregistrée Proposition non conforme.</td> <td>vide</td> <td>Proposition non conforme. Relancer la page et reformulez la proposition</td> </tr>
+<tr class="proposeur"><td>DTNO -</td> <td>Proposition non enregistrée non autorisée erreur calcul ↺onsignel</td> <td>vide</td> <td></td> </tr>
+<tr class="proposeur"><td>DTRT -</td> <td>Proposition non enregistrée transaction non autorisée genre réécrire l'histoire</td> <td>vide</td> <td></td> </tr>
+<tr class="erreur"><td>ERDP -</td> <td>Manque le code de la transaction demandée</td> <td>vide</td> <td>Focus sur le imput où on entre le code de transaction</td> </tr>
+<tr class="erreur"><td>NULL -</td> <td>Fichier inconnu</td> <td>Nom du fichier demandé</td> <td>Alerte fichier inconnu</td> </tr>
+<tr class="proposeur"><td>PACC -</td> <td>Proposition faites par vous et déjà acceptée par l'accepteur</td> <td>Contenu de la proposition</td> <td>Transaction déjà acceptée par un autre</td> </tr>
+<tr class="proposeur"><td>PACT -</td> <td>La proposition faite par le demandeur est active</td> <td>Fichier de la proposition de transaction</td> <td>C'est moi qui l'ai faite cette proposition afficher la proposition pour le proposeur</td> </tr>
+<tr class="proposeur"><td>PANN -</td> <td>Proposition annulée par le proposeur</td> <td>Contenu de la proposition</td> <td>Transaction annulée</td> </tr>
+<tr class="proposeur"><td>PDEN -</td> <td>Proposition de transaction déjà enregistrée</td> <td>vide</td> <td>Présentez le code qr Ne rien faire</td> </tr>
+<tr class="proposeur"><td>PEAA -</td> <td>Proposition de transaction enregistrée</td> <td>Nouveau résumé de compte</td> <td>Présentez le code qr Mise à jour du résumé</td> </tr>
+<tr class="proposeur"><td>PEXP -</td> <td>La transaction faite par vous est expirée</td> <td>vide</td> <td>Proposition expirée</td> </tr>
+<tr class="proposeur"><td>TACC -</td> <td>Proposition enregistrée et acceptée</td> <td>Nouveau résumé de compte</td> <td>Transaction acceptée</td> </tr>
+<tr class="erreur"><td>TEST -</td> <td>Arrêt volontaire du PHP pour vérification pendant le développement</td> <td>Contenu dépendant du développeur</td> <td>Affichage contenu du développeur</td> </tr>
+<tr class="accepteur"><td>TNDI -</td> <td>Proposition déjà acceptée</td> <td>vide</td> <td>Proposition non disponible</td> </tr>
+<tr class="proposeur accepteur"><td>TREF -</td> <td>Transaction refusée</td> <td>vide</td> <td>Transaction refusée</td> </tr>
+<tr class="accepteur"><td>TRIN -</td> <td>Transaction demandée par un accepteur non autorisé</td> <td>vide</td> <td>Transaction inconnue</td> </tr>
 </table></div>
+
+<div class="pied">
+<hr><div class="refdocument"> <p class="auteur">Auteur: Bruno Gadrat + Communauté GIT</p> <p class="revision">Orig: 2019/03 Rev: 2019/03/25</p> <p class="nomdufichier">Fichier: consignel-php-reponses.html</p>
+<p class="verification"><sub><a href="//validator.w3.org/check?uri=referer">Contr&ocirc;le html</a> - <a href="//jigsaw.w3.org/css-validator/check/referer">Contr&ocirc;le css</a></sub></p> </div>
+<hr>
+</div>
+</body>
+</html>
