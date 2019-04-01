@@ -8,12 +8,12 @@ function acceptetransaction(accepteouinon){
   utilisateur = codequiutilise();
   if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
 /* proposition venant de moi */
-  if(acceptation == "actualisemoi"){alert("actualisemoi");}; /* fin du actualisemoi */
+  if(acceptation == "actualisemoi"){ actualiselaproposition("maproposition"); }; /* fin du actualisemoi */
   if(acceptation == "annulemoi"){ chargemoi('annuleuneproposition'); }; /* fin du annulemoi */
 /* proposition venant d'un autre */
   if(acceptation == "oui"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
   if(acceptation == "non"){alert("non");}; /* fin du non */
-  if(acceptation == "modifie"){alert("modifie");}; /* fin du modifie */
+  if(acceptation == "modifie"){ actualiselaproposition("pasmaproposition"); }; /* fin du modifie */
 };
 
 /* Affichage et activation de la page d'utilisation */
@@ -30,6 +30,36 @@ changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaude
     $('.confirmation').show(); $('#confirmationrecherche').attr("class","actif"); $('#confirmationacceptetransaction').attr("class","actif"); 
     confirmationokinputcode(); 
   };
+};
+
+/* affiche la proposition dans la page utilisation */
+function actualiselaproposition(dequi="mapropostion"){
+  $("#offrechoisi").show();  $("#demandechoisi").show();
+  var dansqui = ""; var dansqui2 ="";
+  var codeitemchoisi = ""; var itemchoisi = ""; var quantite = 1; var unite = "h"; var consignel = 0; var argent = 0; var mlc = 0; var environnement = 0; var duree = 0; var social = 0; var foisparan = 0; var dureedevie = 0;
+  if (dequi == "mapropostion"){ 
+    dansqui = "offreconfirme" ; dansqui2 = "offrechoisi" ;
+  }else{ 
+    dansqui = "demandeconfirme" ; dansqui2 = "demandechoisi" ;
+  };
+  var nbdiv=$("#"+dansqui+" div[id^=act]").length; var lesdiv = $("#"+dansqui+" div[id^=act]"); var nomdudiv =""; var nomdudiv2 = "";
+  for (i = 0; i < nbdiv; i++) {
+    nomdudiv = "#"+$(lesdiv[i]).attr("id"); nomdudiv2= nomdudiv+"preciseact";
+    codeitemchoisi = nomdudiv.substring(4); itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text(); 
+    ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
+  };
+  if (dequi == "mapropostion"){ 
+    dansqui = "demandeconfirme" ; dansqui2 = "demandechoisi" ;
+  }else{ 
+    dansqui = "offreconfirme" ; dansqui2 = "offrechoisi" ;
+  };
+  var nbdiv=$("#"+dansqui+" div[id^=act]").length; var lesdiv = $("#"+dansqui+" div[id^=act]"); var nomdudiv =""; var nomdudiv2 = "";
+  for (i = 0; i < nbdiv; i++) {
+    nomdudiv = "#"+$(lesdiv[i]).attr("id"); nomdudiv2= nomdudiv+"preciseact";
+    codeitemchoisi = nomdudiv.substring(4); itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text(); 
+    ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
+  };
+  $("#menuprefutilisation").click();
 };
 
 /* affiche le détail de la proposition (venant du serveur par demandefichier) */
@@ -666,7 +696,7 @@ function choixactivite(itemchoisi){
     choisi=choisisansunite(choisi,tabref[1],tabref[2]);
     if (justeunite==1){choisi="..."};ajoutediv(dansdiv,"act",codechoisi,choisi,tabref[1],tabref[2],tabref[3],tabref[4],tabref[5],tabref[6],tabref[7],tabref[8],tabref[9],tabref[10]) ;
   };
-  /* dansqui,prefixe,suffixe,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie */
+  /* dansqui,prefixe,codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie */
 };
 
 /* fonction supprime la référence à l'unité dans le nom */
@@ -1174,30 +1204,25 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Il y a plusieurs proposition avec le même identifiant"); break; 
         case "TDAC":
         $("#acceptetransactionstatut").html("Ancienne version du logiciel j'ai déjà accepté la transaction");
-        responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
-        alert("Transaction déjà acceptée par vous"); break; 
+        propositionrefusee(contenuretour);
+        break; 
         case "TREF":
-        $("#acceptetransactionstatut").html("Transaction refusée");
-        responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
-        alert("Transaction refusée"); break; 
+        $("#acceptetransactionstatut").html("Transaction refusée"); propositionrefusee(contenuretour);
+        break; 
         case "TRIN":
-        $("#acceptetransactionstatut").html("Transaction inconnue");
-        responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
-        alert("Transaction inconnue"); 
+        $("#acceptetransactionstatut").html("Transaction inconnue"); propositionrefusee(contenuretour);
         break; 
         case "PEXP":
         $("#acceptetransactionstatut").html("Ma proposition est expirée");
         menudetailproposition("matransactionfermee"); affichedetailproposition(responseTxt,"matransaction"); 
         break; 
         case "TNDI":
-        $("#acceptetransactionstatut").html("Proposition non disponible");
-        responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
-        alert("Proposition non disponible"); break; 
+        $("#acceptetransactionstatut").html("Proposition non disponible"); propositionrefusee(contenuretour);
+        break; 
         case "PANN":
         $("#acceptetransactionstatut").html("Ma transaction est annulée");
-        responseTxt = responseTxt.substring(4);
-        menudetailproposition("matransaction"); propositionannulee(responseTxt);
-        alert("Transaction annulée"); break; 
+        menudetailproposition("matransactionfermee"); affichedetailproposition(contenuretour,"matransaction");  
+        break; 
         case "0000":
         responseTxt = responseTxt.substring(4);
         alert("Travail en cours sur le php "+responseTxt); break; 
@@ -1368,7 +1393,7 @@ return contenuencode;
 /* affiche la page d'identification */
 function identification(){
   $("#suiviappli").prepend("identification() <br>");
-$(".utilisation").hide();
+  $(".utilisation").hide();
   $(".inscription").show(); $(".detection").hide(); $(".secret").hide(); $(".validation").show();
   utilisateurinconnu();
   videinput("#formulaireaccesutilisateur"); videinput("#formulaireaccespass"); 
@@ -1403,8 +1428,6 @@ function listelesact(dansdiv){
     nomdudiv = "#"+$(lesdiv[i]).attr("id");
     laliste = laliste +""+ $(nomdudiv+" .codedunom").text() + $(nomdudiv+" .codedetailactivite").text()+"" ;
   };
-    
-
   return laliste; 
 };
 

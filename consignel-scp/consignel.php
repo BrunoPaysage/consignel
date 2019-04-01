@@ -283,7 +283,7 @@ function acceptetransaction($var3,$notransaction){
   // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
   
   // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
-  $nouveauproacc = transactionacc($idtra,$contenufichiertra,$dateaccepte,$noaccepteur);
+  $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$noaccepteur);
   $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
   ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveauproacc."\n");
   // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
@@ -402,7 +402,7 @@ function annuleproposition($var3,$notransaction){
     $derniercompte = explode( ',', $resumecpt );
     $soldeconsigneldisponible = $derniercompte[0];
     $soldeconsignelparjour = $derniercompte[2];
-$compensation = consignelsuivi($jsonenphp,$idtra);
+    $compensation = consignelsuivi($jsonenphp,$idtra);
     $consigne = 0;
     $dateaccepte = date("Ymd_Hi");
     $demandeur = preg_replace( "/\D/", "", $demandeur);
@@ -418,7 +418,7 @@ $compensation = consignelsuivi($jsonenphp,$idtra);
     ajouteaufichier($cheminfichier.$nomfichierann, $transactionsuivi); 
     // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
     $base=constante("base");
-    $nouveautraann = transactionann($idtra,$contenufichiertra,$dateaccepte,$demandeur);
+    $nouveautraann = transactionaccann("ann",$idtra,$contenufichiertra,$dateaccepte,$demandeur);
     $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); 
     ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraann."\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
@@ -445,8 +445,8 @@ $compensation = consignelsuivi($jsonenphp,$idtra);
   If ($statut == "PACC"){ return "TEST - impossible déjà acceptée ".$statut; };
   If ($statut == "PANN"){ return "TEST - impossible déjà annulée ".$statut; };
   If ($statut == "PEXP"){ return "TEST - impossible déjà expirée ".$statut; };
-  If ($statut == "ADAC"){ return "TEST - impossible vous l'avez accepté, ce n'est pas votre proposition".$statut; };
-  return "TEST - TNDI - Cette proposition n'est pas disponible";
+  If ($statut == "ADAC"){ return "TEST - impossible vous avez accepté cette proposition".$statut; };
+  return "TNDI - Cette proposition n'est pas disponible";
 }; // fin d'anulation de la transaction
 
 
@@ -469,8 +469,8 @@ function transactionstatut($demandeur, $notransaction){
     $fichierencours = fopen($cheminfichier."ann".$notransaction.".json", 'r');
     $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
     list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var48 == "\"".$nodemandeur."\"\n"){ return "PANN - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà annulée par vous
-    return "TEST - ".$var48."  \"".$nodemandeur."\"\n";
+    if ($var48 == "\"".$nodemandeur."\"\n"){ 
+    return "PANN - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà annulée par vous
     return "TNDI - Cette proposition n'est pas disponible";
   };
   if (file_exists($cheminfichier."exp".$notransaction.".json")) { 
@@ -1156,9 +1156,9 @@ function suivi31jours($cheminfichier, $ancienidtra, $idtra, $solde){
       return $ouvrechemin.$nomfichier;
     };
 
-// renvoie la proposition acceptée
-    function transactionacc($idtra,$contenufichiertra,$dateaccepte,$noaccepteur){
-      $notra = "acc".substr($idtra,3);
+// renvoie la proposition acceptée ou annulée
+    function transactionaccann($prefixe,$idtra,$contenufichiertra,$dateaccepte,$noaccepteur){
+      $notra = $prefixe.substr($idtra,3);
       $acclocal = $contenufichiertra;
       $cherchenotra = "/(".$idtra.")/"; 
       $acclocal = preg_replace( $cherchenotra, $notra , $acclocal);
@@ -1166,21 +1166,6 @@ function suivi31jours($cheminfichier, $ancienidtra, $idtra, $solde){
       $acclocalenphp[$notra][2] = $dateaccepte;
       $acclocalenphp[$notra][3] = $noaccepteur;
       $acclocal = json_encode($acclocalenphp);
-//return "TEST -".$notra."<br>".$idtra;
-      return $acclocal;
-    };
-
-// renvoie la proposition annulée
-    function transactionann($idtra,$contenufichiertra,$dateaccepte,$noproposeur){
-      $notra = "ann".substr($idtra,3);
-      $acclocal = $contenufichiertra;
-      $cherchenotra = "/(".$idtra.")/"; 
-      $acclocal = preg_replace( $cherchenotra, $notra , $acclocal);
-      $acclocalenphp = json_decode($acclocal,true);
-      $acclocalenphp[$notra][2] = $dateaccepte;
-      $acclocalenphp[$notra][3] = $noproposeur;
-      $acclocal = json_encode($acclocalenphp);
-//return "TEST -".$notra."<br>".$idtra;
       return $acclocal;
     };
 
