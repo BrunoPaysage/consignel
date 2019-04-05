@@ -34,6 +34,7 @@ changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaude
 
 /* affiche la proposition dans la page utilisation */
 function actualiselaproposition(dequi="mapropostion"){
+  $("#suiviappli").prepend("actualiselaproposition(dequi) <br>");
   $("#offrechoisi").show();  $("#demandechoisi").show();
   var dansqui = ""; var dansqui2 ="";
   var codeitemchoisi = ""; var itemchoisi = ""; var quantite = 1; var unite = "h"; var consignel = 0; var argent = 0; var mlc = 0; var environnement = 0; var duree = 0; var social = 0; var foisparan = 0; var dureedevie = 0;
@@ -162,11 +163,12 @@ function afficheproposition(ou,id,valeurs,numproposetra){
 
 /* repérage d'un paiement double troc ou d'un simple échange */
 function queltypetroc(notransaction){
-var noact= notransaction;
-var typetroc = "doubletroc";
-var listepaiement = constante("paiements"); 
-if (listepaiement.indexOf("_"+notransaction+"\"")==-1){typetroc = "simpletroc";};
-return typetroc;
+  $("#suiviappli").prepend("queltypetroc(notransaction) <br>");
+  var noact= notransaction;
+  var typetroc = "doubletroc";
+  var listepaiement = constante("paiements"); 
+  if (listepaiement.indexOf("_"+notransaction+"\"")==-1){typetroc = "simpletroc";};
+  return typetroc;
 }
 
 function aidepropositions(){
@@ -303,6 +305,13 @@ function changegraphsuivi(disponible,unjour,dispomini,dispomaxi){
   var dispo1jour=unjour;
   var dispo14jours=14*unjour;
   var dispo1an=365*unjour;
+  if (dispo1an > constante("maximumcompte") ){ 
+    var dispomax = constante("maximumcompte") ; 
+    dispo=disponible   ;
+    dispo14jours=14*dispomax/365 ;
+    dispo1jour=dispomax/365 ;
+    dispo1an=dispomax ;
+  };
   var dispomin=0; 
   var pxmin=0; var pxmax=300; 
   var pxgauche=pxmin+(1-(dispo1an-dispo)/(dispo1an-dispomin))*(pxmax-pxmin); 
@@ -382,7 +391,6 @@ function changeClass(elem, className1,className2){
 elem.className = (elem.className == className1)?className2:className1; 
 }
 
-
 /* change la liste des autocomplete */
 function changedeliste(quelinput, queldiv){
   var codeutilisateur = codequiutilise();
@@ -433,8 +441,6 @@ function changelesid(numid){
   supprimediv("#"+ancienid); 
   /* vérification si des valeurs sont connues */
   var tabref=refdevaleur("e"+codechoisi);
-
-
   if (!tabref){ 
     /* inconnu dans les références *//* crée le nouveau div ("pas reconnu"); */
     /*si c,est le nom qu'on change utiliser les valeurs précédentes sinon */
@@ -1472,7 +1478,7 @@ $("#confirmationacceptetransaction div").hide();
 $("#acceptetransactionstatut").show();
 if(menutra == "matransaction"){$("#confirmationacceptetransaction .matransaction").show();};
 if(menutra == "matransactionfermee"){$("#confirmationacceptetransaction .matransaction").show(); $("#acceptetransactionannuler").hide(); };
-if(menutra == "pasmatransaction"){$("#confirmationacceptetransaction .pasmatransaction").show();};
+if(menutra == "pasmatransaction"){$("#confirmationacceptetransaction .pasmatransaction ").show(); $("#confirmationacceptetransaction .pasmatransaction button").show(); };
 if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasmatransaction").show();  $("#acceptetransactionoui").hide();  $("#acceptetransactionnon").hide(); };
 if(menutra == "attente"){$('#confirmationacceptetransaction').attr("class","attente");};
 };
@@ -2167,7 +2173,8 @@ if($nom == "scp"){ return "consignel-scp/"; };
 if($nom == "minimumviable"){ return 15; }; /* salaire horaire minimum pour la viabilité durable (Montérégie 2018) */
 if($nom == "valrefenviro"){ return 1.88; }; /* valeur absolue environnementale de la région pour 1 $, 1 mlc ou 1 ↺ */
 if($nom == "coefsalairemoyen"){ return 2; }; /* calcul du salaire moyen par rapport au minimumviable*/
-if($nom == "coefsalaireindecent"){ return 20; }; /* calcul du salaire maximum accpetable*/
+if($nom == "coefsalaireindecent"){ return 20; }; /* calcul du salaire maximum accepetable*/
+if($nom == "maximumcompte"){ return 54600; }; /* maximum d'accumulation du compte */
 if($nom == "coefgainenvironnement"){ return 1.1; };  /* gain environnemental 10% */
 
 };
