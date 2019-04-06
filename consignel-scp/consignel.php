@@ -276,7 +276,7 @@ function acceptetransaction($var3,$notransaction){
   $minimax = suivi31jours($cheminfichier, $nojourancien, $nojour, $nouveausoldeconsignel);
   // Mise à jour du fichier  gain365jours dans la base de l'accepteur
   $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-gain365jours.json");
-  $revenujournalier = gains365jours($cheminfichier, $nojourancien, $nojour, $consigneldemande + $consigneldemandepaiement, $anciennete);
+  $revenujournalier = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldemande + $consigneldemandepaiement, $anciennete);
   // Mise à jour du fichier -resume.json dans la base de l'accepteur
   $nouveauresumeacc = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
   $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-resume.json");
@@ -316,8 +316,7 @@ function acceptetransaction($var3,$notransaction){
   $minimaxproposeur = suivi31jours($cheminfichier, $nojourancien, $nojour, $nouveausoldeconsignelproposeur);
   // Mise à jour du fichier  gain365jours dans la base du proposeur
   $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-gain365jours.json");
-//  $revenujournalierproposeur = gain365jours($cheminfichier, $idtraprecedenteproposeur, $idtra, $consigneldacoffre + $consigneloffrepaiement, $ancienneteproposeur);
-  $revenujournalierproposeur = gain365joursb($cheminfichier, $nojourancien, $nojour, $consigneldacoffre + $consigneloffrepaiement, $ancienneteproposeur);
+  $revenujournalierproposeur = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldacoffre + $consigneloffrepaiement, $ancienneteproposeur);
   // Mise à jour du fichier -resume.json dans la base du proposeur
   $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1];
   $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-resume.json");
@@ -722,7 +721,7 @@ function fichierperso($var3,$nomfichier){
 };
 
 // garde trace des gains et  retourne le montant journalier pour la durée demandée
-function gains365jours($cheminfichier, $numancienjour, $numnouveaujour, $gain, $duree=365){
+function gain365jours($cheminfichier, $numancienjour, $numnouveaujour, $gain, $duree=365){
   $fichier = $cheminfichier;
   $ancienjour = $numancienjour;
   $nouveaujour = $numnouveaujour;
@@ -748,7 +747,7 @@ function gains365jours($cheminfichier, $numancienjour, $numnouveaujour, $gain, $
   $gainjson = cryptepourstockage(json_encode($gainconsignel));
   file_put_contents($fichier, $gainjson);
   $revenuconsignel = round(array_sum( $gainconsignel )/$duree,2); 
-  if(!$gainconsignel){(int)$revenuconsignel=10;}; 
+  if( (!$gainconsignel) || ($revenuconsignel <10 ) ){(int)$revenuconsignel=10;}; 
   return $revenuconsignel;
 };
 
@@ -919,7 +918,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $minimax = suivi31jours($cheminfichier, $nojourancien, $nojour, $nouveausoldeconsignel);
   // vérifier si et comment on met à jour les gains dans la proposition
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-gain365jours.json");
-  $revenujournalier = gains365jours($cheminfichier, $nojourancien, $nojour, $consigneloffre+$consigneloffrepaiement, $anciennete);
+  $revenujournalier = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneloffre+$consigneloffrepaiement, $anciennete);
   // vérifier le gain 365jours
   
   // met à jour le résumé de compte
@@ -1022,8 +1021,6 @@ function resumecompte($var3){
     $resumeducompte = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
     fclose($fichierencours); // fermeture du fichier
   }else{
-    // $resumeducompte = "182.5,10,0,365"; // utilisateur connu ouverture du compte
-    // amélioration à faire retrouver le résumé du compte 
     // ouvrir avec le compte initial
       $resumeducompte = constante("ouverturecompte");
     //    ajouteaufichier($cheminfichier, $resumeducompte);
@@ -1057,7 +1054,7 @@ function suivi31jours($cheminfichier, $numancienjour, $numnouveaujour, $solde){
       if($key > $nouveaujour){ 
         if($key < 365-30+$nouveaujour){ unset($gainconsignel[$key]);  };
       };
-    }; 
+    };
   };
   $gainjson = cryptepourstockage(json_encode($gainconsignel));
   file_put_contents($fichier, $gainjson);
