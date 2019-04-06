@@ -1172,7 +1172,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "ADAC":
         $("#acceptetransactionstatut").html("J'ai déja accepté cette proposition");
-        menudetailproposition(""); affichedetailproposition(contenuretour,""); 
+        menudetailproposition("pasmatransactionfermee"); affichedetailproposition(contenuretour,""); 
         break; 
         case "PACC":
         responseTxt = responseTxt.substring(7);
@@ -1221,6 +1221,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "PEXP":
         $("#acceptetransactionstatut").html("Ma proposition est expirée");
         menudetailproposition("matransactionfermee"); affichedetailproposition(responseTxt,"matransaction"); 
+        break; 
+        case "AEXP":
+        $("#acceptetransactionstatut").html("Cette proposition est expirée");
+        menudetailproposition("pasmatransactionfermee"); affichedetailproposition(contenuretour,""); 
         break; 
         case "TNDI":
         $("#acceptetransactionstatut").html("Proposition non disponible"); propositionrefusee(contenuretour);

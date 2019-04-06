@@ -642,6 +642,11 @@ function dernieretat($codecompte){
   return $compilecompte;
 };
 
+// Inscription du fichier d'expiration à développer
+function expire($demandeur,$notransaction){
+// s'appuyer sur la fonction annulation qui lui ressemble mais nom de fichier différent et utilisateur 0 au lieu du proposeur
+};
+
 // Renvoi le contenu du fichier
 function fichierperso($var3,$nomfichier){
   $identifiantlocal=$var3; 
@@ -1077,8 +1082,8 @@ function transactionstatut($demandeur, $notransaction){
   $nodemandeur = $demandeur; 
   $idtra = "tra".$notransaction; 
   $cheminfichier = testelechemin($idtra); // chemin dans base2 par date
-  // l'orde des tests est important
   $debut = "";
+  // l'orde des tests est important
   if (file_exists($cheminfichier."acc".$notransaction.".json")) { 
     $fichierencours = fopen($cheminfichier."acc".$notransaction.".json", 'r');
     $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
@@ -1120,9 +1125,10 @@ function transactionstatut($demandeur, $notransaction){
           // vérifier et faire le traitement d'expiration avant de renvoyer PEXP il y a un problème dans la mise à jour des fichiers
           if ($expiration == "pasexpire"){ return "PACT - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition active
         }else{
-            $testdestinataire = testdestinataire($var45,$nodemandeur);
-          if ($testdestinataire == "autorise"){ return "DTAO - ".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
+          $testdestinataire = testdestinataire($var45,$nodemandeur);
           if ($testdestinataire == "nonautorise"){ return "TNDI - Cette proposition n'est pas disponible "; }; // Cette proposition n'est pas disponible
+          if ($expiration == "expire"){ expire($demandeur,$notransaction) ;return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // La proposition est expirée 
+          if ($testdestinataire == "autorise"){ return "DTAO - ".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
         };
       }; // fin de transaction trouvée
     }; // fin du while
