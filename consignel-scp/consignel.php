@@ -461,65 +461,6 @@ function annuleproposition($var3,$notransaction){
   return "TNDI - Cette proposition n'est pas disponible";
 }; // fin d'anulation de la transaction
 
-
-// retourne le statut de la transaction TACC PANN PEXP TRAP TNDI ... sans vérification complémentaire
-function transactionstatut($demandeur, $notransaction){
-  $nodemandeur = $demandeur; 
-  $idtra = "tra".$notransaction; 
-  $cheminfichier = testelechemin($idtra); // chemin dans base2 par date
-  // l'orde des tests est important
-  $debut = "";
-  if (file_exists($cheminfichier."acc".$notransaction.".json")) { 
-    $fichierencours = fopen($cheminfichier."acc".$notransaction.".json", 'r');
-    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
-    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var48 == "\"".$nodemandeur."\"\n"){ return "ADAC - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà acceptée par vous
-    if ($var45 == "\"".$nodemandeur."\""){ return "PACC - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition faite par vous a déjà été acceptée
-    return "TNDI - Cette proposition n'est pas disponible";
-  };
-  if (file_exists($cheminfichier."ann".$notransaction.".json")) { 
-    $fichierencours = fopen($cheminfichier."ann".$notransaction.".json", 'r');
-    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
-    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var48 == "\"".$nodemandeur."\"\n"){ 
-    return "PANN - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà annulée par vous
-    return "TNDI - Cette proposition n'est pas disponible";
-  };
-  if (file_exists($cheminfichier."exp".$notransaction.".json")) { 
-    $fichierencours = fopen($cheminfichier."exp".$notransaction.".json", 'r');
-    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
-    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var48 == "\"".$nodemandeur."\"\n"){ return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition de votre part expirée sans être acceptée
-    return "TNDI - Cette proposition n'est pas disponible";
-  };
-  if (file_exists($cheminfichier.substr($idtra,0,14)."-suivi.json")) { 
-    // Vérifications dans le fichier -suivi.json proposition de qui pour qui
-    // manque vérification plusieurs fois la même ligne DTAP - plusieurs auteurs même propostion
-  $ligneexiste = FALSE;
-  $fichierencours = fopen($cheminfichier.substr($idtra,0,14)."-suivi.json", 'r');
-  while (!feof($fichierencours) && !$ligneexiste) {
-    $ligne = decryptelestockage(fgets($fichierencours, 1024));
-    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var41 == "\"".$idtra."\""){
-$memetransaction = TRUE; // transaction trouvée
-$ligneexiste = TRUE;
-$expiration = testeexpiration($var41,$var46);
-if ($var48 == "\"".$nodemandeur."\"\n"){ 
-if ($expiration == "expire"){ return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition expirée 
-// vérifier et faire le traitement d'expiration avant de renvoyer PEXP il y a un problème dans la mise à jour des fichiers
-if ($expiration == "pasexpire"){ return "PACT - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition active
-}else{
-  $testdestinataire = testdestinataire($var45,$nodemandeur);
-if ($testdestinataire == "autorise"){ return "DTAO - ".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
-if ($testdestinataire == "nonautorise"){ return "TNDI - Cette proposition n'est pas disponible "; }; // Cette proposition n'est pas disponible
-};
-}; // fin de transaction trouvée
-}; // fin du while
-
-};
-return "TRIN - Transaction inconnue";
-};
-
 // nettoie les entrées texte qui doivent avoir un format json et ne pas poser de problème javascript
 function antitagnb($entree){
   if(($entree=="undefined") || ($entree=="")){
@@ -1129,6 +1070,64 @@ function transactionaccann($prefixe,$idtra,$contenufichiertra,$dateaccepte,$noac
   $acclocalenphp[$notra][3] = $noaccepteur;
   $acclocal = json_encode($acclocalenphp);
   return $acclocal;
+};
+
+// retourne le statut de la transaction ADAC - PACC - PANN - PEXP - AEXP - PACT - DTAO - TNDI ... sans vérification complémentaire
+function transactionstatut($demandeur, $notransaction){
+  $nodemandeur = $demandeur; 
+  $idtra = "tra".$notransaction; 
+  $cheminfichier = testelechemin($idtra); // chemin dans base2 par date
+  // l'orde des tests est important
+  $debut = "";
+  if (file_exists($cheminfichier."acc".$notransaction.".json")) { 
+    $fichierencours = fopen($cheminfichier."acc".$notransaction.".json", 'r');
+    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
+    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+    if ($var48 == "\"".$nodemandeur."\"\n"){ return "ADAC - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà acceptée par vous
+    if ($var45 == "\"".$nodemandeur."\""){ return "PACC - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition faite par vous a déjà été acceptée
+    return "TNDI - Cette proposition n'est pas disponible";
+  }; // ADAC - PACC - TNDI
+  if (file_exists($cheminfichier."ann".$notransaction.".json")) { 
+    $fichierencours = fopen($cheminfichier."ann".$notransaction.".json", 'r');
+    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
+    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+    if ($var48 == "\"".$nodemandeur."\"\n"){ return "PANN - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà annulée par vous
+    return "TNDI - Cette proposition n'est pas disponible";
+  }; // PANN - TNDI -
+  if (file_exists($cheminfichier."exp".$notransaction.".json")) { 
+    $fichierencours = fopen($cheminfichier."exp".$notransaction.".json", 'r');
+    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
+    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+    if ($var48 == "\"".$nodemandeur."\"\n"){ return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition de votre part expirée sans être acceptée
+    if ($var45 == "\"".$nodemandeur."\""){ return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition est expirée
+    if ($var45 == "\"0\""){ return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition est expirée
+    return "TNDI - Cette proposition n'est pas disponible";
+  }; // PEXP - AEXP - TNDI -
+  if (file_exists($cheminfichier.substr($idtra,0,14)."-suivi.json")) { 
+    // Vérifications dans le fichier -suivi.json proposition de qui pour qui
+    // manque vérification plusieurs fois la même ligne DTAP - plusieurs fois même propostion
+    $ligneexiste = FALSE;
+    $fichierencours = fopen($cheminfichier.substr($idtra,0,14)."-suivi.json", 'r');
+    while (!feof($fichierencours) && !$ligneexiste) {
+      $ligne = decryptelestockage(fgets($fichierencours, 1024));
+      list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+      if ($var41 == "\"".$idtra."\""){
+        $memetransaction = TRUE; // transaction trouvée
+        $ligneexiste = TRUE;
+        $expiration = testeexpiration($var41,$var46);
+        if ($var48 == "\"".$nodemandeur."\"\n"){ 
+          if ($expiration == "expire"){ expire($demandeur,$notransaction) ;return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition expirée 
+          // vérifier et faire le traitement d'expiration avant de renvoyer PEXP il y a un problème dans la mise à jour des fichiers
+          if ($expiration == "pasexpire"){ return "PACT - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition active
+        }else{
+            $testdestinataire = testdestinataire($var45,$nodemandeur);
+          if ($testdestinataire == "autorise"){ return "DTAO - ".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
+          if ($testdestinataire == "nonautorise"){ return "TNDI - Cette proposition n'est pas disponible "; }; // Cette proposition n'est pas disponible
+        };
+      }; // fin de transaction trouvée
+    }; // fin du while
+  }; // PEXP - PACT - DTAO - TNDI
+  return "TRIN - Transaction inconnue";
 };
 
 // retourne doubletroc = achat ou vente de monnaie; simple troc = troc ou achat ou vente de produits
