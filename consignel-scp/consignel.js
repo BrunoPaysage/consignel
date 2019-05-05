@@ -724,10 +724,15 @@ var utilisateur = codequiutilise(); if (utilisateur == "u0 "){effacelentete();};
 cachetout(); $('.utilisation').show(); $('#suiviappli').prepend('clic menu ----- utilisation <br>'); $('#inputactivite').focus();
 };
 
-/* click menu confirmatin */
+/* click menu confirmation */
 function clicmenuconfirmation(){
-var utilisateur = codequiutilise(); if (utilisateur == "u0 "){effacelentete();};
-cachetout(); $('.confirmation').show(); $('#suiviappli').prepend('clic menu ----- confirmation <br>'); $('#confirmationinputcode').focus(); 
+var utilisateur = codequiutilise(); 
+if (utilisateur == "u0 "){effacelentete();};
+cachetout(); 
+$('.confirmation').show(); 
+$("#confirmationokinputcode").click();
+$('#suiviappli').prepend('clic menu ----- confirmation <br>'); 
+$('#confirmationinputcode').focus(); 
 };
 
 /* click menu préférences */
@@ -1133,7 +1138,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
         break;
         case "PDEN":
-        alert("Présentez le code qr"); //ne rien faire proposition déjà enregistrée
+        alert("Présentez le code qr"); $("#acceptetransactionstatut").html("");//ne rien faire proposition déjà enregistrée
         break;
         case "TACC":
         $("#acceptetransactionstatut").html("Transaction acceptée");
@@ -1480,7 +1485,7 @@ var menutra = menutransaction;
 $('#confirmationacceptetransaction').attr("class","actif"); 
 $("#confirmationacceptetransaction div").hide();
 $("#acceptetransactionstatut").show();
-if(menutra == "matransaction"){$("#confirmationacceptetransaction .matransaction").show();};
+if(menutra == "matransaction"){$("#confirmationacceptetransaction .matransaction").show(); $("#confirmationacceptetransaction .matransaction button").show(); };
 if(menutra == "matransactionfermee"){$("#confirmationacceptetransaction .matransaction").show(); $("#acceptetransactionannuler").hide(); };
 if(menutra == "pasmatransaction"){$("#confirmationacceptetransaction .pasmatransaction ").show(); $("#confirmationacceptetransaction .pasmatransaction button").show(); };
 if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasmatransaction").show();  $("#acceptetransactionoui").hide();  $("#acceptetransactionnon").hide(); };

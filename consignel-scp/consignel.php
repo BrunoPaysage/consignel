@@ -156,6 +156,9 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
 // accepte la proposition de transaction
 function acceptetransaction($var3,$notransaction){
   $noaccepteur = $var3; 
+  $demandeur = $var3;
+  $statuttransaction = transactionstatut($demandeur, $notransaction);
+  $debut = substr($statuttransaction,0,4);
   $idtra = "tra".$notransaction; 
   $nomfichiertra = "tra".$notransaction.".json"; 
   $idtraacc = "acc".$notransaction; 
@@ -163,172 +166,143 @@ function acceptetransaction($var3,$notransaction){
   $nomfichierann = "ann".$notransaction.".json"; 
   $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
   // vérification préliminaires
-  // cherche si la transsaction a été annulée
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
-  if (file_exists($cheminfichier.$nomfichierann)) {
-    return "PANN - Cette proposition n'est pas disponible";
-  };
-  // cherche si la transaction a déjà été acceptée
-  if (file_exists($cheminfichier.$nomfichieracc)) {
-    $fichierencours = fopen($cheminfichier.$nomfichieracc, 'r');
+  $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
+  $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
+  while (!feof($fichierencours) && !$ligneexiste) { // cherche dans les lignes
     $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
-    list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var48 == "\"".$noaccepteur."\"\n"){
-      return "TDAC - Proposition déjà acceptée par vous";
+    list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
+    if ($var31 == "\"".$idtra."\""){
+       $ligneexiste = TRUE;
+    }; // Fin de transaction trouvée
+  }; // Fin de while cherche dans les lignes
+
+  if($debut=="DTAO"){
+    // vérifications complémentaires avant d'enregistrer la transaction
+    $resumecpt = resumecompte($var3); 
+    $derniercompte = explode( ',', $resumecpt );
+    $soldeconsigneldisponible = $derniercompte[0];
+    $soldeconsignelparjour = $derniercompte[2];
+    if($soldeconsignelparjour =="INF"){$soldeconsignelparjour = 10;}; // à faire remplacer par variable inscription
+    
+    // récupération du contenu de la transaction
+    if (file_exists($cheminfichier.$nomfichiertra)) {
+      $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
     }else{
-      return "TNDI - Cette proposition n'est pas disponible";
+      return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
     };
-  };
-  // cherche si la proposition existe et peut être acceptée par le demandeur
-  if (file_exists($cheminfichier.$nomfichiersuivi)) { // vérification que la proposition existe
-    $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
-    $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
-    while (!feof($fichierencours) && !$ligneexiste) { // cherche dans les lignes
-      $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
-      list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
-      if ($var31 == "\"".$idtra."\""){
-        $memetransaction = TRUE; // transaction trouvée
-        $ligneexiste = TRUE;
-        $var3chaine = "\"".$noaccepteur."\"\n"; // attention au " et à la fin de ligne
-        if ($var38 == $var3chaine){ 
-          return "TREF - PACT - C'est ma proposition ";  
-        }else{ 
-          if(testeexpiration($var31,$var36) == "expire"){
-            return "AEXP - Proposition expirée"; 
-          }else{
-            if( testdestinataire($var35,$var3chaine) == "autorise"){
-              // vérification disponibilité de consignel et du flux autorisé
-            }else{
-              return "TRIN - Transaction inconnue erreur destinataire " ;// destinataire non autorisé ;
-            };
-          }; // fin de trouvée d'un autre non expiré
-        }; // fin de proposition trouvée et proposition d'un autre
-      }else{
-        $memetransaction = FALSE; // transaction non trouvée
-      }; 
-    }; // Fin de while cherche dans les lignes
-  }else{
-    return "DTMR - Vérifiez le numéro de la proposition"; // le fichier n'existe pas
-  };
-  // vérifications complémentaires avant d'enregistrer la transaction
-  $resumecpt = resumecompte($var3); 
-  $derniercompte = explode( ',', $resumecpt );
-  $soldeconsigneldisponible = $derniercompte[0];
-  $soldeconsignelparjour = $derniercompte[2];
-  if($soldeconsignelparjour =="INF"){$soldeconsignelparjour = 10;}; // à faire remplacer par variable inscription
-  
-  // récupération du contenu de la transaction
-  if (file_exists($cheminfichier.$nomfichiertra)) {
-    $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
-  }else{
-    return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
-  };
-  $jsonenphp = json_decode($contenufichiertra,true);
-  if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
-  $consigneldemande = preg_replace( "/\"/", "", $var37); 
-  $paiement = paiement($jsonenphp,$idtra);
-  if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
-  $consigneldemandepaiement = $paiement[1]; // propositions de dons en consignel du proposeur la dépense de l'accepteur  - $paiement[4] est déjà inclue dans le da↺ $consigneldemande 
-  if ((($soldeconsignelparjour * 7) + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = ""; };
-  if (($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = ""; };
-  
-  //$soldemlcdisponible = ; à faire
-  // $mlcdemandepaiement = $paiement[2] - $paiement[5];
-  //  if (($soldemlcdisponible + $mlcdemandepaiement)<0){ echo "solde mlc insuffisant"; $transaction = ""; };
-  
-  // $soldedollardisponible = ;  à faire
-  // $dollardemandepaiement = $paiement[3] - $paiement[6];
-  //  if (($soldedollardisponible + $dollardemandepaiement)<0){ echo "solde dollar insuffisant"; $transaction = ""; };
-  
-  // fin des vérifications et des refus, enregistrement du suivi dans les fichiers
-  // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
-  $dateaccepte = date("Ymd_Hi");
-  $noproposeur = preg_replace( "/\D/", "", $var38);
-  $var38nombre= preg_replace( "/\D/", "", $var38);
-  $var38chaine = "\"".preg_replace( "/\D/", "", $var38)."\"";
-  $transactionsuivi = "\"".$idtraacc."\",".$var33.",".$var32.",\"".$dateaccepte."\",".$var38chaine.",".$var36.",".$var37.",".$var3chaine;
-  ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
-  // ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
-  ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi); 
-  // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
-  $base=constante("base");
-  $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
-  $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
-  ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraacc."\n");
-  // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
-  $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
-  $idtraprecedente = $dernieresidtra[0];
-  $anciennete = $dernieresidtra[4];
-  $nojourancien = $dernieresidtra[8];
-  $nojour = $dernieresidtra[9];
-  // fichier de chainage des transaction bloc à écrire
-  
-  // fonction consignelsuivi renvoie les 2 valeurs de consignel du dac 
-  $consigneldac = consignelsuivi($jsonenphp,$idtra);
-  $consigneldacoffre = $consigneldac[1];
-  $consigneldacdemande = $consigneldac[2];
-  // Calcul nouveau solde accepteur $soldeconsigneldisponible
-  $nouveausoldeconsignel = ($soldeconsigneldisponible + $consigneldemandepaiement + $consigneldacdemande);
-  $maxcompteconsignel = constante("maxcompte");
-  if( $nouveausoldeconsignel > $maxcompteconsignel  ){  $nouveausoldeconsignel = $maxcompteconsignel ; }; // zéro accumulation toxique
-  // Mise à jour du fichier  suivi31jours dans la base de l'accepteur
-  $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suivi31jours.json");
-  $minimax = suivi31jours($cheminfichier, $nojourancien, $nojour, $nouveausoldeconsignel);
-  // Mise à jour du fichier  gain365jours dans la base de l'accepteur
-  $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-gain365jours.json");
-  $revenujournalier = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldemande + $consigneldemandepaiement, $anciennete);
-  // Mise à jour du fichier -resume.json dans la base de l'accepteur
-  $nouveauresumeacc = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
-  $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-resume.json");
-  remplacefichier($cheminfichier, $nouveauresumeacc);
-  // Mise à jour du fichier -suiviresume.json dans la base de l'accepteur
-  $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
-  ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc."\n");
-  // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
-  
-  // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
-  $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$noaccepteur);
-  $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
-  ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveauproacc."\n");
-  // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
-  $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
-  $idtraprecedenteproposeur = $dernieresidtra[0];
-  $ancienneteproposeur = $dernieresidtra[4];
-  $nojourancien = $dernieresidtra[8];
-  $nojour = $dernieresidtra[9];
-  // fichier de chainage des transaction bloc à écrire
-  
-  // Calcul nouveau solde proposeur $soldeconsigneldisponibleproposeur
-  $resumecptproposeur = resumecompte($noproposeur); 
-  $derniercompteproposeur = explode( ',', $resumecptproposeur );
-  $soldeconsigneldisponibleproposeur = $derniercompteproposeur[0];
-  $soldeconsignelparjourproposeur = $derniercompteproposeur[2];
-  
-  //   $paiement = paiement($jsonenphp,$idtra); déjà fait  
-  $consigneloffrepaiement = $paiement[4] ; // dons en consignel de l'accepteur - les dons du proposeur- $paiement[1] ont déjà été comptés dans le da↺. 
-  if($consigneloffrepaiement < 0){$consigneloffrepaiement = 0;}; //déjà déduit si négatif
-  
-  if($consigneldacoffre < 0){$consigneldacoffre = 0;}; //déjà déduit si négatif
-  $nouveausoldeconsignelproposeur = ($soldeconsigneldisponibleproposeur + $consigneloffrepaiement + $consigneldacoffre);
-  if( $nouveausoldeconsignelproposeur > $maxcompteconsignel  ){ $nouveausoldeconsignelproposeur = $maxcompteconsignel ; }; // zéro accumulation toxique
-  // Mise à jour du fichier  suivi31jours dans la base du proposeur
-  $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-suivi31jours.json");
-  $minimaxproposeur = suivi31jours($cheminfichier, $nojourancien, $nojour, $nouveausoldeconsignelproposeur);
-  // Mise à jour du fichier  gain365jours dans la base du proposeur
-  $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-gain365jours.json");
-  $revenujournalierproposeur = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldacoffre + $consigneloffrepaiement, $ancienneteproposeur);
-  // Mise à jour du fichier -resume.json dans la base du proposeur
-  $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1];
-  $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-resume.json");
-  remplacefichier($cheminfichier, $nouveauresumeaccproposeur);
-  // Mise à jour du fichier -suiviresume.json dans la base du proposeur
-  $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-suiviresume.json");  
-  ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeaccproposeur."\n");
-  // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base du proposeur à faire
-  
-  // renvoi du nouveau résumé de l'accepteur
-  return "TACC - ".$nouveauresumeacc;
+    $jsonenphp = json_decode($contenufichiertra,true);
+    if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
+    
+    $consigneldemande = preg_replace( "/\"/", "", $var37); 
+    $paiement = paiement($jsonenphp,$idtra);
+    if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
+    $consigneldemandepaiement = $paiement[1]; // propositions de dons en consignel du proposeur la dépense de l'accepteur  - $paiement[4] est déjà inclue dans le da↺ $consigneldemande 
+    if ((($soldeconsignelparjour * 7) + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = ""; };
+    if (($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = ""; };
+    
+    //$soldemlcdisponible = ; à faire
+    // $mlcdemandepaiement = $paiement[2] - $paiement[5];
+    //  if (($soldemlcdisponible + $mlcdemandepaiement)<0){ echo "solde mlc insuffisant"; $transaction = ""; };
+    
+    // $soldedollardisponible = ;  à faire
+    // $dollardemandepaiement = $paiement[3] - $paiement[6];
+    //  if (($soldedollardisponible + $dollardemandepaiement)<0){ echo "solde dollar insuffisant"; $transaction = ""; };
+    
+    // fin des vérifications et des refus, enregistrement du suivi dans les fichiers
+    // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
+    $dateaccepte = date("Ymd_Hi");
+    $noproposeur = preg_replace( "/\D/", "", $var38);
+    $var38nombre= preg_replace( "/\D/", "", $var38);
+    $var38chaine = "\"".preg_replace( "/\D/", "", $var38)."\"";
+    $transactionsuivi = "\"".$idtraacc."\",".$var33.",".$var32.",\"".$dateaccepte."\",".$var38chaine.",".$var36.",".$var37.",".$var3chaine;
+    ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
+    // ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
+    ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi); 
+    // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
+    $base=constante("base");
+     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
+    $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
+   ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraacc."\n");
+    // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
+    $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
+    $idtraprecedente = $dernieresidtra[0];
+    $anciennete = $dernieresidtra[4];
+    $nojourancien = $dernieresidtra[8];
+    $nojour = $dernieresidtra[9];
+    // fichier de chainage des transaction bloc à écrire
+    
+    // fonction consignelsuivi renvoie les 2 valeurs de consignel du dac 
+    $consigneldac = consignelsuivi($jsonenphp,$idtra);
+    $consigneldacoffre = $consigneldac[1];
+    $consigneldacdemande = $consigneldac[2];
+    // Calcul nouveau solde accepteur $soldeconsigneldisponible
+    $nouveausoldeconsignel = ($soldeconsigneldisponible + $consigneldemandepaiement + $consigneldacdemande);
+    $maxcompteconsignel = constante("maxcompte");
+    if( $nouveausoldeconsignel > $maxcompteconsignel  ){  $nouveausoldeconsignel = $maxcompteconsignel ; }; // zéro accumulation toxique
+    // Mise à jour du fichier  suivi31jours dans la base de l'accepteur
+    $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suivi31jours.json");
+    $minimax = suivi31jours($cheminfichier, $nojourancien, $nojour, $nouveausoldeconsignel);
+    // Mise à jour du fichier  gain365jours dans la base de l'accepteur
+    $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-gain365jours.json");
+    $revenujournalier = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldemande + $consigneldemandepaiement, $anciennete);
+    // Mise à jour du fichier -resume.json dans la base de l'accepteur
+    $nouveauresumeacc = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
+    $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-resume.json");
+    remplacefichier($cheminfichier, $nouveauresumeacc);
+    // Mise à jour du fichier -suiviresume.json dans la base de l'accepteur
+    $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
+    ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc."\n");
+    // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
+    
+    // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
+    $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$noaccepteur);
+    $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
+    ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveauproacc."\n");
+    // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
+    $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
+    $idtraprecedenteproposeur = $dernieresidtra[0];
+    $ancienneteproposeur = $dernieresidtra[4];
+    $nojourancien = $dernieresidtra[8];
+    $nojour = $dernieresidtra[9];
+    // fichier de chainage des transaction bloc à écrire
+    
+    // Calcul nouveau solde proposeur $soldeconsigneldisponibleproposeur
+    $resumecptproposeur = resumecompte($noproposeur); 
+    $derniercompteproposeur = explode( ',', $resumecptproposeur );
+    $soldeconsigneldisponibleproposeur = $derniercompteproposeur[0];
+    $soldeconsignelparjourproposeur = $derniercompteproposeur[2];
+    
+    //   $paiement = paiement($jsonenphp,$idtra); déjà fait  
+    $consigneloffrepaiement = $paiement[4] ; // dons en consignel de l'accepteur - les dons du proposeur- $paiement[1] ont déjà été comptés dans le da↺. 
+    if($consigneloffrepaiement < 0){$consigneloffrepaiement = 0;}; //déjà déduit si négatif
+    
+    if($consigneldacoffre < 0){$consigneldacoffre = 0;}; //déjà déduit si négatif
+    $nouveausoldeconsignelproposeur = ($soldeconsigneldisponibleproposeur + $consigneloffrepaiement + $consigneldacoffre);
+    if( $nouveausoldeconsignelproposeur > $maxcompteconsignel  ){ $nouveausoldeconsignelproposeur = $maxcompteconsignel ; }; // zéro accumulation toxique
+    // Mise à jour du fichier  suivi31jours dans la base du proposeur
+    $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-suivi31jours.json");
+    $minimaxproposeur = suivi31jours($cheminfichier, $nojourancien, $nojour, $nouveausoldeconsignelproposeur);
+    // Mise à jour du fichier  gain365jours dans la base du proposeur
+    $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-gain365jours.json");
+    $revenujournalierproposeur = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldacoffre + $consigneloffrepaiement, $ancienneteproposeur);
+    // Mise à jour du fichier -resume.json dans la base du proposeur
+    $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1];
+    $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-resume.json");
+    remplacefichier($cheminfichier, $nouveauresumeaccproposeur);
+    // Mise à jour du fichier -suiviresume.json dans la base du proposeur
+    $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-suiviresume.json");  
+    ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeaccproposeur."\n");
+    // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base du proposeur à faire
+    
+    // renvoi du nouveau résumé de l'accepteur
+    return "TACC - ".$nouveauresumeacc;
+
+  }
+  else
+  {return "TEST - Proposition innacceptable pas possible d,accepter ".$debut;};
 };
+
 
 // ajoute au fichier le chemin doit exister la chaine fichier doit inclure son retour chariot
 function ajouteaufichier($cheminfichierinclu, $chainefichier){
@@ -382,20 +356,22 @@ function ajoutelesconnexions($cheminfich2,$chainecontenu) {
 }
 
 // annule une transaction 
-function annuleproposition($var3,$notransaction){
+function annuleproposition($var3,$notransaction,$prefixe="ann"){
   $demandeur = $var3;
   $statuttransaction = transactionstatut($demandeur, $notransaction);
   $statut = substr($statuttransaction,0,4);
+  $annexp = $prefixe;
   If ($statut == "PACT"){ 
     // Ce code autorise l'annulation de la transaction la ligne du fichier suivi suit au 7e caractère
     $idtra = "tra".$notransaction; // chemin du dossier par date
     $cheminfichier = testelechemin($idtra); // chemin dans base2 par date
     $nomfichiertra = "tra".$notransaction.".json";
-    $idtraann = "ann".$notransaction; 
-    $nomfichierann = "ann".$notransaction.".json";
+    $idtraann = $annexp.$notransaction; 
+    $nomfichierann = $annexp.$notransaction.".json";
     $contenufichiertra = substr($statuttransaction ,7); // transaction transférée par statuttransaction
     $jsonenphp = json_decode($contenufichiertra,true);
-    if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition";  };         $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
+    if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition";  };         
+    $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
     if (file_exists($cheminfichier.substr($idtra,0,14)."-suivi.json")) {
       $ligneexiste = FALSE;
       $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r');
@@ -422,13 +398,13 @@ function annuleproposition($var3,$notransaction){
     $nouveausolde = $soldeconsigneldisponible + $consigne;
     
     // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
-    $transactionsuivi = "\"ann".$notransaction."\",".$var32.",".$var33.",\"".$dateaccepte."\",".$demandeurchaine.",".$var36.",".$var37.",".$var38;
+    $transactionsuivi = "\"".$annexp.$notransaction."\",".$var32.",".$var33.",\"".$dateaccepte."\",".$demandeurchaine.",".$var36.",".$var37.",".$var38;
     ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
     // ajout fichier annxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
     ajouteaufichier($cheminfichier.$nomfichierann, $transactionsuivi); 
     // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
     $base=constante("base");
-    $nouveautraann = transactionaccann("ann",$idtra,$contenufichiertra,$dateaccepte,$demandeur);
+    $nouveautraann = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,$demandeur);
     $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); 
     ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraann."\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
@@ -511,66 +487,6 @@ function cherchetransaction($var3,$notransaction){
 // debut  == "TRIN - " Transaction inconnue" ; }; // Transaction inconnue
 // debut  == "TNDI - " Cette proposition n'est pas disponible " ; };
   return $statuttransaction;
-
-  $notransactionlocal = "tra".$notransaction;
-//  $cheminfichier = ouvrelechemin($notransactionlocal);
-  $cheminfichier = testelechemin($notransactionlocal);
-  $nomfichier = substr($notransactionlocal,0,14)."-suivi.json";
-  if (file_exists($cheminfichier.$nomfichier)) {
-    $transactionsuivi = $notransactionlocal;
-$autretesteur = FALSE; // Testeur de truc spécial trouvé dans la ligne
-$fichierencours = fopen($cheminfichier.$nomfichier, 'r'); // ouverture en lecture
-$nbauteurstra = 0; // initialise le nombre d'auteurs ayant fait la même transaction
-while (!feof($fichierencours)) { // cherche dans les lignes
-$ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
-list($var21, $var22, $var23, $var24, $var25, $var26, $var27, $var28) = explode(",", $ligne);
-if ($var21 == "\"".$notransactionlocal."\""){$memetransaction = TRUE;}else{$memetransaction = FALSE;}; 
-$var3chaine = "\"".$var3."\"\n"; // attention au " et à la fin de ligne
-if ($var28 == $var3chaine){$memeauteur = TRUE;}else{$memeauteur = FALSE;};
-if ($memetransaction == TRUE){ // transaction existe
-  if( (testdestinataire($var25,$var3chaine) == "autorise")||( $memeauteur == TRUE)){
-    $notetra = "oui";
-  }else{
-    $notetra = "non";  
-return "TRIN - Transaction inconnue erreur destinataire " ;// destinataire non autorisé
-};
-
-$nbauteurstra = $nbauteurstra + 1;
-if ($memeauteur == TRUE) { // trouvé identique
-  if ($nbauteurstra == 1){
-// PACT ma proposition active PEXP ma proposition exiprée PACC ma proposition acceptée PANN ma proposition annulée
-    $expiration = testeexpiration($var21,$var26);
-if ($expiration == "expire"){ $debut= "PEXP - "; }; // C'est ma proposition expirée
-$debut="PACT - ";
-}else{
-  if("\"acc".substr($var21,4)==$var21){ $debut= "PACC - ";};
-  if("\"ann".substr($var21,4)==$var21){ $debut= "PANN - ";};
-  $debut="DTAP - ";
-};
-// $nomfichier2 = $notransactionlocal.".json";
-$nomfichier2 = $notransactionlocal.".json";
-$fichierencours2 = fopen($cheminfichier.$nomfichier2, 'r');
-$ligne2 = decryptelestockage(fgets($fichierencours2, 1024)); // ligne par ligne
-$contenutransaction = $debut.$ligne2;
-}else{
-if ($nbauteurstra == 1){$debut="DTBR - ";}else{$debut="DTAP - ";}; // pas le même auteur
-$nomfichier2 = $notransactionlocal.".json";
-$fichierencours2 = fopen($cheminfichier.$nomfichier2, 'r');
-$ligne2 = decryptelestockage(fgets($fichierencours2, 1024)); // ligne par ligne
-// besoin de vérifier le disponible ici avant de le mettre dans contenu transaction
-$contenutransaction = $debut.$ligne2;
-};
-};
-}; // Fin de while cherche dans les lignes
-fclose($fichierencours); // fermeture du fichier
-if($contenutransaction == ""){
-  $contenutransaction = "DTMR Transaction inconnue à cette heure à ".$_SERVER['HTTP_HOST'];
-};
-}else{
-//demande transaction mal reçue pas de fichier
-  $contenutransaction = "DTMR pas de transaction à cette date (ou heure) à ".$_SERVER['HTTP_HOST'];
-};
-return $contenutransaction;
 };
 
 // Contenu d'une transaction latransaction = contenutra( "cheminfichier"."traxxxx.json" )
@@ -643,8 +559,13 @@ function dernieretat($codecompte){
 };
 
 // Inscription du fichier d'expiration à développer
-function expire($demandeur,$notransaction){
+function expire($proposeur,$notransaction){
+$numprop = $proposeur;
+$numtra = $notransaction;
 // s'appuyer sur la fonction annulation qui lui ressemble mais nom de fichier différent et utilisateur 0 au lieu du proposeur
+// problème annnule renvoie le résumé
+return "TEST - ".$numprop." expire";
+annuleproposition($numprop,$numtra,$prefixe="exp");
 };
 
 // Renvoi le contenu du fichier
@@ -1116,18 +1037,19 @@ function transactionstatut($demandeur, $notransaction){
     while (!feof($fichierencours) && !$ligneexiste) {
       $ligne = decryptelestockage(fgets($fichierencours, 1024));
       list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+      $proposeur = preg_replace( "/\D/", "", $var48);      
       if ($var41 == "\"".$idtra."\""){
         $memetransaction = TRUE; // transaction trouvée
         $ligneexiste = TRUE;
         $expiration = testeexpiration($var41,$var46);
         if ($var48 == "\"".$nodemandeur."\"\n"){ 
-          if ($expiration == "expire"){ expire($demandeur,$notransaction) ;return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition expirée 
+          if ($expiration == "expire"){ expire($proposeur,$notransaction) ;return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition expirée 
           // vérifier et faire le traitement d'expiration avant de renvoyer PEXP il y a un problème dans la mise à jour des fichiers
           if ($expiration == "pasexpire"){ return "PACT - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition active
         }else{
           $testdestinataire = testdestinataire($var45,$nodemandeur);
           if ($testdestinataire == "nonautorise"){ return "TNDI - Cette proposition n'est pas disponible "; }; // Cette proposition n'est pas disponible
-          if ($expiration == "expire"){ expire($demandeur,$notransaction) ;return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // La proposition est expirée 
+          if ($expiration == "expire"){ expire($proposeur,$notransaction) ;return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // La proposition est expirée 
           if ($testdestinataire == "autorise"){ return "DTAO - ".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
         };
       }; // fin de transaction trouvée
