@@ -303,7 +303,6 @@ function acceptetransaction($var3,$notransaction){
   {return "TEST - Proposition innacceptable pas possible d,accepter ".$debut;};
 };
 
-
 // ajoute au fichier le chemin doit exister la chaine fichier doit inclure son retour chariot
 function ajouteaufichier($cheminfichierinclu, $chainefichier){
   $fichierencours = fopen($cheminfichierinclu, 'a'); 
@@ -358,10 +357,17 @@ function ajoutelesconnexions($cheminfich2,$chainecontenu) {
 // annule une transaction 
 function annuleproposition($var3,$notransaction,$prefixe="ann"){
   $demandeur = $var3;
-  $statuttransaction = transactionstatut($demandeur, $notransaction);
-  $statut = substr($statuttransaction,0,4);
-  $annexp = $prefixe;
-  If ($statut == "PACT"){ 
+  if($prefixe=="ann"){
+    $statuttransaction = transactionstatut($demandeur, $notransaction);
+    $statut = substr($statuttransaction,0,4);
+    $annexp = "ann";
+  }else{
+    $statuttransaction = $prefixe;
+    $statut = substr($statuttransaction,0,4);
+    $annexp = "exp";
+  };
+
+  If (($statut == "PACT")||($statut == "PEXP")||($statut == "AEXP")){ 
     // Ce code autorise l'annulation de la transaction la ligne du fichier suivi suit au 7e caractère
     $idtra = "tra".$notransaction; // chemin du dossier par date
     $cheminfichier = testelechemin($idtra); // chemin dans base2 par date
@@ -393,6 +399,11 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     $dateaccepte = date("Ymd_Hi");
     $demandeur = preg_replace( "/\D/", "", $demandeur);
     $demandeurchaine = "\"".preg_replace( "/\D/", "", $demandeur)."\"";
+    
+    if($statut == "PACT"){ $demandeurchaine = $demandeurchaine; };
+    if($statut == "PEXP"){ $demandeurchaine = $var38; };
+    if($statut == "AEXP"){ $demandeurchaine = $var35; };
+    
     if($compensation[0] == "impact négatif"){ $consigne = -$compensation[1] ; };
     // rembourser le proposeur des dépenses engagées
     $nouveausolde = $soldeconsigneldisponible + $consigne;
@@ -400,7 +411,7 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
     $transactionsuivi = "\"".$annexp.$notransaction."\",".$var32.",".$var33.",\"".$dateaccepte."\",".$demandeurchaine.",".$var36.",".$var37.",".$var38;
     ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
-    // ajout fichier annxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
+    // ajout fichier ann(exp)xxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
     ajouteaufichier($cheminfichier.$nomfichierann, $transactionsuivi); 
     // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
     $base=constante("base");
@@ -427,12 +438,14 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     // Mise à jour du fichier -suiviresume.json dans la base du proposeur
     ajouteaufichier($cheminsansfichier."-suiviresume.json",$idtraann.",".$nouveauresumeann."\n");
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base du proposeur à faire
-    // renvoi du nouveau résumé de l'accepteur
-    return  "DABR - ".$nouveauresumeann; 
+    // renvoi du nouveau résumé du proposeur
+   If ($statut == "PACT"){return  "DABR - ".$nouveauresumeann; };
+   If ($statut == "PEXP"){return  "PEXP - ".$contenufichiertra; };
+   If ($statut == "AEXP"){return  "AEXP - ".$contenufichiertra; };
+
   };
   If ($statut == "PACC"){ return "TEST - impossible déjà acceptée ".$statut; };
   If ($statut == "PANN"){ return "TEST - impossible déjà annulée ".$statut; };
-  If ($statut == "PEXP"){ return "TEST - impossible déjà expirée ".$statut; };
   If ($statut == "ADAC"){ return "TEST - impossible vous avez accepté cette proposition".$statut; };
   return "TNDI - Cette proposition n'est pas disponible";
 }; // fin d'anulation de la transaction
@@ -562,10 +575,7 @@ function dernieretat($codecompte){
 function expire($proposeur,$notransaction){
 $numprop = $proposeur;
 $numtra = $notransaction;
-// s'appuyer sur la fonction annulation qui lui ressemble mais nom de fichier différent et utilisateur 0 au lieu du proposeur
-// problème annnule renvoie le résumé
-return "TEST - ".$numprop." expire";
-annuleproposition($numprop,$numtra,$prefixe="exp");
+// annuleproposition($numprop,$numtra,"exp");
 };
 
 // Renvoi le contenu du fichier
@@ -1042,14 +1052,20 @@ function transactionstatut($demandeur, $notransaction){
         $memetransaction = TRUE; // transaction trouvée
         $ligneexiste = TRUE;
         $expiration = testeexpiration($var41,$var46);
+        $propositionexpire ="";
         if ($var48 == "\"".$nodemandeur."\"\n"){ 
-          if ($expiration == "expire"){ expire($proposeur,$notransaction) ;return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition expirée 
-          // vérifier et faire le traitement d'expiration avant de renvoyer PEXP il y a un problème dans la mise à jour des fichiers
+          if ($expiration == "expire"){ 
+            $propositionexpire = annuleproposition($proposeur,$notransaction,"PEXP - ".contenutra($cheminfichier.$idtra.".json"));
+            return $propositionexpire ; 
+          }; // C'est ma proposition expirée 
           if ($expiration == "pasexpire"){ return "PACT - ".contenutra($cheminfichier.$idtra.".json"); }; // C'est ma proposition active
         }else{
           $testdestinataire = testdestinataire($var45,$nodemandeur);
           if ($testdestinataire == "nonautorise"){ return "TNDI - Cette proposition n'est pas disponible "; }; // Cette proposition n'est pas disponible
-          if ($expiration == "expire"){ expire($proposeur,$notransaction) ;return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // La proposition est expirée 
+          if ($expiration == "expire"){ 
+            $propositionexpire = annuleproposition($proposeur,$notransaction,"AEXP - ".contenutra($cheminfichier.$idtra.".json"));
+            return $propositionexpire ;
+          }; // La proposition est expirée 
           if ($testdestinataire == "autorise"){ return "DTAO - ".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
         };
       }; // fin de transaction trouvée

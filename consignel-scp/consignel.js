@@ -726,13 +726,12 @@ cachetout(); $('.utilisation').show(); $('#suiviappli').prepend('clic menu -----
 
 /* click menu confirmation */
 function clicmenuconfirmation(){
-var utilisateur = codequiutilise(); 
-if (utilisateur == "u0 "){effacelentete();};
-cachetout(); 
-$('.confirmation').show(); 
-$("#confirmationokinputcode").click();
-$('#suiviappli').prepend('clic menu ----- confirmation <br>'); 
-$('#confirmationinputcode').focus(); 
+  var utilisateur = codequiutilise(); 
+  if (utilisateur == "u0 "){effacelentete();};
+  cachetout(); 
+  $('.confirmation').show(); 
+  $('#suiviappli').prepend('clic menu ----- confirmation <br>'); 
+  $('#confirmationinputcode').focus(); 
 };
 
 /* click menu préférences */
@@ -1225,7 +1224,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "PEXP":
         $("#acceptetransactionstatut").html("Ma proposition est expirée");
-        menudetailproposition("matransactionfermee"); affichedetailproposition(responseTxt,"matransaction"); 
+        menudetailproposition("matransactionfermee"); affichedetailproposition(contenuretour,"matransaction"); 
         break; 
         case "AEXP":
         $("#acceptetransactionstatut").html("Cette proposition est expirée");
