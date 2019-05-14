@@ -1,12 +1,14 @@
 <!-- Liste dépliable en html5 des fonctions php (serveur) du consignel -->
 <details> <summary>consignel.php</summary> <p>Traite les demandes de consignel.js</p></details>
+<details> <summary>acceptetransaction</summary> <p>Note l'acceptation d'une transaction</p></details>
 <details> <summary>ajouteaufichier</summary> <p>ajoute un item à la fin du fichier</p></details>
 <details> <summary>ajouteaufichier2dates</summary> <p>liste les 2 dernières transactions</p></details>
 <details> <summary>ajoutelesconnexions</summary> <p>fait le fichier de suivi des connexions</p></details>
 <details> <summary>annuleproposition</summary> <p>Annule une proposition de transaction non encore réalisée</p></details>
 <details> <summary>antitaghtml</summary> <p>Nettoyage et decryptage des variables chaine entrantes</p></details>
-<details> <summary>acceptetransaction</summary> <p>Note l'acceptation d'une transaction</p></details>
+<details> <summary>antitagnb</summary> <p>Nettoyage et decryptage des variables nombre entrantes</p></details>
 <details> <summary>baseminimale</summary> <p>Initialise la base de donnée minimale lors de la première utilisation</p></details>
+<details> <summary>cherchetransaction</summary> <p>Renvoie la transaction en fonction de son statut</p></details>
 <details> <summary>codelenom</summary> <p>Code la variable</p></details>
 <details> <summary>consignelsuivi</summary> <p>renvoie les montants de compensation en consignel de la proposition</p></details>
 <details> <summary>constante</summary> <p>Indique les constantes locales et les chemin d'accès aux répertoires de l'application</p></details>
@@ -20,18 +22,20 @@
 <details> <summary>gain365jours</summary> <p>Fichier des gains de consignel sur les 365 derniers jours et renvoi du gains journalier selon la durée</p></details>
 <details> <summary>initialisefichier</summary> <p>Initialise une structure de répertoire dans la base de donnée pour un nouvel utilisateur</p></details>
 <details> <summary>inputvalide</summary> <p>symétrique du javascript</p></details>
+<details> <summary>inversetransaction</summary> <p>inverse l'offre et la demande d'une proposition</p></details>
 <details> <summary>nettoyagerefsessions</summary> <p>Supprime les références aux sessions obsoletes</p></details>
 <details> <summary>notetransaction</summary> <p>Note la transaction proposée après activation du code qr</p></details>
 <details> <summary>ouvrelechemin</summary> <p>Retourne le chemin du suivi de transaction en le créant s'il n'existe pas</p></details>
 <details> <summary>paiement</summary> <p>Renvoie un tableau [0] "speculation" s'il y a un achat vente entre deux activités identifiées comme paiement ou don de monnaies. Renvoie "nonspeculation" dans les autres cas de [1] à [6] renvoie les quantités pour les paiement ↺, mlc, $ d'abord pour le proposeur puis pour l'accepteur</p>
 </details>
 <details> <summary>queltypetroc</summary> <p>Renvoie "simpletroc" si ce n'est pas un paiement sinon renvoie l'unité de paiement  ↺, mlc, $</p></details>
-<details> <summary>rangetransaction</summary> <p>Archive les transactions</p></details>
+<details> <summary>remplacefichier</summary> <p>remplace le contenu du fichier</p></details>
 <details> <summary>resumecompte</summary> <p>Renvoi le résumé du compte</p></details>
-<details> <summary>stockelefichiertemporaire</summary> <p>Ajoute la variable au bon fichier</p></details>
+<details> <summary>revenuinconditionnel</summary> <p>mise à jour du compte avec le revenu inconditionnel</p></details>
 <details> <summary>suivi31jours</summary> <p>Fichier des soldes de consignel sur les 31 derniers jours et renvoi du minimum et maximum</p></details>
 <details> <summary>testeexpiration</summary> <p>Renvoie "expire" ou "nonexpiree"</p></details>
 <details> <summary>testelechemin</summary> <p>Renvoie le chemin d'accès en fonction de l'identifiant</p></details>
+<details> <summary>testdestinataire</summary> <p>Renvoie "autorise" ou "nonautorise"</p></details>
 <details> <summary>tracelechemin</summary> <p>Crée et renvoie le chemin d'accès en fonction de l'identifiant</p></details>
 <details> <summary>transactionaccann</summary> <p>Renvoie le résumé de la proposition avec l'identifiant "tra" changé en "acc" ou en ann, en modifiant le moment de la transaction par le moment de l'acceptation et en mettant à jour le code de l'accepteur</p></details>
 <details> <summary>transactionstatut</summary> <p>Renvoie le statut de la proposition TDAC déjà acceptée par le demandeur, TDPA transaction proposée par le demandeur déjà accpetée TACC acceptée, TANN annulée, TEXP expirée, DTAO ma proposition, DTEX ma proposition expiree, DTAC acceptable par demandeur non proposeur, TNDI non disponible pour demandeur, TRIN inconnue </p></details>

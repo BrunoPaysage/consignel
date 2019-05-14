@@ -2168,7 +2168,7 @@ function videlespoubelles(){$("#poubelle").html("");$("#poubelle2").html("");mis
 
 // définition des constantes selon la localité pour les calculs
 function constante($nom){
-if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
+if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781","↺_2220560"]'; };
 if($nom == "ouverturecompte"){ return '"150,90,30,360"'; };
 if($nom == "localite"){ return "localite/"; };
 if($nom == "siteweb"){ 

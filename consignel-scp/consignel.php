@@ -104,6 +104,9 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       // identification initiale renvoie les variables de session
       // $va4 numéro aléatoir de session
       $oklocal=1; // renvoyer 1 pour utilisateur identifié
+      // mise à jour revenu inconditionnel
+      $revenu = revenuinconditionnel($var3); 
+      // renvoi du résumé de compte
       $resumejson=resumecompte($var3); // 4 variables du résumé (disponible, par jour, dispomini31jours, dispomaxi31jours)
       $idtraprecedant = ""; //  identifiant transaction précédente
       echo (" ,".$var4.",".$oklocal.",".$resumejson.",".$idtraprecedant.", "); 
@@ -300,7 +303,7 @@ function acceptetransaction($var3,$notransaction){
 
   }
   else
-  {return "TEST - Proposition innacceptable pas possible d,accepter ".$debut;};
+  {return "TEST - Réponse serveur: Proposition innacceptable type ".$debut;};
 };
 
 // ajoute au fichier le chemin doit exister la chaine fichier doit inclure son retour chariot
@@ -451,21 +454,6 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
 }; // fin d'anulation de la transaction
 
 // nettoie les entrées texte qui doivent avoir un format json et ne pas poser de problème javascript
-function antitagnb($entree){
-  if(($entree=="undefined") || ($entree=="")){
-    $entree="";
-  }else{
-// décode si transfert codé
-    $entree = decrypteletransfert($entree);
-//$entree = preg_replace( "/(encode pour transfert )/", '', $entree);
-// fin du décodage
-// nettoyage de la demande de transaction
-    $entree = preg_replace( '/[^\d_]/', '', $entree);
-    return $entree;
-  };
-}; // 
-
-// nettoie les entrées texte qui doivent avoir un format json et ne pas poser de problème javascript
 function antitaghtml($entree){
   if(($entree=="undefined") || ($entree=="")){
     $entree="";
@@ -484,6 +472,21 @@ function antitaghtml($entree){
   };
 }; 
 
+// nettoie les entrées nombre qui doivent avoir un format json et ne pas poser de problème javascript
+function antitagnb($entree){
+  if(($entree=="undefined") || ($entree=="")){
+    $entree="";
+  }else{
+// décode si transfert codé
+    $entree = decrypteletransfert($entree);
+//$entree = preg_replace( "/(encode pour transfert )/", '', $entree);
+// fin du décodage
+// nettoyage de la demande de transaction
+    $entree = preg_replace( '/[^\d_]/', '', $entree);
+    return $entree;
+  };
+}; // 
+
 // cherche la proposition de transaction
 function cherchetransaction($var3,$notransaction){
   $demandeur = $var3;
@@ -500,13 +503,6 @@ function cherchetransaction($var3,$notransaction){
 // debut  == "TRIN - " Transaction inconnue" ; }; // Transaction inconnue
 // debut  == "TNDI - " Cette proposition n'est pas disponible " ; };
   return $statuttransaction;
-};
-
-// Contenu d'une transaction latransaction = contenutra( "cheminfichier"."traxxxx.json" )
-function contenutra( $chemincomplet ){
-  $fichierencours = fopen($chemincomplet, 'r');
-  $contenutra = decryptelestockage(fgets($fichierencours, 1024));
-  return $contenutra;
 };
 
 // Code la variable
@@ -533,6 +529,13 @@ function consignelsuivi($propositionenjson,$nompropostion){
   if ($impact > 0){ $consignelsuivi[0]= "impact positif"; };
 
   return $consignelsuivi;
+};
+
+// Contenu d'une transaction latransaction = contenutra( "cheminfichier"."traxxxx.json" )
+function contenutra( $chemincomplet ){
+  $fichierencours = fopen($chemincomplet, 'r');
+  $contenutra = decryptelestockage(fgets($fichierencours, 1024));
+  return $contenutra;
 };
 
 // crypte pour stockage
@@ -569,13 +572,6 @@ function dernieretat($codecompte){
 //vérifie dans fichier $codecompte et codelenom(resumefichier)
   $compilecompte = 0;
   return $compilecompte;
-};
-
-// Inscription du fichier d'expiration à développer
-function expire($proposeur,$notransaction){
-$numprop = $proposeur;
-$numtra = $notransaction;
-// annuleproposition($numprop,$numtra,"exp");
 };
 
 // Renvoi le contenu du fichier
@@ -875,9 +871,19 @@ function paiement($propositionenjson,$nompropostion){
   return $paiement;
 };
 
-// range les transactions dans les dossiers
-function rangetransaction(){
-};
+// retourne doubletroc = achat ou vente de monnaie; simple troc = troc ou achat ou vente de produits
+function queltypetroc($noact){
+      $typetroc = "doubletroc";
+      $listepaiement = constante("paiements");
+      if (strpos($listepaiement, "_".$noact."\"") === FALSE){
+        $typetroc = "simpletroc";
+      }else{
+        if (strpos($listepaiement, "↺_".$noact."\"") != FALSE){return "↺";};
+        if (strpos($listepaiement, "mlc_".$noact."\"") != FALSE){return "mlc";};
+        if (strpos($listepaiement, "$_".$noact."\"") != FALSE){return "$";};
+      };
+      return $typetroc;
+    };
 
 // remplace le contenu du fichier
 function remplacefichier($cheminfichierinclu, $chainefichier){
@@ -903,6 +909,60 @@ function resumecompte($var3){
     //    ajouteaufichier($cheminfichier, $resumeducompte);
   };
   return $resumeducompte;
+};
+
+// mise à jour du compte avec le revenu inconditionnel
+function revenuinconditionnel($var3){
+  $base = constante("base");
+  $revenubase = constante("minimumviableparjour");
+  $cheminfichier = tracelechemin($var3,$base,$var3);  
+  $ladate = date("Ymd_Hi");
+  $dernieresidtra = ajouteaufichier2dates($cheminfichier."-resume2dates.json","dac".$ladate."_".$var3."");
+  if($dernieresidtra[9] == $dernieresidtra[8]){ 
+    return 0;
+  }else{
+    if($dernieresidtra[9] > $dernieresidtra[8]){ 
+      $nbjourrevenuinconditionnel = $dernieresidtra[9] - $dernieresidtra[8] ; 
+    }else{ 
+      $nbjourrevenuinconditionnel = $dernieresidtra[9] + 365 - $dernieresidtra[8] ; 
+    };
+    if($nbjourrevenuinconditionnel > 31){$nbjourrevenuinconditionnel=31;};
+    $revenuinconditionnel = $nbjourrevenuinconditionnel * $revenubase;
+    // fait la proposition de transaction
+/* on doit produire quelque chose comme ça pour la proposition
+{ "tra20190513_1732_1647274" : ["655989","292054","20190513_1732","0","1"],"off20190513_1732_655989" : ["act0002220560",1,"u",-41.14,0,0,-70.31,6.36,37.4] ,"dem20190513_1732_292054" : ["act000537234",1,"u",0,0,0,0,0,0] ,"off20190513_1732_act0002220560" : ["don du minimum viable",37.4,"↺",-1.1,0,0,-1.88,0.17,1,1,1],"dem20190513_1732_act000537234" : ["rien",0,"↺",0,0,0,0,0,0,0,0] }
+*/
+    $mesactoff= "\"off".$ladate.'_act0002220560" : ["don du minimum viable",'.$revenuinconditionnel.',"↺",0,0,0,0,0,0,0,0]';
+    $mesactdem= "\"dem".$ladate.'_act000537234" : ["rien",0,"↺",0,0,0,0,0,0,0,0]';
+    $mesact=  $mesactoff.",".$mesactdem;
+//    $codeoffre="292054";
+    $codeoffre=codelenom($mesactoff);    
+//    $codedemande="292357";
+    $codedemande=codelenom($mesactdem);
+    $loffre="\"off".$ladate."_".$codeoffre."\" : [\"act0002220560\",1,\"u\",0,0,0,0,0,0,0,0],";
+    $lademande="\"dem".$ladate."_".$codedemande."\" : [\"act000537234\",1,\"u\",0,0,0,0,0,0,0,0]";
+    $demandeaqui=$var3;
+    $dureeexpire=1;
+    $latransaction= "[\"".$codeoffre."\",\"".$codedemande."\",\"".$ladate."\",\"".$demandeaqui."\",\"".$dureeexpire."\"]";
+    $chaineretour = "revenuinconditionnel";
+    $codelatransaction=codelenom($latransaction.$chaineretour);
+    $matransaction="\"tra".$ladate."_".$codelatransaction."\" : ".$latransaction.",".$loffre.$lademande."";
+    $transactionjson="{ ".$matransaction.",".$mesact." } ";  
+    $cheminfichier = ouvrelechemin("tra".$ladate."_".$codelatransaction."");
+    ajouteaufichier($cheminfichier."tra".$ladate."_".$codelatransaction.".json", "".$transactionjson."\n");
+    // note la transaction dans le suivi
+/* on doit obtenir quelque chose du genre 
+"tra20190513_1703_1864437","443945","444319","20190513_1703","0","1","-33","3535"
+*/
+    $transactionjson = "\"tra".$ladate."_".$codelatransaction."\",\"".$codeoffre."\",\"".$codedemande."\",\"".$ladate."\",\"".$var3."\",\"31\",\"0\",\"DA↺\"";
+    ajouteaufichier($cheminfichier."tra".substr($ladate,0,11)."-suivi.json", "".$transactionjson."\n");
+    // met à jour le fichier 2 dates de l'utilisateur
+//    $cheminfichier = tracelechemin($var3,$base,$var3);  
+//    $dernieresidtra = ajouteaufichier2dates($cheminfichier."-resume2dates.json","tra".$ladate."_".$codelatransaction."");
+    
+    // fait l'accetation de la proposition de transaction
+    return $nbjourrevenuinconditionnel;
+  }; // fin du choix de mise à jour du revenu inconditionnel
 };
 
 // mise en réserve des valeurs dans un tableau de 31 jours retourne [mini,max]
@@ -940,6 +1000,16 @@ function suivi31jours($cheminfichier, $numancienjour, $numnouveaujour, $solde){
   return [$miniconsignel,$maxconsignel];
 };
 
+// pour tester si la proposition est encore valide
+function testeexpiration($notransaction,$nombredejours){
+      $datetransaction = substr($notransaction,4,8); $datetransactionunix = strtotime($datetransaction);
+      $nbjour = preg_replace( "/\"/", "", $nombredejours); 
+      $datedujour = date("Ymd"); $datedujournunix = strtotime($datedujour);
+      $differencedateenjours = ($datedujournunix - $datetransactionunix)/86400;
+      if($differencedateenjours > $nbjour){$expiration = "expire";}else{$expiration = "pasexpire";};
+      return $expiration;
+    };
+
 // pour tester un chemin de répertoire en fonction de la transaction
 function testelechemin($nomtransaction){
       $chemin = $nomtransaction;
@@ -949,16 +1019,6 @@ function testelechemin($nomtransaction){
       $chemin .= substr($nomtransaction, 9, 2)."/"; 
       $chemin .= substr($nomtransaction, 12, 2)."/";
       return $chemin;
-    };
-
-// pour tester si la proposition est encore valide
-function testeexpiration($notransaction,$nombredejours){
-      $datetransaction = substr($notransaction,4,8); $datetransactionunix = strtotime($datetransaction);
-      $nbjour = preg_replace( "/\"/", "", $nombredejours); 
-      $datedujour = date("Ymd"); $datedujournunix = strtotime($datedujour);
-      $differencedateenjours = ($datedujournunix - $datetransactionunix)/86400;
-      if($differencedateenjours > $nbjour){$expiration = "expire";}else{$expiration = "pasexpire";};
-      return $expiration;
     };
 
 // pour tester si la proposition est encore valide
@@ -1074,23 +1134,9 @@ function transactionstatut($demandeur, $notransaction){
   return "TRIN - Transaction inconnue";
 };
 
-// retourne doubletroc = achat ou vente de monnaie; simple troc = troc ou achat ou vente de produits
-function queltypetroc($noact){
-      $typetroc = "doubletroc";
-      $listepaiement = constante("paiements");
-      if (strpos($listepaiement, "_".$noact."\"") === FALSE){
-        $typetroc = "simpletroc";
-      }else{
-        if (strpos($listepaiement, "↺_".$noact."\"") != FALSE){return "↺";};
-        if (strpos($listepaiement, "mlc_".$noact."\"") != FALSE){return "mlc";};
-        if (strpos($listepaiement, "$_".$noact."\"") != FALSE){return "$";};
-      };
-      return $typetroc;
-    };
-
 // définition des constantes selon la localité pour les calculs
 function constante($nom){
-  if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781"]'; };
+  if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781","↺_2220560"]'; };
   if($nom == "ouverturecompte"){ return '"200,100,20,300"'; };
   if($nom == "minimumviable"){ return 15; };
   if($nom == "minimumviableparjour"){ return 37.4; }; // minimumviable * 52semaines * 17,5h / 365j
