@@ -386,6 +386,42 @@ function changeaideinputactivite(option){
   if (optionlocale=="ǜ"){changedeliste("#inputactivite", "#mstockquoi");};
 };
 
+/* usage de l'offre choisie changeaideinputactivite("ø") "ȫ" "ǜ" etc */
+function changeaideinputconfirmation(option){
+  $("#suiviappli").prepend("changeaideinputconfirmation("+option+") <br>");
+  var variablelocale=$("#changeaideinputconfirmation").html();
+  var optionlocale=option;
+  if (optionlocale== undefined ){
+    if (variablelocale=="ø"){
+      if(($("#stockecherchemesopportunites").text()).length > 5){
+        optionlocale=("ȫ");
+      }else{
+        if(($("#mstockmesopportunites").text()).length > 5){
+          optionlocale=("ǜ");
+        }else{
+          optionlocale=("ø");
+        };
+      };
+    };
+    if (variablelocale=="ȫ"){
+      if(($("#mstockmesopportunites").text()).length > 5){
+        optionlocale=("ǜ");
+      }else{
+        optionlocale=("ø");
+      };
+    };
+    if (variablelocale=="ǜ"){optionlocale=("ø");};
+    $("#suiviappli").prepend("transforme en "+optionlocale+"<br>");
+  };
+  $("#changeaideinputconfirmation").html(optionlocale);
+//  if (optionlocale=="ø"){$("#inputactivite").autocomplete("option","source",[]);};
+//  if (optionlocale=="ø"){  var listeconfirmation = JSON.parse(decryptediv($("#mstockmesopportunites").text()));
+//  $("#confirmationinputcode").autocomplete("option","source",listeconfirmation); };
+  if (optionlocale=="ø"){$("#confirmationinputcode").autocomplete("option","source",[]);};
+  if (optionlocale=="ȫ"){changedeliste("#confirmationinputcode", "#stockecherchemesopportunites");};
+  if (optionlocale=="ǜ"){changedeliste("#confirmationinputcode", "#mstockmesopportunites");};
+};
+
 /* changement de style par un clic */
 function changeClass(elem, className1,className2){ 
 elem.className = (elem.className == className1)?className2:className1; 
@@ -394,8 +430,11 @@ elem.className = (elem.className == className1)?className2:className1;
 /* change la liste des autocomplete */
 function changedeliste(quelinput, queldiv){
   var codeutilisateur = codequiutilise();
+  var idchangeaide = "";
   $("#suiviappli").prepend(codeutilisateur+" "+"changedeliste( "+quelinput+", "+queldiv+") <br>");
   if(queldiv=="#stockecherchequoimini"){quelinput="#inputactivite"};
+  if(quelinput=="#inputactivite"){idchangeaide = "#changeaideinputactivite"};
+  if(quelinput=="#confirmationinputcode"){idchangeaide = "#changeaideinputconfirmation"};
   var listedudiv = $(queldiv).text();
   if(listedudiv != "..."){
 // session expirée renvoi utilisateur inconnu dans le div
@@ -407,10 +446,10 @@ if(listedudiv.length > 5){ /*div contenant plus que ... */
   try {var listeduinput = JSON.parse(decryptediv(listedudiv));}
   catch{var listeduinput = JSON.parse($("#stockevaleursrefmini").text()); alert("Le fichier du div "+queldiv+" est mal chargé"); $("#changeaideinputactivite").html("ø");};
   $(quelinput).autocomplete("option","source",listeduinput);
-  if(queldiv[1]=="s"){$("#changeaideinputactivite").html("ȫ");};
-  if(queldiv[1]=="m"){$("#changeaideinputactivite").html("ǜ");};
+  if(queldiv[1]=="s"){$(idchangeaide).html("ȫ");};
+  if(queldiv[1]=="m"){$(idchangeaide).html("ǜ");};
 }else{
-  $("#changeaideinputactivite").html("ø");
+  $(idchangeaide).html("ø");  
 };
 }; 
 
@@ -648,6 +687,7 @@ function chargemoi(nomdonnees){
       $("#suiviappli").prepend("depuis le serveur <br>");
       demandefichier(dansdiv,nomdonnees,dansspansuivi,nomfichierlocal,dansspansuivi2);
       if(nomdonnees=="quoi"){ changedeliste("#inputactivite", dansdiv); };
+      if(nomdonnees=="mesopportunites"){ changedeliste("#confirmationinputcode", dansdiv); };
     }else{
       /* c'est dans localstorage transfert dans lediv */
       $(dansdiv).html(encryptepourdiv(fichierlocaljson));
@@ -655,6 +695,7 @@ function chargemoi(nomdonnees){
       $(dansspansuivi).html("<i class='eval3'> - "+nomdonnees+" chargé depuis le stockage local" + " -</i>");
       $(dansspansuivi2).html("<i class='eval3'> </i>");
       if(nomdonnees=="quoi"){ changedeliste("#inputactivite", dansdiv); };
+      if(nomdonnees=="mesopportunites"){ changedeliste("#confirmationinputcode", dansdiv); };
     };
   };/* fin du transfert dans le div depuis localstorage */
 }; /* fin de la fonction chargemoi */
@@ -969,13 +1010,14 @@ $("#chargecherchepourqui").click(function() { charge("cherchepourqui"); });
 $("#chargechercheparqui").click(function() { charge("chercheparqui"); });
 $("#chargevaleursref").click(function() { charge("valeursref"); });
 
-$("#fichierspersonnelspoubelle").click(function() { videlocalstorageperso(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition"]); videlediv(".mstockdansdiv"); videautocomplete(); chargevaleursrefmini(); });
-$("#fichierspersonnelschargemoi").click(function() { chargemoitout(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition"]); });
+$("#fichierspersonnelspoubelle").click(function() { videlocalstorageperso(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites"]); videlediv(".mstockdansdiv"); videautocomplete(); chargevaleursrefmini(); });
+$("#fichierspersonnelschargemoi").click(function() { chargemoitout(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites"]); });
 $("#chargemoiresume").click(function() { chargemoi("resume"); });
 $("#chargemoiquoi").click(function() { chargemoi("quoi"); });
 $("#chargemoimesvaleursref").click(function() { chargemoi("mesvaleursref"); });
 $("#chargemoimespropositions").click(function() { chargemoi("mespropositions"); });
 $("#chargemoidemandeuneproposition").click(function() { chargemoi("demandeuneproposition"); });
+$("#chargemoimesopportunites").click(function() { chargemoi("mesopportunites"); });
 
 /* ajout des onclick developpement et suivi */
 $("#developpementetsuivi").click(function() { changeClass(stockage,'voit','cache'); });
@@ -1258,19 +1300,20 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
           $(dansspansuivi).html("<i class='eval2'> - "+demandefich+" fichier vide sur le serveur" + " -</i>"); 
           $(dansspansuivi2).html("<i class='eval2'>&nbsp;</i>"); 
         };
-        if(nomdonnees=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
         var storageoui = $("#localstoragemoi").prop("checked");
         var storagedisponible=testestorage(); 
         if(storageoui==1 && storagedisponible == "oui"){ /* met le div dans localstorage */
           $("#suiviappli").prepend("stokage local du fichier "+nomdonnees+" arrivé du serveur <br>");
-        if(responseTxt.length ==1){
-          $(dansspansuivi).html("<i class='eval2'> - "+demandefich+" fichier vide sur le serveur et dans le stokage local" + " -</i>"); 
-          $(dansspansuivi2).html("<i class='eval2'>&nbsp;</i>"); 
-        };
+          if(responseTxt.length ==1){
+            $(dansspansuivi).html("<i class='eval2'> - "+demandefich+" fichier vide sur le serveur et dans le stokage local" + " -</i>"); 
+            $(dansspansuivi2).html("<i class='eval2'>&nbsp;</i>"); 
+          };
           localStorage.setItem(nomfichierlocal, encryptepourlocalstorage(responseTxt)); 
           $(dansspansuivi).html("<i class='eval3'> - "+demandefich+" chargé depuis le serveur et mis dans le stockage local" + " -</i>"); 
           $(dansspansuivi2).html("<i class='eval3'>&nbsp;</i>"); 
         };
+        if(nomdonnees=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
+        if(nomdonnees=="mesopportunites"){ changedeliste("#confirmationinputcode", "#mstockmesopportunites"); $("#acceptetransactionstatut").html("Essayez 2");};
         break;
       }; /* Fin du switch */
     }; /* Fin de la fonction de retour succès */
