@@ -180,6 +180,7 @@ function acceptetransaction($var3,$notransaction){
        $ligneexiste = TRUE;
     }; // Fin de transaction trouvée
   }; // Fin de while cherche dans les lignes
+  fclose($fichierencours); // fermeture du fichier
 
   if($debut=="DTAO"){
     // vérifications complémentaires avant d'enregistrer la transaction
@@ -264,7 +265,10 @@ function acceptetransaction($var3,$notransaction){
     // Mise à jour du fichier -suiviresume.json dans la base de l'accepteur
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
     ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc."\n");
+    // mise à jour du fichier mesopportunites dans la base de l'accepteur
+    retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
+  
     
     if($var38<>"\"DA↺\"\n"){
       // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
@@ -333,7 +337,7 @@ function ajoutealaliste($var3,$nomfichier,$item){
 
 // ajoute au fichier le chemin doit exister la chaine fichier doit inclure son retour chariot
 function ajouteaufichier($cheminfichierinclu, $chainefichier,$bout="fin"){
-  if($bout="debut"){
+  if($bout=="debut"){
     $fichierencours = fopen($cheminfichierinclu, 'w'); 
     }else{
     $fichierencours = fopen($cheminfichierinclu, 'a'); 
@@ -954,6 +958,19 @@ function resumecompte($var3){
     //    ajouteaufichier($cheminfichier, $resumeducompte);
   };
   return $resumeducompte;
+};
+
+// retire de la liste
+function retiredelaliste($var3,$nomfichier,$item){
+  $contenufichier = "".fichierperso2($var3,$nomfichier);
+  $retireregex = "/(".$item.")/";
+  $contenufichier = preg_replace( $retireregex, "", $contenufichier);
+  $contenufichier = preg_replace( "/(\"\",)/", "", $contenufichier);
+  $contenufichier = preg_replace( "/(,\"\")/", "", $contenufichier);
+  $base=constante("base");
+  $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");
+  ajouteaufichier($cheminfichierinclu, $contenufichier,"debut");
+  return $contenufichier;
 };
 
 // mise à jour du compte avec le revenu inconditionnel

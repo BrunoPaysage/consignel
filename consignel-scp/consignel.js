@@ -972,7 +972,8 @@ $("#rechercheokinputactivite").click(function() { okinputactivite(); });
 /* ajout des onclick et comportement input sur le html confirmation */
 $("#changeaideinputconfirmation").click(function() { changeaideinputconfirmation(); });
 $("#aidepropositions").click(function() { aidepropositions(); });
-$("#confirmationinputcode").change(function(){ confirmationokinputcode(); }); 
+$("#confirmationinputcode").change(function(){
+confirmationokinputcode(); }); 
 $("#confirmationokinputcode").click(function() { confirmationokinputcode(); });
 $("#acceptetransactionactualiser").click(function() { acceptetransaction("actualisemoi"); });
 $("#acceptetransactionannuler").click(function() { acceptetransaction("annulemoi"); });
@@ -1313,7 +1314,13 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
           $(dansspansuivi2).html("<i class='eval3'>&nbsp;</i>"); 
         };
         if(nomdonnees=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
-        if(nomdonnees=="mesopportunites"){ changedeliste("#confirmationinputcode", "#mstockmesopportunites"); $("#acceptetransactionstatut").html("Essayez 2");};
+        if(nomdonnees=="mesopportunites"){ 
+          menudetailproposition("attente");
+          changedeliste("#confirmationinputcode", "#mstockmesopportunites"); 
+            if($("#changeaideinputconfirmation").text() != "ø"){
+              $("#acceptetransactionstatut").html("tapez 2, choisissez et clic sur ok");
+            };
+        };
         break;
       }; /* Fin du switch */
     }; /* Fin de la fonction de retour succès */
@@ -2049,6 +2056,7 @@ if(tableauretour[0] == " "){
     tableauretour[0]="u"+nomcode4; 
     $(".retourserveur").html(tableauretour[0]+$(".retourserveur").text()); /* identifiant local u+code(utilisateur+pass) */
     verifiepreflocalstorage();
+    chargemoi("mesopportunites");
     activeutilisation(tableauretour);
   }else{ /* début de si utilisateur connu et mot de passe inconnu */
 // if(tableauretour[0] != "u0"){
