@@ -64,11 +64,16 @@ function actualiselaproposition(dequi="mapropostion"){
 };
 
 /* affiche le détail de la proposition (venant du serveur par demandefichier) */
-function affichedetailproposition(noproposition, propositiondequi){
-  $("#suiviappli").prepend("affichedetailproposition(noproposition) <br>"); 
+function affichedetailproposition(noproposition, propositiondequi, accepte){
+  $("#suiviappli").prepend("affichedetailproposition("+noproposition+" "+propositiondequi+") <br>"); 
   effaceconfirmation();
   var nomproposition = noproposition;
   var dequi = propositiondequi; 
+  if(dequi!="matransaction"){$("#utilisationchoisidemande span.confirmation").html(dequi+" me donne");};
+  if(accepte=="accepte"){
+    $("#utilisationchoisioffre span.confirmation").html("J'ai donné");
+    $("#utilisationchoisidemande span.confirmation").html(dequi+" m'a donné");
+    };
   if (nomproposition == "demandeuneproposition"){
     $("#offreconfirme").html("demande "+$("#mstockdemandeuneproposition").text());
   }else{
@@ -83,8 +88,8 @@ function affichedetailproposition(noproposition, propositiondequi){
     var numoff = "off"+objson[numtra][2]+"_"+objson[numtra][0]; // id de l'offre
     // $("#demandeconfirme").append( objson[numoff][0]+"<br>"); // liste des act offerts
     // $("#demandeconfirme").append( objson[numoff]+"<br>"); // valeurs de l'offre
-   var ou="#demandemontantsconfirme"; 
-   if(dequi=="matransaction"){ou="#offremontantsconfirme";};
+    var ou="#demandemontantsconfirme"; 
+    if(dequi=="matransaction"){ou="#offremontantsconfirme";};
     afficheproposition(ou,numoff,objson[numoff],numproposetra);
     var tableauoff = objson[numoff][0].split("act");
     // $("#demandeconfirme").append( tableauoff.length+"<br>"); // nombre d'actes offerts (+1)
@@ -98,7 +103,7 @@ function affichedetailproposition(noproposition, propositiondequi){
     var numdem = "dem"+objson[numtra][2]+"_"+objson[numtra][1];
     // $("#demandeconfirme").append( objson[numdem][0]+"<br>"); // liste des actes demandés
     // $("#demandeconfirme").append( objson[numdem]+"<br>"); // valeurs de la demande
-   var ou="#offremontantsconfirme"; if(dequi=="matransaction"){ou="#demandemontantsconfirme";};
+    var ou="#offremontantsconfirme"; if(dequi=="matransaction"){ou="#demandemontantsconfirme";};
     afficheproposition(ou,numdem,objson[numdem]);
     var tableaudem = objson[numdem][0].split("act");
     // $("#demandeconfirme").append( tableaudem.length+"<br>"); // nombre d'actes demandés (+1)
@@ -106,7 +111,7 @@ function affichedetailproposition(noproposition, propositiondequi){
     for (i = 1; i < tableaudem.length; i++) { 
       nomact = "dem"+objson[numtra][2]+"_"+"act"+tableaudem[i];
       // $("#demandeconfirme").append( nomact+"<br>");
-   var ou="#offreconfirme"; if(dequi=="matransaction"){ou="#demandeconfirme";};
+      var ou="#offreconfirme"; if(dequi=="matransaction"){ou="#demandeconfirme";};
       afficheproposition(ou,tableaudem[i],objson[nomact]);
     };
     
@@ -934,7 +939,7 @@ $( "#inputcherchepourqui" ).autocomplete({ source: listepourqui, select: functio
 var listeparqui = [];
 $( "#inputchercheparqui" ).autocomplete({ source: listeparqui, select: function (event, ui) { $("#inputchercheparqui").val(ui.item.label); proposechoix();}, }); 
 var listeconfirmation = [];
-$( "#confirmationinputcode" ).autocomplete({ source: listeconfirmation, select: function (event, ui) { $("#confirmationinputcode").val(ui.item.label); proposechoix();}, }); 
+$( "#confirmationinputcode" ).autocomplete({ source: listeconfirmation, select: function (event, ui) { $("#confirmationinputcode").val(ui.item.label); confirmationokinputcode();}, }); 
 
 /* ajout des onclick sur le html menupref */
 $("h2.localisation").click(function() { clicpageweb();  });
@@ -1166,7 +1171,12 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
       responseTxt = decryptetransfert(responseTxt);
       var testebr = responseTxt.indexOf("<br>"); 
       var testretour = responseTxt.substring(0,4);
-      var contenuretour =  responseTxt.substring(7);
+      var contenuretour = responseTxt.substring(7);
+      var debuttransaction = responseTxt.indexOf("{");
+      var propositiondequi = ""; var latransaction = "";
+      if(debuttransaction>7){ propositiondequi = responseTxt.substring(7,debuttransaction-1); latransaction = responseTxt.substring(debuttransaction);};
+//      if(debuttransaction==-1){alert("pas de transaction + "+debuttransaction);};
+//      if(debuttransaction==7){alert("transaction stricte "+debuttransaction);}; 
       menudetailproposition("pasmatransaction"); 
       $("#acceptetransactionstatut").html(testretour);
       switch (testretour) {
@@ -1184,7 +1194,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break;
         case "TACC":
         $("#acceptetransactionstatut").html("Transaction acceptée");
-        menudetailproposition("pasmatransactionfermee"); affichedetailproposition("","pasmatransaction"); 
+        menudetailproposition("pasmatransactionfermee");  
         $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+contenuretour+",,");
         var paramgraph = contenuretour.split(","); 
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
@@ -1210,8 +1220,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Cette transaction n'existe pas"); break;
         case "DTAO":
         $("#acceptetransactionstatut").html("Transaction disponible");
-        responseTxt = responseTxt.substring(7);
-        menudetailproposition("pasmatransaction"); affichedetailproposition(responseTxt);
+        menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
         break; 
         case "PACT":
         $("#acceptetransactionstatut").html("Ma proposition est encore active");
@@ -1219,7 +1228,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "ADAC":
         $("#acceptetransactionstatut").html("J'ai déja accepté cette proposition");
-        menudetailproposition("pasmatransactionfermee"); affichedetailproposition(contenuretour,""); 
+        menudetailproposition("pasmatransactionfermee"); affichedetailproposition(latransaction,propositiondequi,"accepte"); 
         break; 
         case "PACC":
         responseTxt = responseTxt.substring(7);
@@ -1531,6 +1540,8 @@ function listelesactdetails(span1,span2){
 /* affiche le menu selon l'origine de la transaction à confirmer*/
 function menudetailproposition(menutransaction){
 var menutra = menutransaction;
+$("#utilisationchoisidemande span.confirmation").html("Je reçois");
+$("#utilisationchoisioffre span.confirmation").html("Je donne");
 $('#confirmationacceptetransaction').attr("class","actif"); 
 $("#confirmationacceptetransaction div").hide();
 $("#acceptetransactionstatut").show();

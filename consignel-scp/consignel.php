@@ -227,7 +227,7 @@ function acceptetransaction($var3,$notransaction){
     $var38chaine = "\"".preg_replace( "/\D/", "", $var38)."\"";
     };
     
-    $transactionsuivi = "\"".$idtraacc."\",".$var33.",".$var32.",\"".$dateaccepte."\",".$var38chaine.",".$var36.",".$var37.",".$var38;
+    $transactionsuivi = "\"".$idtraacc."\",".$var33.",".$var32.",\"".$dateaccepte."\",\"".$noaccepteur."\",".$var36.",".$var37.",".$var38;
     ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
     // ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
     ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi); 
@@ -524,7 +524,7 @@ function antitagnb($entree){
 function cherchetransaction($var3,$notransaction){
   $demandeur = $var3;
   $statuttransaction = transactionstatut($demandeur, $notransaction);
-  $debut = substr($statuttransaction,0,7);
+//  $debut = substr($statuttransaction,0,7);
 
 // debut == "ADAC - "  Proposition déjà acceptée par vous 
 // debut == "PACC - " Cette proposition faite par vous a déjà été acceptée
@@ -723,6 +723,28 @@ function inversetransaction($idtra,$contenufichiertra,$dateaccepte,$noproposeur)
   return $acclocal;
 };
 
+// retourne le seudo d'un identifiant
+function lepseudode($iddupsudo){
+  $baseutilisateurs = constante("baseutilisateurs");
+  $cheminfichier =  tracelechemin("",$baseutilisateurs,".baseconsignel3");  
+  if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
+    $existe = FALSE; // Testeur de boucle
+    $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
+    while (!feof($fichierencours) && !$existe) { // cherche dans les lignes
+      $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
+      if (preg_match('/\b' . preg_quote($donnee2) . '\b/u', $ligne)) { 
+        list($var61, $var62, $var63, $var64, $var65) = explode(",", $ligne);
+        // $var1 code utilisateur, $var2 code mot de passe, $var3 pseudo utilisateur, $var4 image ou avatar, $var5 localité consignel
+        if ($var61==$iddupsudo){ // trouvé comme identifiant
+          $existe = TRUE; // Valeur trouvée arrêt du while
+        }; // fin du trouvé comme identifiant
+      } // Fin de trouvé dans la ligne
+    }; // Fin de cherche dans les lignes
+    fclose($fichierencours); // fermeture du fichier
+  };
+  if($existe == TRUE){return $var63;};
+};
+
 // supprime les références aux sessions obsoletes
 function nettoyagerefsessions(){
   $today = getdate();  $heureutilise = $today[hours]*60+$today[minutes];
@@ -799,6 +821,8 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
   
   $iddem = "dem".$jsonenphp[$idtra][2]."_".$jsonenphp[$idtra][1]; // identification de la demande
+  $destinataire = $jsonenphp[$idtra][3]; // identification du destinataire de l'offre
+  $nodestinataire = $destinataire;  
   $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
   if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ;
 ; $transaction = "";  };
@@ -850,6 +874,8 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   // met à jour l'archivage des résumés de compte consignel
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
   ajouteaufichier($cheminfichier,$idtra.",".$nouveauresume."\n");
+  // ajout de la proposition dans les opportunités si c'est un utilisateur identifié
+  if($nodesitataire != 0){ $laliste = ajoutealaliste($nodestinataire,"mesopportunites","\"".$idtra.".json\"" ); };
   // envoi le retour à l'utilisateur - La proposition est en attente d'acceptation
   return "PEAA - ".$nouveauresume;
 };
@@ -1135,8 +1161,10 @@ function transactionstatut($demandeur, $notransaction){
     $fichierencours = fopen($cheminfichier."acc".$notransaction.".json", 'r');
     $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
     list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var48 == "\"".$nodemandeur."\"\n"){ return "ADAC - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà acceptée par vous
-    if ($var45 == "\"".$nodemandeur."\""){ return "PACC - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition faite par vous a déjà été acceptée
+    $proposeur = preg_replace( "/\D/", "", $var48);
+    if($var48=="\"DA↺\"\n"){$pseudo = "\"DA↺\"\n";}else{$pseudo = lepseudode($proposeur);};
+    if ($var45 == "\"".$nodemandeur."\""){ return "ADAC - ".$pseudo."\"".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà acceptée par vous
+    if ($var48 == "\"".$nodemandeur."\"\n"){ return "PACC - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition faite par vous a déjà été acceptée
     return "TNDI - Cette proposition n'est pas disponible";
   }; // ADAC - PACC - TNDI
   if (file_exists($cheminfichier."ann".$notransaction.".json")) { 
@@ -1182,7 +1210,8 @@ function transactionstatut($demandeur, $notransaction){
             $propositionexpire = annuleproposition($proposeur,$notransaction,"AEXP - ".contenutra($cheminfichier.$idtra.".json"));
             return $propositionexpire ;
           }; // La proposition est expirée 
-          if ($testdestinataire == "autorise"){ return "DTAO - ".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
+          if($var48=="\"DA↺\"\n"){$pseudo = "\"DA↺\"\n";}else{$pseudo = lepseudode($proposeur);};
+          if ($testdestinataire == "autorise"){ return "DTAO - ".$pseudo."\"".contenutra($cheminfichier.$idtra.".json"); }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
         };
       }; // fin de transaction trouvée
     }; // fin du while
