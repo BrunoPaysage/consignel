@@ -140,6 +140,11 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
         $transactionacceptee = acceptetransaction($var3,$donnee4); 
         echo $transactionacceptee;
       }; // fin de "accepteuneproposition"
+      if($lademande==211910){ 
+        // ,"refuseuneproposition"
+        $transactionrefusee = refusetransaction($var3,$donnee4); 
+        echo $transactionrefusee;
+      }; // fin de "refuseuneproposition"
       if($lademande==211873){ 
         // ,"annuleuneproposition"
         $transactionannulee = annuleproposition($var3,$donnee4); 
@@ -156,6 +161,30 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
 };
 // -----------------------
 
+// refuse la proposition de transaction
+function refusetransaction($var3,$notransaction){
+  $noaccepteur = $var3; 
+  $demandeur = $var3;
+  $statuttransaction = transactionstatut($demandeur, $notransaction);
+  $debut = substr($statuttransaction,0,4);
+  $ligne = contenusuivi($var3,$notransaction); 
+  list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
+
+  if($debut=="DTAO"){
+    if($var35 == "\"".$var3."\""){
+      $idtra = "tra".$notransaction;
+      $nomfichiertra = $idtra.".json";
+      $listeopportunite = retiredelaliste($var3,"mesopportunites",$nomfichiertra);
+      $proposeur = preg_replace( "/\D/", "", $var38);
+      $propositionrefuse = annuleproposition($proposeur,$notransaction,"TREF - ".substr($statuttransaction,7)); // annuleproposition renvoie "TREF - ".substr($statuttransaction,7);
+      return $propositionrefuse;
+    }else{
+      return "TEST - Réponse serveur: Cette proposition reste ouverte à tous TREF -";
+    };
+  } else {
+    return "TEST - Réponse serveur: Proposition non disponible pour refus type: ".$debut;
+  };
+};
 
 // accepte la proposition de transaction
 function acceptetransaction($var3,$notransaction){
@@ -266,7 +295,7 @@ function acceptetransaction($var3,$notransaction){
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
     ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc."\n");
     // mise à jour du fichier mesopportunites dans la base de l'accepteur
-    retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
+    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
   
     
@@ -401,18 +430,20 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     $statuttransaction = $prefixe;
     $statut = substr($statuttransaction,0,4);
     $annexp = "exp";
+    if($statut == "TREF"){ $annexp = "ann"; };
   };
 
-  If (($statut == "PACT")||($statut == "PEXP")||($statut == "AEXP")){ 
+  If (($statut == "PACT")||($statut == "PEXP")||($statut == "AEXP")||($statut == "TREF")){ 
     // Ce code autorise l'annulation de la transaction la ligne du fichier suivi suit au 7e caractère
     $idtra = "tra".$notransaction; // chemin du dossier par date
     $cheminfichier = testelechemin($idtra); // chemin dans base2 par date
     $nomfichiertra = "tra".$notransaction.".json";
     $idtraann = $annexp.$notransaction; 
     $nomfichierann = $annexp.$notransaction.".json";
-    $contenufichiertra = substr($statuttransaction ,7); // transaction transférée par statuttransaction
+    if($statut=="TREF"){$debuttra = strpos($statuttransaction, "{");}else{$debuttra=7;};
+    $contenufichiertra = substr($statuttransaction ,$debuttra); // transaction transférée par statuttransaction
     $jsonenphp = json_decode($contenufichiertra,true);
-    if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition";  };         
+    if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition " ; };         
     $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
     if (file_exists($cheminfichier.substr($idtra,0,14)."-suivi.json")) {
       $ligneexiste = FALSE;
@@ -439,6 +470,7 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     if($statut == "PACT"){ $demandeurchaine = $demandeurchaine; };
     if($statut == "PEXP"){ $demandeurchaine = $var38; };
     if($statut == "AEXP"){ $demandeurchaine = $var35; };
+    if($statut == "TREF"){ $demandeurchaine = $var35; };
     
     if($compensation[0] == "impact négatif"){ $consigne = -$compensation[1] ; };
     // rembourser le proposeur des dépenses engagées
@@ -474,10 +506,18 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     // Mise à jour du fichier -suiviresume.json dans la base du proposeur
     ajouteaufichier($cheminsansfichier."-suiviresume.json",$idtraann.",".$nouveauresumeann."\n");
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base du proposeur à faire
+    
+    // Retrait de la liste des opportunités de l'accepteur si l'accepteur est identifié
+    if($demandeurchaine!="0"){
+      $nodemandeur =  substr($demandeurchaine,1,strlen($demandeurchaine)-2);;
+      $listeopportunite = retiredelaliste($nodemandeur,"mesopportunites",$nomfichiertra);
+    };
+    
     // renvoi du nouveau résumé du proposeur
    If ($statut == "PACT"){return  "DABR - ".$nouveauresumeann; };
    If ($statut == "PEXP"){return  "PEXP - ".$contenufichiertra; };
    If ($statut == "AEXP"){return  "AEXP - ".$contenufichiertra; };
+   If ($statut == "TREF"){return  "TREF - ".$contenufichiertra; };
 
   };
   If ($statut == "PACC"){ return "TEST - impossible déjà acceptée ".$statut; };
@@ -569,6 +609,28 @@ function contenutra( $chemincomplet ){
   $fichierencours = fopen($chemincomplet, 'r');
   $contenutra = decryptelestockage(fgets($fichierencours, 1024));
   return $contenutra;
+};
+
+// Contenusuivi renvoit les 8 valeurs si la transaction existe $suivi=contenusuivi($var3,$notransaction)
+function contenusuivi($var3,$notransaction){
+  $idtra = "tra".$notransaction; 
+  $nomfichiertra = "tra".$idtra.".json"; 
+  $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
+ 
+  $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
+  $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
+  $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
+  while (!feof($fichierencours) && !$ligneexiste) { // cherche dans les lignes
+    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
+    list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
+    if ($var31 == "\"".$idtra."\""){
+       $ligneexiste = TRUE;
+    }; // Fin de transaction trouvée
+  }; // Fin de while cherche dans les lignes
+  fclose($fichierencours); // fermeture du fichier
+  if($ligneexiste == TRUE){
+    return $ligne;
+  };
 };
 
 // crypte pour stockage
@@ -822,7 +884,6 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   
   $iddem = "dem".$jsonenphp[$idtra][2]."_".$jsonenphp[$idtra][1]; // identification de la demande
   $destinataire = $jsonenphp[$idtra][3]; // identification du destinataire de l'offre
-  $nodestinataire = $destinataire;  
   $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
   if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ;
 ; $transaction = "";  };
@@ -875,7 +936,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
   ajouteaufichier($cheminfichier,$idtra.",".$nouveauresume."\n");
   // ajout de la proposition dans les opportunités si c'est un utilisateur identifié
-  if($nodesitataire != 0){ $laliste = ajoutealaliste($nodestinataire,"mesopportunites","\"".$idtra.".json\"" ); };
+  if($destinataire != 0){ $laliste = ajoutealaliste($destinataire,"mesopportunites","\"".$idtra.".json\"" ); };
   // envoi le retour à l'utilisateur - La proposition est en attente d'acceptation
   return "PEAA - ".$nouveauresume;
 };

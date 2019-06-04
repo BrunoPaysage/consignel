@@ -12,7 +12,7 @@ function acceptetransaction(accepteouinon){
   if(acceptation == "annulemoi"){ chargemoi('annuleuneproposition'); }; /* fin du annulemoi */
 /* proposition venant d'un autre */
   if(acceptation == "oui"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
-  if(acceptation == "non"){alert("non");}; /* fin du non */
+  if(acceptation == "non"){ chargemoi('refuseuneproposition'); }; /* fin du non */
   if(acceptation == "modifie"){ actualiselaproposition("pasmaproposition"); }; /* fin du modifie */
 };
 
@@ -664,6 +664,7 @@ function chargemoi(nomdonnees){
       if (nomdonnees == "mespropositions" ){envoi = "oui";};
       if (nomdonnees == "demandeuneproposition" ){envoi = "oui";};
       if (nomdonnees == "accepteuneproposition" ){envoi = "oui";};
+      if (nomdonnees == "refuseuneproposition" ){envoi = "oui";};
       if (nomdonnees == "annuleuneproposition" ){envoi = "oui";};
       if(envoi=="oui"){
         /* envoi de données */
@@ -1140,7 +1141,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
   };
   
   var var4="";
-  if((nomdonnees=="demandeuneproposition") || (nomdonnees=="accepteuneproposition") || (nomdonnees=="annuleuneproposition")){
+  if((nomdonnees=="demandeuneproposition") || (nomdonnees=="accepteuneproposition") || (nomdonnees=="annuleuneproposition") || (nomdonnees=="refuseuneproposition")){
     var nodemande = nettoieinputtra($("#confirmationinputcode").val()) ;
     if (nodemande.length <= 14){
       $("#confirmationinputcode").css('color', 'red');
@@ -1280,7 +1281,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "AEXP":
         $("#acceptetransactionstatut").html("Cette proposition est expirée");
-        menudetailproposition("pasmatransactionfermee"); affichedetailproposition(contenuretour,""); 
+        menudetailproposition("pasmatransactionfermee"); 
+        affichedetailproposition(contenuretour,""); 
         break; 
         case "TNDI":
         $("#acceptetransactionstatut").html("Proposition non disponible"); propositionrefusee(contenuretour);
