@@ -1249,6 +1249,9 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "DTCE":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré dépense de ↺onsignel supérieure à 7 jours"); break; 
+        case "DTDI":
+        responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
+        alert("Le destinataire est inconnu. Vérifiez ou supprimez le destinatire"); break;
         case "DTNO":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré transaction non autorisée erreur calcul ↺onsignel"); break; 

@@ -161,31 +161,6 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
 };
 // -----------------------
 
-// refuse la proposition de transaction
-function refusetransaction($var3,$notransaction){
-  $noaccepteur = $var3; 
-  $demandeur = $var3;
-  $statuttransaction = transactionstatut($demandeur, $notransaction);
-  $debut = substr($statuttransaction,0,4);
-  $ligne = contenusuivi($var3,$notransaction); 
-  list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
-
-  if($debut=="DTAO"){
-    if($var35 == "\"".$var3."\""){
-      $idtra = "tra".$notransaction;
-      $nomfichiertra = $idtra.".json";
-      $listeopportunite = retiredelaliste($var3,"mesopportunites",$nomfichiertra);
-      $proposeur = preg_replace( "/\D/", "", $var38);
-      $propositionrefuse = annuleproposition($proposeur,$notransaction,"TREF - ".substr($statuttransaction,7)); // annuleproposition renvoie "TREF - ".substr($statuttransaction,7);
-      return $propositionrefuse;
-    }else{
-      return "TEST - Réponse serveur: Cette proposition reste ouverte à tous TREF -";
-    };
-  } else {
-    return "TEST - Réponse serveur: Proposition non disponible pour refus type: ".$debut;
-  };
-};
-
 // accepte la proposition de transaction
 function acceptetransaction($var3,$notransaction){
   $noaccepteur = $var3; 
@@ -616,7 +591,6 @@ function contenusuivi($var3,$notransaction){
   $idtra = "tra".$notransaction; 
   $nomfichiertra = "tra".$idtra.".json"; 
   $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
- 
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
   $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
   $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
@@ -785,8 +759,8 @@ function inversetransaction($idtra,$contenufichiertra,$dateaccepte,$noproposeur)
   return $acclocal;
 };
 
-// retourne le seudo d'un identifiant
-function lepseudode($iddupsudo){
+// retourne le pseudo d'un identifiant
+function lepseudode($iddupsudo, $option="noid"){
   $baseutilisateurs = constante("baseutilisateurs");
   $cheminfichier =  tracelechemin("",$baseutilisateurs,".baseconsignel3");  
   if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
@@ -795,7 +769,7 @@ function lepseudode($iddupsudo){
     while (!feof($fichierencours) && !$existe) { // cherche dans les lignes
       $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
       if (preg_match('/\b' . preg_quote($donnee2) . '\b/u', $ligne)) { 
-        list($var61, $var62, $var63, $var64, $var65) = explode(",", $ligne);
+        list($var61, $var62, $var63, $var64, $var65, $var66) = explode(",", $ligne);
         // $var1 code utilisateur, $var2 code mot de passe, $var3 pseudo utilisateur, $var4 image ou avatar, $var5 localité consignel
         if ($var61==$iddupsudo){ // trouvé comme identifiant
           $existe = TRUE; // Valeur trouvée arrêt du while
@@ -804,7 +778,32 @@ function lepseudode($iddupsudo){
     }; // Fin de cherche dans les lignes
     fclose($fichierencours); // fermeture du fichier
   };
-  if($existe == TRUE){return $var63;};
+  if($existe == TRUE){
+    if($option=="noid"){return $var63;};
+    if($option=="nopseudo"){return $var66;};
+  };
+};
+
+// retourne l'identifiant à partir du code du pseudo
+function leiddupseudo($iddupsudo){
+  $baseutilisateurs = constante("baseutilisateurs");
+  $cheminfichier =  tracelechemin("",$baseutilisateurs,".baseconsignel3");  
+  if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
+    $existe = FALSE; // Testeur de boucle
+    $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
+    while (!feof($fichierencours) && !$existe) { // cherche dans les lignes
+      $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
+      if (preg_match('/\b' . preg_quote($donnee2) . '\b/u', $ligne)) { 
+        list($var61, $var62, $var63, $var64, $var65, $var66) = explode(",", $ligne);
+        // $var1 code utilisateur, $var2 code mot de passe, $var3 pseudo utilisateur, $var4 image ou avatar, $var5 localité consignel $var6 code de $var3
+        if (($var66==$iddupsudo)||($var61==$iddupsudo)){ // trouvé
+          $iddestinataire = $var61; $existe = TRUE; // Valeur trouvée arrêt du while
+        }; // fin du trouvé comme identifiant
+      } // Fin de trouvé dans la ligne
+    }; // Fin de cherche dans les lignes
+    fclose($fichierencours); // fermeture du fichier
+  };
+  if($existe == TRUE){return $iddestinataire;}else{return "inconnu";};
 };
 
 // supprime les références aux sessions obsoletes
@@ -883,10 +882,11 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
   
   $iddem = "dem".$jsonenphp[$idtra][2]."_".$jsonenphp[$idtra][1]; // identification de la demande
-  $destinataire = $jsonenphp[$idtra][3]; // identification du destinataire de l'offre
+  $destinataire = leiddupseudo($jsonenphp[$idtra][3],$idtra); // identification du destinataire de l'offre
+  if($destinataire=="inconnu"){return "DTDI - Destinataire inconnu" ; };
+
   $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
-  if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ;
-; $transaction = "";  };
+  if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ; $transaction = "";  };
   if (($soldeconsigneldisponible + $consigneloffre + $consigneloffrepaiement)<0){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = "";  };
   
   //  if (($soldedollardisponible + $dollaroffre)<0){ echo "solde dollar insuffisant"; $transaction = "";  };
@@ -1020,6 +1020,31 @@ function queltypetroc($noact){
       };
       return $typetroc;
     };
+
+// refuse la proposition de transaction
+function refusetransaction($var3,$notransaction){
+  $noaccepteur = $var3; 
+  $demandeur = $var3;
+  $statuttransaction = transactionstatut($demandeur, $notransaction);
+  $debut = substr($statuttransaction,0,4);
+  $ligne = contenusuivi($var3,$notransaction); 
+  list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
+  $destinataire = leiddupseudo($demandeur); // identification du destinataire de l'offre
+  if($debut=="DTAO"){
+    if(($var35 == "\"".$var3."\"")||($demandeur==$var3)){
+      $idtra = "tra".$notransaction;
+      $nomfichiertra = $idtra.".json";
+      $listeopportunite = retiredelaliste($var3,"mesopportunites",$nomfichiertra);
+      $proposeur = preg_replace( "/\D/", "", $var38);
+      $propositionrefuse = annuleproposition($proposeur,$notransaction,"TREF - ".substr($statuttransaction,7)); // annuleproposition renvoie "TREF - ".substr($statuttransaction,7);
+      return $propositionrefuse;
+    }else{
+      return "TEST - Réponse serveur: Cette proposition reste ouverte à tous TREF -";
+    };
+  } else {
+    return "TEST - Réponse serveur: Proposition non disponible pour refus type: ".$debut;
+  };
+};
 
 // remplace le contenu du fichier
 function remplacefichier($cheminfichierinclu, $chainefichier){
@@ -1163,14 +1188,14 @@ function testelechemin($nomtransaction){
       return $chemin;
     };
 
-// pour tester si la proposition est encore valide
+// pour tester si le destinataire de la proposition est autorisé
 function testdestinataire($pourqui,$demandeur){
-      $desti = preg_replace( "/\D/", "", $pourqui) ; $tesqui = preg_replace( "/\D/", "", $demandeur) ;
-      $autorise = "nonautorise" ; 
-      if($desti == "0"){ $autorise = "autorise" ; };
-      if($tesqui == $desti){ $autorise = "autorise" ; };
-      return $autorise;
-    };
+  $desti = preg_replace( "/\D/", "", $pourqui) ; $tesqui = preg_replace( "/\D/", "", $demandeur) ;
+  if($desti == "0"){ return "autorise" ; };
+  if($tesqui == $desti){ return "autorise" ; };
+  if(lepseudode($tesqui, "nopseudo") == $desti){ return "autorise" ; };
+  return "nonautorise" ; 
+};
 
 // renvoie le chemin d'accès en fonction de l'identifiant 
 function tracelechemin($numerofichier,$sousrep,$nomfichier,$defriche="") {
