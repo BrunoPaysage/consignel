@@ -115,6 +115,7 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       $lademande = ($donnee3/$var4);
       if($lademande==16887){  fichierperso($var3,"resume"); };
       if($lademande==6986){  fichierperso($var3,"quoi"); };
+      if($lademande==59570){  fichierperso($var3,"demandeaqui"); };
       if($lademande==86012){  fichierperso($var3,"mesvaleursref"); };
       if($lademande==116020){  fichierperso($var3,"mestransactions"); };
       if($lademande==118452){  
@@ -271,6 +272,12 @@ function acceptetransaction($var3,$notransaction){
     ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc."\n");
     // mise à jour du fichier mesopportunites dans la base de l'accepteur
     $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
+    // mise à jour du fichier demandeaqui dans la base de l'accepteur et du proposeur
+    $lepseudoproposeur = lepseudode($noproposeur);
+    $listedemandeaqui = ajoutealaliste($noaccepteur,"demandeaqui",$lepseudoproposeur);
+    $lepseudoaccepteur = lepseudode($noaccepteur);
+    $listedemandeaqui = ajoutealaliste($noproposeur,"demandeaqui",$lepseudoaccepteur);
+   
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
   
     
@@ -332,6 +339,7 @@ function ajoutealaliste($var3,$nomfichier,$item){
   $contenufichier = $contenufichier.$virgule."".$item."";
   $tableaucontenufichier = explode(",",$contenufichier);
   natsort($tableaucontenufichier);
+  $tableaucontenufichier = array_unique($tableaucontenufichier);
   $contenufichier = implode(",",$tableaucontenufichier);
   $contenufichier = "[".$contenufichier."]";
   $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");
@@ -407,7 +415,6 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     $annexp = "exp";
     if($statut == "TREF"){ $annexp = "ann"; };
   };
-
   If (($statut == "PACT")||($statut == "PEXP")||($statut == "AEXP")||($statut == "TREF")){ 
     // Ce code autorise l'annulation de la transaction la ligne du fichier suivi suit au 7e caractère
     $idtra = "tra".$notransaction; // chemin du dossier par date
@@ -458,6 +465,7 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     ajouteaufichier($cheminfichier.$nomfichierann, $transactionsuivi); 
     // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
     $base=constante("base");
+    if($var38="\DA↺\"\n"){$base=$base."/DA↺/";}; // note les refus si le répertoire existe
     $nouveautraann = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,$demandeur);
     $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); 
     ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraann."\n");
@@ -1035,6 +1043,7 @@ function refusetransaction($var3,$notransaction){
       $idtra = "tra".$notransaction;
       $nomfichiertra = $idtra.".json";
       $listeopportunite = retiredelaliste($var3,"mesopportunites",$nomfichiertra);
+      if($var38 =="\"DA↺\"\n"){$proposeur="001"; };
       $proposeur = preg_replace( "/\D/", "", $var38);
       $propositionrefuse = annuleproposition($proposeur,$notransaction,"TREF - ".substr($statuttransaction,7)); // annuleproposition renvoie "TREF - ".substr($statuttransaction,7);
       return $propositionrefuse;

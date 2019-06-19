@@ -694,6 +694,7 @@ function chargemoi(nomdonnees){
       demandefichier(dansdiv,nomdonnees,dansspansuivi,nomfichierlocal,dansspansuivi2);
       if(nomdonnees=="quoi"){ changedeliste("#inputactivite", dansdiv); };
       if(nomdonnees=="mesopportunites"){ changedeliste("#confirmationinputcode", dansdiv); };
+      if(nomdonnees=="demandeaqui"){ changedeliste("#demandequi", dansdiv); };
     }else{
       /* c'est dans localstorage transfert dans lediv */
       $(dansdiv).html(encryptepourdiv(fichierlocaljson));
@@ -702,6 +703,7 @@ function chargemoi(nomdonnees){
       $(dansspansuivi2).html("<i class='eval3'> </i>");
       if(nomdonnees=="quoi"){ changedeliste("#inputactivite", dansdiv); };
       if(nomdonnees=="mesopportunites"){ changedeliste("#confirmationinputcode", dansdiv); };
+      if(nomdonnees=="demandeaqui"){ changedeliste("#demandequi", dansdiv); };
     };
   };/* fin du transfert dans le div depuis localstorage */
 }; /* fin de la fonction chargemoi */
@@ -941,6 +943,8 @@ var listeparqui = [];
 $( "#inputchercheparqui" ).autocomplete({ source: listeparqui, select: function (event, ui) { $("#inputchercheparqui").val(ui.item.label); proposechoix();}, }); 
 var listeconfirmation = [];
 $( "#confirmationinputcode" ).autocomplete({ source: listeconfirmation, select: function (event, ui) { $("#confirmationinputcode").val(ui.item.label); confirmationokinputcode();}, }); 
+var listedemandeaqui = [];
+$( "#demandeaqui" ).autocomplete({ source: listedemandeaqui, select: function (event, ui) { $("#demandeaqui").val(ui.item.label); validedemandeaqui();}, }); 
 
 /* ajout des onclick sur le html menupref */
 $("h2.localisation").click(function() { clicpageweb();  });
@@ -1017,14 +1021,15 @@ $("#chargecherchepourqui").click(function() { charge("cherchepourqui"); });
 $("#chargechercheparqui").click(function() { charge("chercheparqui"); });
 $("#chargevaleursref").click(function() { charge("valeursref"); });
 
-$("#fichierspersonnelspoubelle").click(function() { videlocalstorageperso(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites"]); videlediv(".mstockdansdiv"); videautocomplete(); chargevaleursrefmini(); });
-$("#fichierspersonnelschargemoi").click(function() { chargemoitout(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites"]); });
+$("#fichierspersonnelspoubelle").click(function() { videlocalstorageperso(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites","demandeaqui"]); videlediv(".mstockdansdiv"); videautocomplete(); chargevaleursrefmini(); });
+$("#fichierspersonnelschargemoi").click(function() { chargemoitout(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites","demandeaqui"]); });
 $("#chargemoiresume").click(function() { chargemoi("resume"); });
 $("#chargemoiquoi").click(function() { chargemoi("quoi"); });
 $("#chargemoimesvaleursref").click(function() { chargemoi("mesvaleursref"); });
 $("#chargemoimespropositions").click(function() { chargemoi("mespropositions"); });
 $("#chargemoidemandeuneproposition").click(function() { chargemoi("demandeuneproposition"); });
 $("#chargemoimesopportunites").click(function() { chargemoi("mesopportunites"); });
+$("#chargemoidemandeaqui").click(function() { chargemoi("demandeaqui"); });
 
 /* ajout des onclick developpement et suivi */
 $("#developpementetsuivi").click(function() { changeClass(stockage,'voit','cache'); });
@@ -1309,6 +1314,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         default :
         /* Fichier demandé au serveur et chargé */
         $(retourdansdiv).html(encryptepourdiv(responseTxt));
+        $("#acceptetransactionstatut").html("");           menudetailproposition("attente");
         $(dansspansuivi).html("<i class='eval4'> - "+demandefich+" chargé depuis le serveur" + " -</i>"); 
         $(dansspansuivi2).html("<i class='eval4'>&nbsp;</i>"); 
         if(responseTxt.length ==1){
@@ -1329,12 +1335,12 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         };
         if(nomdonnees=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
         if(nomdonnees=="mesopportunites"){ 
-          menudetailproposition("attente");
           changedeliste("#confirmationinputcode", "#mstockmesopportunites"); 
             if($("#changeaideinputconfirmation").text() != "ø"){
               $("#acceptetransactionstatut").html("tapez 2, choisissez et clic sur ok");
             };
         };
+        if(nomdonnees=="demandeaqui"){ changedeliste("#demandeaqui", "#mstockdemandeaqui"); };
         break;
       }; /* Fin du switch */
     }; /* Fin de la fonction de retour succès */
@@ -1879,7 +1885,6 @@ function testdepassement(consignel){
 };
 
 /* teste si des intermédiaires d'échange ($ mlc ↺) sont échangés */
-/* blabla */
 function testspeculation(){
   $("#suiviappli").prepend("testspeculation() <br>");
   var param = $("#mesact").text();
@@ -2158,8 +2163,10 @@ function videautocomplete() {
   $("#suiviappli").prepend("videautocomplete() <br>");
   $(".recherche input").autocomplete("option","source",[]);
   $("#changeaideinputactivite").html("ø");
+  $("#changeaideinputconfirmation").html("ø");
   var listeduinput = JSON.parse($("#listestockevaleursrefmini").text());
   $("#inputactivite").autocomplete("option","source",listeduinput);
+  $("#acceptetransactionstatut").html("...");
 };
 
 /* vide le localstorage et les div fichierspersonnels*/

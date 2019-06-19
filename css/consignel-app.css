@@ -336,7 +336,8 @@ h3 .utilisation { cursor: pointer; }
 #offrechoisi span[id$="preciseact"] span.codedetailactivite, #demandechoisi span[id$="preciseact"] span.codedetailactivite { cursor: default; }
 #offrechoisi span[id$="preciseact"] span.consignel, #demandechoisi span[id$="preciseact"] span.consignel { cursor: default; }
 #offrechoisi span.supprime, #demandechoisi span.supprime { cursor: pointer; }
-#offrechoisi span.preciseactivite, #demandechoisi span.supprime { cursor: pointer; }
+#offrechoisi span.preciseactivite, #demandechoisi span.preciseactivite { cursor: pointer; }
+#offreconfirme span.preciseactivite, #demandeconfirme span.preciseactivite { cursor: pointer; }
 #dacoffre h3, #dacdemande h3 {padding-top:5px; padding-left:1.5em; }
 #dacoffre div, #dacdemande div {padding-left:0.9em; }
 
