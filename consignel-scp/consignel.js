@@ -166,16 +166,6 @@ function afficheproposition(ou,id,valeurs,numproposetra){
   };
 };
 
-/* repérage d'un paiement double troc ou d'un simple échange */
-function queltypetroc(notransaction){
-  $("#suiviappli").prepend("queltypetroc(notransaction) <br>");
-  var noact= notransaction;
-  var typetroc = "doubletroc";
-  var listepaiement = constante("paiements"); 
-  if (listepaiement.indexOf("_"+notransaction+"\"")==-1){typetroc = "simpletroc";};
-  return typetroc;
-}
-
 function aidepropositions(){
   $("#suiviappli").prepend("aidepropositions() <br>");
   alert("aidepropositions à écrire ");
@@ -312,7 +302,7 @@ function changegraphsuivi(disponible,unjour,dispomini,dispomaxi){
   var dispo1an=365*unjour;
   if (dispo1an > constante("maximumcompte") ){ 
     var dispomax = constante("maximumcompte") ; 
-    dispo=disponible   ;
+    dispo=disponible ;
     dispo14jours=14*dispomax/365 ;
     dispo1jour=dispomax/365 ;
     dispo1an=dispomax ;
@@ -666,6 +656,7 @@ function chargemoi(nomdonnees){
       if (nomdonnees == "accepteuneproposition" ){envoi = "oui";};
       if (nomdonnees == "refuseuneproposition" ){envoi = "oui";};
       if (nomdonnees == "annuleuneproposition" ){envoi = "oui";};
+      if (nomdonnees == "inscription" ){envoi = "oui";};
       if(envoi=="oui"){
         /* envoi de données */
         fichierlocaljson = undefined;
@@ -868,7 +859,7 @@ function codetransaction(){
   var lademande=$("#mademande").text();
   var codedemande=$("#demandemontants .codedemande").text();
   var ladate=$("#idtransaction .codedate").text();
-  var demandeaqui=codelenom(nettoieinput($("#demandeaqui").val()));
+  var demandeaqui=codelenom(nettoieinput($("#inputdemandeaqui").val()));
   var dureeexpire=($("#dureeexpire").val());
   var latransaction= "[\""+codeoffre+"\",\""+codedemande+"\",\""+ladate+"\",\""+demandeaqui+"\",\""+dureeexpire+"\"]";
   var chaineretour = $(".retourserveur").text();
@@ -911,8 +902,9 @@ function confirmationchangeaide(){
 /* au chargement de la page initialise l'application */
 function debuter(){
 /* masque le champs secret pour l'inscription */
-$(".secret").hide();
+$(".secret").hide();$(".inscription2").hide(); $(".inscription3").hide();
 $("#confirmationacceptetransaction .matransaction").hide();
+
 
 /* connection des listes triables */
 $("#suiviappli").prepend("function() .sortable<br>");
@@ -944,7 +936,7 @@ $( "#inputchercheparqui" ).autocomplete({ source: listeparqui, select: function 
 var listeconfirmation = [];
 $( "#confirmationinputcode" ).autocomplete({ source: listeconfirmation, select: function (event, ui) { $("#confirmationinputcode").val(ui.item.label); confirmationokinputcode();}, }); 
 var listedemandeaqui = [];
-$( "#demandeaqui" ).autocomplete({ source: listedemandeaqui, select: function (event, ui) { $("#demandeaqui").val(ui.item.label); validedemandeaqui();}, }); 
+$( "#inputdemandeaqui" ).autocomplete({ source: listedemandeaqui, select: function (event, ui) { $("#inputdemandeaqui").val(ui.item.label); validedemandeaqui();}, }); 
 
 /* ajout des onclick sur le html menupref */
 $("h2.localisation").click(function() { clicpageweb();  });
@@ -961,6 +953,11 @@ $(".suivicompte .barredisponible").click(function() { clicsuividd("suivibarre");
 /* ajout des onchange sur le html incription et arretesession*/
 $("#formulaireaccesutilisateur").change(function() { valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
 $("#formulaireaccespass").change(function() { valideutilisateur(nettoieinput($("#formulaireaccespass").val())); });
+$("#inscr2nom").change(function() { nettoieinput($("#inscr2nom").val()); inscription(2); });
+$("#inscr2nom2").change(function() { nettoieinput($("#inscr2nom2").val()); inscription(3); });
+$("#inscr3secret").change(function() { nettoieinput($("#inscr3secret").val()); inscription(4); });
+$("#inscr3secret2").change(function() { nettoieinput($("#inscr3secret2").val()); inscription(5); });
+
 $("#formulairearretcontinue").click(function() { arretesessionclic("continue"); });
 $("#formulairearretarrete").click(function() { arretesessionclic("arrete"); });
 $("#modedemo").change(function() { changemodedemo(); });
@@ -997,8 +994,8 @@ $("#utilisationchoisioffre").click(function() { inverseoffredemande("offre"); })
 $("#utilisationchoisidemande").click(function() { inverseoffredemande("demande"); });
 
 /* ajout des onclick pour demande à qui */
-$("#demandeaqui").focus(function() { supprimeautorisationqr(); });
-$("#demandeaqui").blur(function() { validedemandeaqui(); });
+$("#inputdemandeaqui").focus(function() { supprimeautorisationqr(); });
+$("#inputdemandeaqui").blur(function() { validedemandeaqui(); });
 
 /* ajout des onclick du DA&#8634; */
 $("#offrecompensationdetails").click(function() { changeClass(offremontants,'voit','cache'); });
@@ -1168,6 +1165,16 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
       var5="&var5="+var5
     };
   };
+  if(nomdonnees=="inscription"){
+    var nomupublic= nettoieinput($("#formulaireaccesutilisateur").val());
+    var codenomupublic= codelenom(nomupublic);
+    var codenomutil= codelenom(nettoieinput($("#inscr2nom2").val()));
+    var codesecret= codelenom(nettoieinput($("#inscr3secret2").val()));
+    var var5 = "\""+nomupublic+"\","+codenomupublic+","+codenomutil+","+codesecret ;
+    var5="{ "+ var5 +" } ";
+    var5 = encryptepourtransfert(var5);
+    var5="&var5="+var5
+  };
 
   var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
   $("#suiviappli").prepend("script php demandeauserveur envoyé au serveur <br>");
@@ -1205,6 +1212,13 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         var paramgraph = contenuretour.split(","); 
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
         break; 
+        case "NUCI":
+        menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
+        inscription(1);
+        break; // page d'inscription nouvel utilisateur
+        case "NUCC":
+        alert("l'identifiant et le mot de passe ont été changés"); identification();
+        break; // page d'inscription nouvel utilisateur
         case "ERDP":
         $('#confirmationinputcode').focus(); break; // ("Manque le code de la transaction");  
         case "NULL":
@@ -1228,6 +1242,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#acceptetransactionstatut").html("Transaction disponible");
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
         break; 
+        case "DIMF":
+        alert(contenuretour); break; // "Demande d'inscription mal formulée"
         case "PACT":
         $("#acceptetransactionstatut").html("Ma proposition est encore active");
         menudetailproposition("matransaction"); affichedetailproposition(contenuretour,"matransaction");
@@ -1256,7 +1272,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Non enregistré dépense de ↺onsignel supérieure à 7 jours"); break; 
         case "DTDI":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
-        alert("Le destinataire est inconnu. Vérifiez ou supprimez le destinatire"); break;
+        alert("Le destinataire est inconnu. Vérifiez ou supprimez le destinataire"); break;
         case "DTNO":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré transaction non autorisée erreur calcul ↺onsignel"); break; 
@@ -1340,7 +1356,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
               $("#acceptetransactionstatut").html("tapez 2, choisissez et clic sur ok");
             };
         };
-        if(nomdonnees=="demandeaqui"){ changedeliste("#demandeaqui", "#mstockdemandeaqui"); };
+        if(nomdonnees=="demandeaqui"){ changedeliste("#inputdemandeaqui", "#mstockdemandeaqui"); };
         break;
       }; /* Fin du switch */
     }; /* Fin de la fonction de retour succès */
@@ -1396,7 +1412,7 @@ function effaceutilisation(){
   effaceutilisationrechercheinput();
   videlespan(".compensation");
   videlespan(".demandecompensation");
-  $("#demandeaqui").val("");
+  $("#inputdemandeaqui").val("");
 };
 
 /* nettoyage interface */
@@ -1480,9 +1496,49 @@ function identification(){
   $(".utilisation").hide();
   $(".inscription").show(); $(".detection").hide(); $(".secret").hide(); $(".validation").show();
   utilisateurinconnu();
-  videinput("#formulaireaccesutilisateur"); videinput("#formulaireaccespass"); 
+  videinput("#formulaireaccesutilisateur"); videinput("#formulaireaccespass"); videinput("#inscr2nom"); videinput("#inscr2nom2"); videinput("#inscr3secret"); videinput("#inscr3secret2"); 
   $("#formulaireaccesutilisateur").focus();
 };
+
+/* affiche la page d'inscption */
+function inscription(etapedinscription=1){
+  var etape = etapedinscription; var nom1=""; var nom2=""; var test1="";
+  if(etape==1){
+    $("#suiviappli").prepend("inscription() <br>");
+    $(".inscription").show(); $(".confirmation").hide(); 
+    $(".detection").hide(); $(".inscriptiontesteurs").hide(); $(".inscriptiontesteurssecrets").hide();  
+    $(".inscription2").show(); $("#inscr2nom2").focus();$("#inscr2nom").focus();
+  };
+  if(etape==2){
+    $(".inscription2").show(); $("#inscr2nom2").focus(); 
+  }; // nom d'utilisateur
+  
+  if(etape==3){
+    nom1 = $("#inscr2nom").val(); nom2 = $("#inscr2nom2").val();
+    test1 = ""+nom1+nom2; 
+    if((nom1 == nom2) && (test1 != "")){
+      $(".inscription3").show(); $("#inscr3secret").focus(); 
+    }else{
+      alert("les identifiants de compte sont différents"); videinput("#inscr2nom"); videinput("#inscr2nom2"); $("#inscr2nom").focus();
+    };
+   }; // nom d'utilisateur vérification avant mot de passe
+  
+  if(etape==4){
+    $(".inscription3").show(); $("#inscr3secret2").focus();
+  }; // mot de passe
+  
+  if(etape==5){
+    nom1 = $("#inscr3secret").val(); nom2 = $("#inscr3secret2").val();
+    test1 = ""+nom1+nom2; 
+    if((nom1 == nom2) && (test1 != "")){
+      chargemoi("inscription"); 
+    }else{
+      alert("les mots de passe sont différents"); videinput("#inscr3secret"); videinput("#inscr3secret2"); $("#inscr3secret").focus();
+    };
+   }; // nom d'utilisateur vérification avant mot de passe
+  
+}; // affiche la page d'inscption
+/* affiche le complément de la page d'inscption */
 
 /* inverse l'envoi vers l'offre ou la demande */
 function inverseoffredemande(option){
@@ -1670,7 +1726,7 @@ function modifieqr(nouveautexte){
 };
 
 /* Précaution anti-script sur une entrée input */
-function nettoieinput(valinput){
+function nettoieinput(valinput=""){
   var remplacescript = new RegExp('\\b(script)\\b', 'gi');
   valinput = valinput.replace(remplacescript, 'scr¡pt');
   var remplacescript = new RegExp('\\b(style)\\b', 'gi');
@@ -1779,6 +1835,16 @@ function propositionrefusee(responseduserveur){
 /* proposition négociée */
 function propositionnegociee(){
 };
+
+/* repérage d'un paiement double troc ou d'un simple échange */
+function queltypetroc(notransaction){
+  $("#suiviappli").prepend("queltypetroc(notransaction) <br>");
+  var noact= notransaction;
+  var typetroc = "doubletroc";
+  var listepaiement = constante("paiements"); 
+  if (listepaiement.indexOf("_"+notransaction+"\"")==-1){typetroc = "simpletroc";};
+  return typetroc;
+}
 
 /* retourne le tableau des valeurs pour l'élément enum */
 function refdevaleur(codeitem){
@@ -2024,7 +2090,7 @@ valconsignel = valconsignel + compenseenvironnement;
 /* validation de l'utilisateur */
 function valideutilisateur(nomutilisateur){
   $("#suiviappli").prepend("valideutilisateur(nomutilisateur) <br>");
-  var nomutil = nomutilisateur;
+  var nomutil = nomutilisateur; //change selon le input utilisateur pass, vrainon etc.
   var nomutil2= nettoieinput($("#formulaireaccesutilisateur").val());
   var nomutil3= nettoieinput($("#formulaireaccespass").val());
   var tableauretour= $(".retourserveur").html().split(",");
@@ -2059,7 +2125,11 @@ $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr)
 try { var tableauretour = $(".retourserveur").html().split(","); }
   catch(err) {$(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};
 /* Utilisateur inconnu sur le serveur echo (" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu") */
+
+if(!tableauretour[2]){ $(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};/* Utilisateur DA↺ mot réservé undefined */
+
 tableauretour[2] = tableauretour[2].substring(1,(tableauretour[2].length)-1) ;
+
 // peut contenir le pseudo, inconnu ou 1 si l'utilisateur est identifié par le serveur 
 if(tableauretour[2] =="Inconnu"){
   effacelentete();/* reste sur la page d'inscription à faire accès au test par le menu */
@@ -2108,9 +2178,9 @@ alert("fonction validfluxconsignel à écrire");
 /* validation de la durée d'expiration */
 function validedemandeaqui(){
   $("#suiviappli").prepend("validedemandeaqui() <br>");
-var demandeaquilocale = $("#demandeaqui").val();
+var demandeaquilocale = $("#inputdemandeaqui").val();
 demandeaquilocale = nettoieinput(demandeaquilocale);
-$("#demandeaqui").val(demandeaquilocale) ;
+$("#inputdemandeaqui").val(demandeaquilocale) ;
 miseajourdesvaleurs();
 }; 
 

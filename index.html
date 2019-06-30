@@ -32,7 +32,7 @@
 
 <!-- Préférences ou accès différentes pages -->
 <span class="menupref"><span class="suivant cache">.utilisation</span>
-<a id="menuprefinscription">Insc</a>
+<!-- <a id="menuprefinscription">Insc</a> -->
 <a id="menuprefutilisation">Agir</a>
 <a id="menuprefconfirmation">Réagir</a>
 <a id="menuprefpreferences">Préf</a>
@@ -79,6 +79,30 @@ Utilisateur<br>
 Secret<br>
 <input type=password id="formulaireaccespass" placeholder="Code personnel"><span class="inscriptiontesteurssecrets boutonsclic"> Pour tester: <span>test</span></span>
 </p>
+
+<div class="inscription2">
+<h3>Ouverture du compte</h3>
+<p class="inscription2 utilisateur">
+Identifiant de compte (nom d'utilisateur secret)<br>
+<input type=password id="inscr2nom" placeholder="Nom ou Identifiant"><span></span>
+</p>
+<p class="inscription2 utilisateur">
+Confirmer l'identifiant de compte<br>
+<input type=password id="inscr2nom2" placeholder="Nom ou Identifiant"><span id="inscr2nom2ok"></span>
+</p>
+</div>
+
+<div class="inscription3">
+<p class="inscription3 secret">
+Mot de passe (secret)<br>
+<input type=password id="inscr3secret" placeholder="Code personnel"><span></span>
+</p>
+<p class="inscription3 secret">
+Confirmer le mot de passe<br>
+<input type=password id="inscr3secret2" placeholder="Code personnel"><span></span>
+</p>
+</div>
+
 </form>
 <form class="arretesession" name="formulairearret" id="formulairearret" method="post" onsubmit="return false">
 <button id="formulairearretcontinue">Continue ma session</button><button id="formulairearretarrete">STOP arrête la session, change d'utilisateur</button>
@@ -133,7 +157,7 @@ Secret<br>
   <div id="poubelle2" class="listedeschoix"></div>
   <div id="demandechoisi" class="listedeschoix utilisation">
   <div class="utilisateur recherche">
-    <input id="demandeaqui" type="text" placeholder="A qui ?">
+    <input id="inputdemandeaqui" type="text" placeholder="A qui ?">
   </div>
 </div>
   <div id="demandeconfirme" class="listedeschoix confirmation"></div>
@@ -146,12 +170,12 @@ Secret<br>
 <div id="dacoffre" class="utilisation confirmation compensation deuxcolonnesA3">
   <h3>DA&#8634;</h3>
   <div class="utilisation"> <!-- Début utilisation  -->
-    <div id="offrecompensation" class="offrecompensation"><span class="montant"></span> &#8634;onsignel <a id="offrecompensationdetails">&#9064;</a></div>
+    <div id="offrecompensation" class="offrecompensation"><span class="montant"></span> &#8634;onsignél <a id="offrecompensationdetails">&#9064;</a></div>
     <div id="offremontants" class="cache"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codeoffre"></span> <span class="listeact"></span> </div>
     <div id="idtransaction"><sub><span class="codetransaction vegetal"></span> <span class="date cache"></span><span class="codedate"></span></sub></div>
   </div> <!-- Fin utilisation  -->
   <div class="confirmation"> <!-- Début confirmation  -->
-    <div id="offrecompensationconfirme" class="offrecompensation"><span class="montant"></span> &#8634;onsignel <a id="offrecompensationconfirmedetails">&#9064;</a></div>
+    <div id="offrecompensationconfirme" class="offrecompensation"><span class="montant"></span> &#8634;onsignél <a id="offrecompensationconfirmedetails">&#9064;</a></div>
     <div id="offremontantsconfirme" class="voit"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codeoffre"></span> <span class="listeact"></span> </div>
     <div id="idtransactionconfirme"><sub><span class="codetransaction vegetal"></span> <span class="date"></span><span class="codedate"></span></sub></div>
   </div> <!-- Fin confirmation  -->
@@ -160,11 +184,11 @@ Secret<br>
 <div id="dacdemande"  class="utilisation confirmation demandecompensation deuxcolonnesB3">
   <h3>DA&#8634;</h3>
   <div class="utilisation"> <!-- Début utilisation  -->
-    <div id="demandecompensation" class="demandecompensation"><span class="montant"></span> &#8634;onsignel <a id="demandecompensationdetails">&#9064;</a></div>
+    <div id="demandecompensation" class="demandecompensation"><span class="montant"></span> &#8634;onsignél <a id="demandecompensationdetails">&#9064;</a></div>
     <div id="demandemontants" class="cache"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codedemande"></span> <span class="listeact"></span> </div><br>
     </div> <!-- Fin utilisation  -->
     <div class="confirmation"> <!-- Début confirmation  -->
-    <div id="demandecompensationconfirme" class="demandecompensation"><span class="montant"></span> &#8634;onsignel <a id="demandecompensationconfirmedetails">&#9064;</a></div>
+    <div id="demandecompensationconfirme" class="demandecompensation"><span class="montant"></span> &#8634;onsignél <a id="demandecompensationconfirmedetails">&#9064;</a></div>
     <div id="demandemontantsconfirme" class="voit"><span class="argent"></span> $ <span class="mlc"></span> mlc <span class="environnement"></span> *E <span class="duree"></span> h <span class="social"></span> *S <br><span class="codedemande"></span> <span class="listeact"></span> </div>
     <div id="idtransactionproposition"><sub><span class="codetransaction vegetal"></span> <span class="date"></span><span class="codedate"></span></sub></div>
 <br>
@@ -202,7 +226,7 @@ Secret<br>
 </div> <!-- Fin preferences dureeoffre -->
 
 <div class="preferences limitefluxconsignel">
-<br><h3>Limite de dépense de ↺onsignel <span class="duree"><input id="fluxconsignel" type="number" min="2" max="7" size="3" value="4"> jours de consommation</span></h3>
+<br><h3>Limite de dépense de ↺onsignél <span class="duree"><input id="fluxconsignel" type="number" min="2" max="7" size="3" value="4"> jours de consommation</span></h3>
 </div> <!-- Fin preferences dureeoffre -->
 
 <div id="preferences" class="actif">
@@ -233,10 +257,11 @@ Fichiers personnels <input id="localstoragemoi" type="checkbox" value="non"> <sp
 <div class="fichierspersonnels">
 <details><summary><a class="poubelle" id="fichierspersonnelspoubelle"> <small>&#128465;</small> </a> <a class="chargemoi" id="fichierspersonnelschargemoi"> &#9851;</a> 
  Fichiers disponibles <span class="statutfichierspersonnels">
- <span class="statut2resume">...</span><span class="statut2quoi">...</span><span class="statut2mesvaleursref">...</span><span class="statut2mespropositions">...</span><span class="statut2demandeuneproposition">...</span><span class="statut2mesopportunites">...</span><span class="statut2demandeaqui">...</span>
+ <span class="statut2resume">...</span><span class="statut2inscription">...</span><span class="statut2quoi">...</span><span class="statut2mesvaleursref">...</span><span class="statut2mespropositions">...</span><span class="statut2demandeuneproposition">...</span><span class="statut2mesopportunites">...</span><span class="statut2demandeaqui">...</span>
 </span>
 </summary>
 <div>Résumé du compte: <span class="statutresume">vide</span> <a id="chargemoiresume"> &#8634; </a></div>
+<div>Inscription: <span class="statutinscription">vide</span> <a id="chargemoiinscription"> </a></div>
 <div>quoi: <span class="statutquoi">quoi</span> <a id="chargemoiquoi"> &#8634; </a></div>
 <div>mes références de valeurs: <span class="statutmesvaleursref">mesvaleursref</span> <a id="chargemoimesvaleursref"> &#8634; </a></div>
 <!-- <div>mes transactions: <span class="statutmestransactions">mestransactions</span> <a onclick="chargemoi('mestransactions')"> &#8634; </a></div>  -->
@@ -308,16 +333,20 @@ Fichiers personnels <input id="localstoragemoi" type="checkbox" value="non"> <sp
 "e721781": [ "donner 1↺", 1, "↺", -1.1, 0, 0, -1.88, 0.17, 1, 1, 1],
 "e537234": [ "rien 0↺", 0, "↺", 0, 0, 0, 0, 0, 0, 0, 0],
 "e229857": [ "entretenir la nature 1h", 1, "h", 23, -30, 0, 18.8, 1, 0.8, 1, 1],
-"e269775": [ "produit de mon jardin 1kg", 1, "kg", -2.05, -10, 0, -3.5, 1.5, 0.2, 1, 1]
+"e269775": [ "produit de mon jardin 1kg", 1, "kg", -2.05, -10, 0, -3.5, 1.5, 0.2, 1, 1],
+"e1644192": [ "inscription d’utilisateur unique 1h", 1, "h", 0, 0, 0, 0, 0, 0, 0, 0],
+"e1760145": [ "vérification d’utilisateur unique 1h", 1, "h", 0, 0, 0, 0, 0, 0, 0, 0],
+"e1302165": [ "présence d’utilisateur unique 1h", 1, "h", 0, 0, 0, 0, 0, 0, 0, 0]
 }
 </div>
-<div id="listestockevaleursrefmini">["h","$","mlc","min","kg","m2","L","↺","payer 1$","payer 1mlc","donner 1↺","rien 0↺","entretenir la nature 1h","produit de mon jardin 1kg"]</div>
+<div id="listestockevaleursrefmini">["h","$","mlc","min","kg","m2","L","↺","payer 1$","payer 1mlc","donner 1↺","rien 0↺","entretenir la nature 1h","produit de mon jardin 1kg","inscription d’utilisateur unique 1h","vérification d’utilisateur unique 1h","présence d’utilisateur unique 1h"]</div>
 <h4>cherchemesopportunites</h4><div id="stockecherchemesopportunites" class="stockedansdiv">...</div> 
 <h4>demandeaqui</h4><div id="stockecherchedemandeaqui" class="stockedansdiv">...</div> 
 </details>
 <!-- Les id des div de chargement commencent par "mstock... le statut est un span class="statut...  le ... est l'identifiant du script chargemoi -->
 <details><summary>Stockage fichiers personnels</summary>
 <h4>resume</h4><div id="mstockresume" class="mstockdansdiv">...</div> 
+<h4>inscription</h4><div id="mstockinscription" class="mstockdansdiv">...</div> 
 <h4>quoi</h4><div id="mstockquoi" class="mstockdansdiv">...</div> 
 <h4>mesvaleursref</h4><div id="mstockmesvaleursref" class="mstockdansdiv">...</div>
 <h4>mes opportunites</h4><div id="mstockmesopportunites" class="mstockdansdiv">...</div> 

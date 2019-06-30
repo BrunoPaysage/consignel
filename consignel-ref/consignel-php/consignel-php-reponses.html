@@ -36,7 +36,8 @@ Chaine commençant par un identifiant "AAAA -" suivi du contenu de la réponse</
 <tr class="demandeur"><td>AEXP -</td> <td>La transaction est expirée naturellement mais autorisée pour le demandeur renvoyer TNDI si elle n'est pas autorisée pour le demandeur</td> <td>Contenu de la proposition</td> <td>Contenu de la proposition sans acceptation</td> </tr>
 <tr class="erreur inconnu"><td>autres (default)</td> <td>Pas d'entête</td> <td>Contenu du fichier demandé</td> <td>Stocker le fichier et agir selon le contenu</td> </tr>
 <tr class="proposeur"><td>DABR -</td> <td>La demande d'annulation a été bien reçue et effectuée</td> <td>Nouveau résumé de compte</td> <td>Alerte proposition annulée</td> </tr>
-<tr class="accepteur"><td>DTAO -</td> <td>La proposition faite par un autre est autorisée pour de demandeur</td> <td>Contenu du fichier demandé</td> <td>Affiche la proposition</td> </tr>
+<tr class="proposeur"><td>DIMF -</td> <td>La demande d'inscription est mal formulée</td> <td>Message d'alerte</td> <td>Alerte Demande d'inscription mal formulée</td> </tr>
+<tr class="accepteur"><td>DTAO -</td> <td>La proposition faite par un autre est autorisées pour de demandeur</td> <td>Contenu du fichier demandé</td> <td>Affiche la proposition</td> </tr>
 <tr class="proposeur"><td>DTAP -</td> <td>Il y a plusieurs proposition avec le même identifiant</td> <td>vide</td> <td></td> </tr>
 <tr class="accepteur"><td>DTBR -</td> <td>Demande de proposition bien reçue</td> <td>Contenu de la proposition</td> <td>Affiche la proposition</td> </tr>
 <tr class="proposeur"><td>DTCE -</td> <td>Proposition non enregistrée dépense de ↺onsignel supérieure à 7 jours</td> <td>vide</td> <td></td> </tr>
@@ -47,6 +48,8 @@ Chaine commençant par un identifiant "AAAA -" suivi du contenu de la réponse</
 <tr class="proposeur"><td>DTNO -</td> <td>Proposition non enregistrée non autorisée erreur calcul ↺onsignel</td> <td>vide</td> <td></td> </tr>
 <tr class="proposeur"><td>DTRT -</td> <td>Proposition non enregistrée transaction non autorisée genre réécrire l'histoire</td> <td>vide</td> <td></td> </tr>
 <tr class="erreur"><td>ERDP -</td> <td>Manque le code de la transaction demandée</td> <td>vide</td> <td>Focus sur le imput où on entre le code de transaction</td> </tr>
+<tr class="accepteur"><td>NUCC</td> <td>Nouvel utilisateur confirmation de l'inscription</td> <td>vide</td> <td>Afficher la page d'inscription initiale</td> </tr>
+<tr class="accepteur"><td>NUCI</td> <td>Nouvel utilisateur proposition d'inscription</td> <td>Contenu de la proposition</td> <td>Afficher la page d'inscription pour les changements d'identifiant et de mot de passe</td> </tr>
 <tr class="erreur"><td>NULL -</td> <td>Fichier inconnu</td> <td>Nom du fichier demandé</td> <td>Alerte fichier inconnu</td> </tr>
 <tr class="proposeur"><td>PACC -</td> <td>Proposition faites par vous et déjà acceptée par l'accepteur</td> <td>Contenu de la proposition</td> <td>Transaction déjà acceptée par un autre</td> </tr>
 <tr class="proposeur"><td>PACT -</td> <td>La proposition faite par le demandeur est active</td> <td>Fichier de la proposition de transaction</td> <td>C'est moi qui l'ai faite cette proposition afficher la proposition pour le proposeur</td> </tr>
