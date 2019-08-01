@@ -117,19 +117,15 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       if($lademande==6986){  fichierperso($var3,"quoi"); };
       if($lademande==59570){  fichierperso($var3,"demandeaqui"); };
       if($lademande==86012){  fichierperso($var3,"mesvaleursref"); };
+      if($lademande==87558){  
+        $noteproposition = notetransaction($var3,"mestransactions",$donnee5); 
+        echo $noteproposition; 
+      };
       if($lademande==116020){  fichierperso($var3,"mestransactions"); };
       if($lademande==61612){  
         $nouveaucompte=inscription($var3,$donnee5); 
         echo $nouveaucompte;
       };
-      if($lademande==118452){  
-        if ($donnee5==""){ 
-          fichierperso($var3,"mespropositions");  // echo "<br>donnee5 est vide<br>"; 
-        }else{  
-          $noteproposition = notetransaction($var3,"mespropositions",$donnee5); 
-          echo $noteproposition;
-        };
-      }; // fin de "mespropositions"
       if($lademande==118535){  fichierperso($var3,"mesopportunites"); };
       if($lademande==232828){  
         // demandeuneproposition
@@ -247,7 +243,7 @@ function acceptetransaction($var3,$notransaction){
     $base=constante("base");
      $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
     $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
-   ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraacc."\n");
+   ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc."\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
     $idtraprecedente = $dernieresidtra[0];
@@ -292,7 +288,7 @@ function acceptetransaction($var3,$notransaction){
       // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
       $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$noaccepteur);
       $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
-      ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveauproacc."\n");
+      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveauproacc."\n");
       // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
       $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
       $idtraprecedenteproposeur = $dernieresidtra[0];
@@ -490,7 +486,7 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     if($var38="\DA↺\"\n"){$base=$base."/DA↺/";}; // note les refus si le répertoire existe
     $nouveautraann = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,$demandeur);
     $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); 
-    ajouteaufichier($cheminsansfichier."-mespropositions.json", $nouveautraann."\n");
+    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraann."\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraann);
     $idtraprecedente = $dernieresidtra[0];
@@ -873,7 +869,7 @@ die("fichier inconnu Fichier non trouvé pas de fichier session "); // Fichier n
 
 // note la proposition de transaction
 function notetransaction($var3,$nomfichier,$contenufichier){
-  // $var3 pour l'utilisateur chiffré, $nomfichier ex mespropositions, $contenu fichier json
+  // $var3 pour l'utilisateur chiffré, $nomfichier ex mestransactions, $contenu fichier json
   $identifiantlocal = $var3; 
   $nomfichierlocal = $nomfichier; 
   $chainejson = $contenufichier; 

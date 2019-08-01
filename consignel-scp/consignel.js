@@ -282,7 +282,7 @@ function autorisationqr(){
   if($('#validqr').attr("class")=="qr2"){ /* transaction autorisée */
     var utilisateur = codequiutilise();
     if(utilisateur=="u0"){$('#validqr').attr("class","qr1"); identification();};
-    chargemoi('mespropositions');
+    chargemoi('maproposition');
   }else{ /* transaction non autorisée */
   }; /* fin de transaction autorisée ou pas */
 };
@@ -651,7 +651,7 @@ function chargemoi(nomdonnees){
     }else{ 
       /* disponible et autorisé */
       var envoi = "non"; /* par défaut demande le fichier au lieu de l'envoyer */
-      if (nomdonnees == "mespropositions" ){envoi = "oui";};
+      if (nomdonnees == "maproposition" ){envoi = "oui";};
       if (nomdonnees == "demandeuneproposition" ){envoi = "oui";};
       if (nomdonnees == "accepteuneproposition" ){envoi = "oui";};
       if (nomdonnees == "refuseuneproposition" ){envoi = "oui";};
@@ -1018,12 +1018,12 @@ $("#chargecherchepourqui").click(function() { charge("cherchepourqui"); });
 $("#chargechercheparqui").click(function() { charge("chercheparqui"); });
 $("#chargevaleursref").click(function() { charge("valeursref"); });
 
-$("#fichierspersonnelspoubelle").click(function() { videlocalstorageperso(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites","demandeaqui"]); videlediv(".mstockdansdiv"); videautocomplete(); chargevaleursrefmini(); });
-$("#fichierspersonnelschargemoi").click(function() { chargemoitout(["resume","quoi","mesvaleursref","mespropositions","demandeuneproposition","mesopportunites","demandeaqui"]); });
+$("#fichierspersonnelspoubelle").click(function() { videlocalstorageperso(["resume","quoi","mesvaleursref","mestransactions","demandeuneproposition","mesopportunites","demandeaqui"]); videlediv(".mstockdansdiv"); videautocomplete(); chargevaleursrefmini(); });
+$("#fichierspersonnelschargemoi").click(function() { chargemoitout(["resume","quoi","mesvaleursref","mestransactions","demandeuneproposition","mesopportunites","demandeaqui"]); });
 $("#chargemoiresume").click(function() { chargemoi("resume"); });
 $("#chargemoiquoi").click(function() { chargemoi("quoi"); });
 $("#chargemoimesvaleursref").click(function() { chargemoi("mesvaleursref"); });
-$("#chargemoimespropositions").click(function() { chargemoi("mespropositions"); });
+$("#chargemoimestransactions").click(function() { chargemoi("mestransactions"); });
 $("#chargemoidemandeuneproposition").click(function() { chargemoi("demandeuneproposition"); });
 $("#chargemoimesopportunites").click(function() { chargemoi("mesopportunites"); });
 $("#chargemoidemandeaqui").click(function() { chargemoi("demandeaqui"); });
@@ -1156,7 +1156,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     };
   };
   var var5="";
-  if(nomdonnees=="mespropositions"){
+  if(nomdonnees=="maproposition"){
     if ($("#matransaction").text()=="..."){
       /* pas de transaction à transférer */
     }else{
