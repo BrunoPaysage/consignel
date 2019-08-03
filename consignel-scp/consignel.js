@@ -1865,14 +1865,8 @@ function refdevaleur(codeitem){
       return ref1;
     };
   }else{ 
-    /* pas de ref perso */
-    if (ref1){ 
-      /* mais ref generale */
-      return ref2;
-    }else{ 
-      /* pas de ref perso ni ref générale */
-      return undefined;
-    };
+    /* ref perso */
+    return ref2;
   };
 };
 
