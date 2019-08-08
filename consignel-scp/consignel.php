@@ -15,11 +15,11 @@ if (!file_exists($cheminfichier)) {baseminimale();};
 
 // vérification de l'utilisateur et du code
 // Pas de code utilisateur
-if($donnee1==1){echo (" , 0 , Inconnu , Inconnu , Inconnu , efface l'entrée");}; // session nulle demande remise à zéro et renvoi
+if($donnee1==1){echo cryptepourtransfert((" , 0 , Inconnu , Inconnu , Inconnu , efface l'entrée"));}; // session nulle demande remise à zéro et renvoi
 
 // Code secret sans code utilisateur
 if(($donnee1==$donnee3) and ($donnee2=="1")){
-  echo (" , 0 , Inconnu , Inconnu , Inconnu , secret seul"); // session nulle code secret sans identifiant ne rien faire
+  echo cryptepourtransfert((" , 0 , Inconnu , Inconnu , Inconnu , secret seul")); // session nulle code secret sans identifiant ne rien faire
 };
 
 // Code utilisateur sans code mot de passe
@@ -62,11 +62,11 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
     $cheminfich2 = tracelechemin("",$baseutilisateurs,".baseconsignel0");
     ajoutelesconnexions($cheminfich2,$chainecontenu);
     // renvoie les variables de session
-    echo (" ,".$nombrealeatoire.",".$var3.",".$cheminfichierimage.",".$var5.", ");
+    echo cryptepourtransfert((" ,".$nombrealeatoire.",".$var3.",".$cheminfichierimage.",".$var5.", "));
   }; // session numéroté demande code secret
   // Fin de l'identifiant a été trouvé
   if($existe==FALSE){ // L'identifiant n'a pas été trouvé
-    echo (" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu");
+    echo cryptepourtransfert((" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"));
   };  // Fin de l'identifiant n'a pas été trouvé
 }; // Fin de vérification de l'identité
 
@@ -109,52 +109,32 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       // renvoi du résumé de compte
       $resumejson=resumecompte($var3); // 4 variables du résumé (disponible, par jour, dispomini31jours, dispomaxi31jours)
       $idtraprecedant = ""; //  identifiant transaction précédente
-      echo (" ,".$var4.",".$oklocal.",".$resumejson.",".$idtraprecedant.", "); 
+      echo cryptepourtransfert((" ,".$var4.",".$oklocal.",".$resumejson.",".$idtraprecedant.", ")); 
     }else{
       // identification secondaire demande de fichier ou transaction
       $lademande = ($donnee3/$var4);
-      if($lademande==16887){  fichierperso($var3,"resume"); };
-      if($lademande==6986){  fichierperso($var3,"quoi"); };
-      if($lademande==59570){  fichierperso($var3,"demandeaqui"); };
-      if($lademande==86012){  fichierperso($var3,"mesvaleursref"); };
-      if($lademande==87558){  
-        $noteproposition = notetransaction($var3,"mestransactions",$donnee5); 
-        echo $noteproposition; 
-      };
-      if($lademande==116020){  fichierperso($var3,"mestransactions"); };
-      if($lademande==61612){  
-        $nouveaucompte=inscription($var3,$donnee5); 
-        echo $nouveaucompte;
-      };
-      if($lademande==118535){  fichierperso($var3,"mesopportunites"); };
+      if($lademande==6986){ $quoi = fichierperso($var3,"quoi"); echo cryptepourtransfert($quoi); }; // fin de "quoi"
+      if($lademande==16887){ $resume = fichierperso($var3,"resume"); echo cryptepourtransfert($resume); }; // fin de "resume"
+      if($lademande==59570){ $demandeaqui = fichierperso($var3,"demandeaqui"); echo cryptepourtransfert($demandeaqui); }; // fin de "demandeaqui"
+      if($lademande==61612){ $nouveaucompte=inscription($var3,$donnee5); echo cryptepourtransfert($nouveaucompte); }; // fin de "inscription"
+      if($lademande==86012){ $mesvaleursref = fichierperso($var3,"mesvaleursref"); echo cryptepourtransfert($mesvaleursref); }; // fin de "mesvaleursref"
+      if($lademande==87558){ $noteproposition = notetransaction($var3,"mestransactions",$donnee5); echo cryptepourtransfert($noteproposition); }; // fin de "maproposition"
+      if($lademande==116020){ $mestransactions = fichierperso($var3,"mestransactions"); echo cryptepourtransfert($mestransactions); }; // fin de "mestransactions"
+      if($lademande==118535){ $mesopportunites = fichierperso($var3,"mesopportunites"); echo cryptepourtransfert($mesopportunites); }; // fin de "mesopportunites"
+      if($lademande==211910){ $transactionrefusee = refusetransaction($var3,$donnee4); echo cryptepourtransfert($transactionrefusee); }; // fin de "refuseuneproposition"
+      if($lademande==211873){ $transactionannulee = annuleproposition($var3,$donnee4); echo cryptepourtransfert($transactionannulee); }; // fin de "annuleuneproposition"
       if($lademande==232828){  
-        // demandeuneproposition
         if ($donnee4==""){ 
-          echo "ERDP <br>donnee5 est vide<br>"; 
+          echo cryptepourtransfert("ERDP <br>donnee5 est vide<br>"); 
         }else{  
-          $transactiontrouvee = cherchetransaction($var3,$donnee4); 
-          echo $transactiontrouvee;
+          $transactiontrouvee = cherchetransaction($var3,$donnee4); echo cryptepourtransfert($transactiontrouvee);
         }; 
-      }; // fin de demandeuneproposition
-      if($lademande==233615){ 
-        // ,"accepteuneproposition"
-        $transactionacceptee = acceptetransaction($var3,$donnee4); 
-        echo $transactionacceptee;
-      }; // fin de "accepteuneproposition"
-      if($lademande==211910){ 
-        // ,"refuseuneproposition"
-        $transactionrefusee = refusetransaction($var3,$donnee4); 
-        echo $transactionrefusee;
-      }; // fin de "refuseuneproposition"
-      if($lademande==211873){ 
-        // ,"annuleuneproposition"
-        $transactionannulee = annuleproposition($var3,$donnee4); 
-        echo $transactionannulee;
-      }; // fin de "annuleuneproposition"
+      }; // fin de "demandeuneproposition"
+      if($lademande==233615){ $transactionacceptee = acceptetransaction($var3,$donnee4); echo ($transactionacceptee); }; // fin de "accepteuneproposition"
     };
   };  // Fin de utilisateur correctement identifié 
   if($existe==FALSE){ // L'utilisateur n'a pas été correctement identifié
-    echo (" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu");
+    echo cryptepourtransfert(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu");
   };  // Fin de l'identifiant n'a pas été trouvé
   if($nettoyage == TRUE){ // Le fichier a besoin de nettoyage
     nettoyagerefsessions();
@@ -216,11 +196,11 @@ function acceptetransaction($var3,$notransaction){
     
     //$soldemlcdisponible = ; à faire
     // $mlcdemandepaiement = $paiement[2] - $paiement[5];
-    //  if (($soldemlcdisponible + $mlcdemandepaiement)<0){ echo "solde mlc insuffisant"; $transaction = ""; };
+    //  if (($soldemlcdisponible + $mlcdemandepaiement)<0){  "solde mlc insuffisant"; $transaction = ""; };
     
     // $soldedollardisponible = ;  à faire
     // $dollardemandepaiement = $paiement[3] - $paiement[6];
-    //  if (($soldedollardisponible + $dollardemandepaiement)<0){ echo "solde dollar insuffisant"; $transaction = ""; };
+    //  if (($soldedollardisponible + $dollardemandepaiement)<0){  "solde dollar insuffisant"; $transaction = ""; };
     
     // fin des vérifications et des refus, enregistrement du suivi dans les fichiers
     // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
@@ -675,15 +655,15 @@ function fichierperso($var3,$nomfichier){
   $nomfichierlocal=$nomfichier; 
   $base=constante("base");
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");
+  $contenufichier ="";
   if (file_exists($cheminfichier)) { // vérification si le fichier existe
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
     while (!feof($fichierencours) ) { // cherche dans les lignes
-      $contenufichier = decryptelestockage(fgets($fichierencours,1024)); // ligne par ligne
-      echo($contenufichier."<br>");
+      $contenufichier = $contenufichier.decryptelestockage(fgets($fichierencours,1024))."<br>"; // ligne par ligne
     }; // Fin de cherche dans les lignes
     fclose($fichierencours); // fermeture du fichier
   }else{
-  //   ne rien renvoyer Fichier non trouvé pas d'utilisateur
+    $contenufichier = "NULL - ".$nomfichierlocal;
   };
   return $contenufichier;
 };
@@ -961,8 +941,8 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ; $transaction = "";  };
   if (($soldeconsigneldisponible + $consigneloffre + $consigneloffrepaiement)<0){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = "";  };
   
-  //  if (($soldedollardisponible + $dollaroffre)<0){ echo "solde dollar insuffisant"; $transaction = "";  };
-  //  if (($soldemlcdisponible + $mlcoffre)<0){ echo "solde mlc insuffisant"; $transaction = "";  };
+  //  if (($soldedollardisponible + $dollaroffre)<0){  "solde dollar insuffisant"; $transaction = "";  };
+  //  if (($soldemlcdisponible + $mlcoffre)<0){  "solde mlc insuffisant"; $transaction = "";  };
   
   // fichier de détail de la transaction dans consignelbase2
   $transactionindex = $chainejson."\n"; 

@@ -1224,7 +1224,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "ERDP":
         $('#confirmationinputcode').focus(); break; // ("Manque le code de la transaction");  
         case "NULL":
-        alert("NULL fichier inconnu "+demandefich);
+        alert("Le fichier "+demandefich+" n'existe pas");
         break;
         case "<?ph":
         $('.alerte').html("<br><i class='eval2'>Vérification d'utilisateur indisponible sur le serveur</i><br>");
@@ -2116,7 +2116,7 @@ $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr)
       /* suite à écrire pour utiliser en local sans vérification serveur de l'utilisateur */
       return;
     }else{
-    //    responseTxt = decryptetransfert(responseTxt);
+    responseTxt = decryptetransfert(responseTxt);
     $(retourdansdiv).html(responseTxt);
     }; 
 // séparation des variables renvoyées dans le div .retourserveur par le serveur
