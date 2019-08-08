@@ -1,0 +1,26 @@
+<h3>00000-resume2dates.json : 2 derniers résumés du compte</h3> 
+<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base</a>/<a href="base00.html">00</a>/suivi31jours</p>
+<p class="utilisation">Le script php écrit ce fichier pour chaque proposition et acceptation de transaction. Il le lit pour déterminer des écarts de dates. </p>
+<p class="identification">
+Le nom du fichier se lit<br>
+<b>00000</b>-resume2dates.json : identifiant de l'utilisateur<br>
+00000<b>-resume2dates</b>.json : identifiant de la nature du fichier<br>
+00000-resume2dates<b>.json</b> : extension du fichier simplifiant la protection .htaccess. <br>
+Le contenu est un fichier json crypté. 
+</p>
+<p class="structure">Le fichier contient:<br>
+encode pour stokage {"3":"acc20190321_1357_1646152","0":"acc20190806_1722_1858852","1":"dac20190806_1730_3535","4":138,"5":0,"6":"79","7":"217","9":"217","8":"217"}</p>
+<div class="contenu"><p>Les éléments des enregistrements sont les suivants:</p>
+<ul>
+<li>"0" : "Identifiant de la transaction précédente"</li>
+<li>"1" : "Identification de la transaction en cours"</li>
+<li>"2" : </li>
+<li>"3" : "Identification de la première transaction de l'utilisateur"</li>
+<li>"4" : ancienneté en nombre de jours</li>
+<li>"5" : écart d'année entre le deux transaction. 0 si c'est la même année</li>
+<li>"6" : numéro du jour de la première inscription</li>
+<li>"7" : numéro du jour de la transaction en cours à partir de la date du fichier transmis</li>
+<li>"8" : numéro du jour de la transaction précédente à partir de la lecture de ce fichier avant modification</li>
+<li>"9" : numéro du jour de la transaction en cours à partir de l'horloge du serveur</li>
+</ul>
+</div>

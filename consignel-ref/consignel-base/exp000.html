@@ -1,19 +1,19 @@
-<h3>ann00000000_0000_0000000.json : transaction annulée</h3> 
-<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base</a>/<a href="bas_2.html">2</a>/transaction annulée</p>
-<p class="utilisation">Permet au script php de savoir si la transaction a été annulée</p>
+<h3>exp00000000_0000_0000000.json : transaction expirée</h3> 
+<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base</a>/<a href="base_2.html">2</a>/transaction expirée</p>
+<p class="utilisation">Permet au script php de savoir si la transaction a déjà exîrée</p>
 <div class="identification">
 <p>Le nom du fichier se lit</p>
 <ul>
-<li><b>ann</b>00000000_0000_0000000.json : identifiant d'annulation de proposition</li>
-<li>ann<b>00000000</b>_0000_0000000.json : identifiant de date de la proposition de transaction. Année en 4 chiffres, mois en 2 chiffres et jour en 2 chiffres</li>
-<li>ann00000000_<b>0000</b>_0000000.json : identifiant d'heure et la minute de la proposition de transaction. 2 chiffres chaque</li>
-<li>ann00000000_0000_<b>0000000</b>.json : code de la transaction en lien avec son contenu. Nombre de chiffres variables</li>
-<li>ann00000000_0000_0000000<b>.json</b> : extension du fichier simplifiant la protection .htaccess. <br>
+<li><b>exp</b>00000000_0000_0000000.json : identifiant d'expiration de proposition</li>
+<li>exp<b>00000000</b>_0000_0000000.json : identifiant de date de la proposition de transaction. Année en 4 chiffres, mois en 2 chiffres et jour en 2 chiffres</li>
+<li>exp00000000_<b>0000</b>_0000000.json : identifiant d'heure et la minute de la proposition de transaction. 2 chiffres chaque</li>
+<li>exp00000000_0000_<b>0000000</b>.json : code de la transaction en lien avec son contenu. Nombre de chiffres variables</li>
+<li>exp00000000_0000_0000000<b>.json</b> : extension du fichier simplifiant la protection .htaccess. <br>
 La combinaison de la date et du codage du contenu permet d'identifier de façon unique une transaction.</li>
 </ul>
 </div>
 <p class="structure">
-encode pour stokage "identifiant","offre","demande","momentaccepte","codedestinataireunique","durée","↺","codeproposeurannulateur"
+encode pour stokage "identifiant","offre","demande","momentaccepte","codedestinataireunique","durée","↺","codeproposeur"
 </p>
 <div class="contenu">
 <ul>
@@ -24,7 +24,7 @@ encode pour stokage "identifiant","offre","demande","momentaccepte","codedestina
 <li>"codedestinataireunique" : Code du destinataire unique de la proposition</li>
 <li>"durée" : Nombre de jour de validité de la proposition initiale</li>
 <li>"↺" : Montant de ↺onsignél demandé ou donné dans la proposition initiale</li>
-<li>"codeproposeurannulateur" : Code du proposeur de la transaction qui est aussi celui qui l'annule</li>
+<li>"codeproposeur" : Code du proposeur de la transaction</li>
 </ul>
 </div>
 

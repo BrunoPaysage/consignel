@@ -1,0 +1,20 @@
+<h3>00000-gain365jours.json : Historique des revenus et dépenses journaliers</h3> 
+<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base</a>/<a href="base_00.html">00</a>/suivi31jours</p>
+<p class="utilisation">Le script php écrit ce fichier pour chaque proposition et acceptation de transaction. Il le lit pour déterminer le minimum et le maximum récent du compte. Seuls les 31 jours précédant la date de l'enregistrement sont conservés, les autres sont éliminés. </p>
+<p class="identification">
+Le nom du fichier se lit<br>
+<b>00000</b>-gain365jours.json : identifiant de l'utilisateur<br>
+00000<b>-gain365jours</b>.json : identifiant de la nature du fichier<br>
+00000-gain365jours<b>.json</b> : extension du fichier simplifiant la protection .htaccess. <br>
+Le contenu est un fichier json crypté. 
+</p>
+<p class="structure">Le fichier contient:<br>
+encode pour stokage { "id":valeur, "id":valeur, "id":valeur }<br>
+etc.
+</p>
+<div class="contenu"><p>Les éléments des enregistrements sont les suivants:</p>
+<ul>
+<li>"id" : le numéro du jour de l'année exemple "35" ou "147"</li>
+<li>valeur : Le cummul des gains du jour en ↺ exemple 23 ou 427.25</li>
+</ul>
+</div>

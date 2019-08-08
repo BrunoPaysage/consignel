@@ -33,7 +33,8 @@ changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaude
 };
 
 /* affiche la proposition dans la page utilisation */
-function actualiselaproposition(dequi="mapropostion"){
+function actualiselaproposition(dequi){
+  if((dequi=="")||(dequi=="undefined")){dequi="mapropostion";};
   $("#suiviappli").prepend("actualiselaproposition(dequi) <br>");
   $("#offrechoisi").show();  $("#demandechoisi").show();
   var dansqui = ""; var dansqui2 ="";
@@ -82,7 +83,7 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
     var numproposetra = inputdemande.substring(14);
     var numtra = "tra"+inputdemande
     try {var objson = JSON.parse(nomproposition); }
-    catch {return;}; // proposition mal écrite ou inexistante
+    catch (err){return;}; // proposition mal écrite ou inexistante
     // $("#demandeconfirme").append( numtra+"<br>"); // nom de la transaction
     // $("#demandeconfirme").append( objson[numtra][0]+"<br>"); // numéro de l'offre
     var numoff = "off"+objson[numtra][2]+"_"+objson[numtra][0]; // id de l'offre
@@ -439,7 +440,7 @@ if(listedudiv.substring(0,4)==" , 0"){listedudiv="..."; $(queldiv).html("...");}
 // $(".alerte").html(queldiv);
 if(listedudiv.length > 5){ /*div contenant plus que ... */
   try {var listeduinput = JSON.parse(decryptediv(listedudiv));}
-  catch{var listeduinput = JSON.parse($("#stockevaleursrefmini").text()); alert("Le fichier du div "+queldiv+" est mal chargé"); $("#changeaideinputactivite").html("ø");};
+  catch (err){var listeduinput = JSON.parse($("#stockevaleursrefmini").text()); alert("Le fichier du div "+queldiv+" est mal chargé"); $("#changeaideinputactivite").html("ø");};
   $(quelinput).autocomplete("option","source",listeduinput);
   if(queldiv[1]=="s"){$(idchangeaide).html("ȫ");};
   if(queldiv[1]=="m"){$(idchangeaide).html("ǜ");};
@@ -786,7 +787,8 @@ window.open(constante("app")+"index.html"); return false;
 /* code l'activité nom et unité */
 
 /* click sur graphique suivi DD */
-function clicsuividd(elementclic=""){
+function clicsuividd(elementclic){
+  if(elementclic=="undefined"){elementclic=""};
 var demande = elementclic; 
 $("#suiviappli").prepend("clic graphiquesuiviDD "+elementclic+" <br>");
 var tableauretour = tableauretourquiutilise();
@@ -1501,7 +1503,8 @@ function identification(){
 };
 
 /* affiche la page d'inscption */
-function inscription(etapedinscription=1){
+function inscription(etapedinscription){
+  if(etapedinscription=="undefined"){etapedinscription=1;};
   var etape = etapedinscription; var nom1=""; var nom2=""; var test1="";
   if(etape==1){
     $("#suiviappli").prepend("inscription() <br>");
@@ -1726,7 +1729,8 @@ function modifieqr(nouveautexte){
 };
 
 /* Précaution anti-script sur une entrée input */
-function nettoieinput(valinput=""){
+function nettoieinput(valinput){
+  if (valinput=="undefined"){valinput="";};
   var remplacescript = new RegExp('\\b(script)\\b', 'gi');
   valinput = valinput.replace(remplacescript, 'scr¡pt');
   var remplacescript = new RegExp('\\b(style)\\b', 'gi');
@@ -1745,7 +1749,7 @@ function nettoieinput(valinput=""){
   valinput = valinput.replace(remplacelesguillemets, 'ʺ');
   var remplaceappostrophes = new RegExp("'", 'g');
   valinput = valinput.replace(remplaceappostrophes, '’');
-$("#suiviappli").prepend("nettoieinput(valinput) <br>");
+$("#suiviappli").prepend("nettoieinput("+valinput+") <br>");
   return valinput;
 };
 
