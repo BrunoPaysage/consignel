@@ -182,8 +182,14 @@ function acceptetransaction($var3,$notransaction){
       return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
     };
 
-// à faire ajouter les éléments des confirmation d'inscription d'utilisateur unique
-
+    // Confirmation d'inscription d'utilisateur unique
+//    $verifutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001760145\"")); if(substr($verifutilisateur,0,4)=="_act"){$verifutilisateur="oui";}else{$verifutilisateur="non";};
+//    $confirmutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001759799\"")); if(substr($confirmutilisateur,0,4)=="_act"){$confirmutilisateur="oui";}else{$confirmutilisateur="non";};
+//    if(($confirmutilisateur=="oui")&&($verifutilisateur=="oui")){ 
+//       return "TEST - Vérification à écrire";
+      // ajout des dates de vérification à écrire
+//    };
+  
     $jsonenphp = json_decode($contenufichiertra,true);
     if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
     
@@ -221,7 +227,7 @@ function acceptetransaction($var3,$notransaction){
     ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi); 
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
     $base=constante("base");
-     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
+    $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
     $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc."\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
@@ -450,7 +456,7 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     if($statut == "PACT"){ $demandeurchaine = $demandeurchaine; };
     if($statut == "PEXP"){ $demandeurchaine = $var38; };
     if($statut == "AEXP"){ $demandeurchaine = $var35; };
-    if($statut == "TREF"){ $demandeurchaine = $var35; };
+    if($statut == "TREF"){ $demandeurchaine = $var35; $numrefuseur =  preg_replace( "/\D/", "", $demandeurchaine);};
    
     if($compensation[0] == "impact négatif"){ $consigne = -$compensation[1] ; };
     // rembourser le proposeur des dépenses engagées
@@ -492,6 +498,12 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
      if($demandeurchaine != "0"){
       $nodemandeur =  leiddupseudo(substr($demandeurchaine,1,strlen($demandeurchaine)-2));
       $listeopportunite = retiredelaliste($nodemandeur,"mesopportunites",$nomfichiertra);
+      // à écrire si refus lors d'une opération d'inscription renvoi d'un message donnant la procédure de fermeture du compte
+      $inscritutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001644192\"")); if(substr($inscritutilisateur,0,4)=="_act"){ 
+        $toto= supprimeutilisateur($nodemandeur,$numrefuseur);
+        $toto= supprimedossierutilisateur($nodemandeur);
+        return "NURI - ".$contenufichiertra; // Demande d'annulation du compte à confirmer
+      };
     };
     
     // renvoi du nouveau résumé du proposeur
@@ -747,12 +759,21 @@ function inscription($var3,$contenufichier){
   $identifiantlocal = $var3; 
   $chaineinscription = substr($contenufichier,2,strlen($contenufichier)-4); 
   list($nompublic, $numpublic, $numprive, $numsecret) = explode(",", $chaineinscription);
+  $etatutilisateur = testeutilisateurunique($numprive,$nompublic);
   $detailutilisateur =",".$numsecret.",".$nompublic.",\"avatar01.png\",\"Marieville\",".$identifiantlocal.",";
-// change le fichier .consignel3
-  ajouteutilisateur($numprive,$detailutilisateur);
-  supprimeutilisateur($var3,"inscription");
-// initialise le compte
-return "NUCC - ";
+  if($etatutilisateur =="inconnu"){
+    // change le fichier .consignel3
+    ajouteutilisateur($numprive,$detailutilisateur);
+    supprimeutilisateur($var3,61612);
+    // initialise le compte
+    initialisefichier("".$numprive."","base","".$numprive."-resume.json");
+
+    return "NUCC - ";
+    }else{
+      if($etatutilisateur =="numpriveconnu"){ return "DIMF - Demande d'inscription l'identifiant privé est déjà utilisé"; };
+      if($etatutilisateur =="nompublicconnu"){ return "DIMF - Demande d'inscription le nom public est déjà utilisé"; };
+    return "TEST - Le nom n'est pas unique ".$etatutilisateur;
+    };
 };
 
 // inverse l'offre et la demande d'une proposition
@@ -907,7 +928,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   // détection de demande d'inscription ou de vérification d'utilisateur unique
   $verifutilisateur = substr($chainejson,strpos($chainejson, "_act0001760145\"")); if(substr($verifutilisateur,0,4)=="_act"){$verifutilisateur="oui";}else{$verifutilisateur="non";};
   $inscritutilisateur = substr($chainejson,strpos($chainejson, "_act0001644192\"")); if(substr($inscritutilisateur,0,4)=="_act"){$inscritutilisateur="oui";}else{$inscritutilisateur="non";};
-  $confirmutilisateur = substr($chainejson,strpos($chainejson, "_act0001302165\"")); if(substr($confirmutilisateur,0,4)=="_act"){$confirmutilisateur="oui";}else{$confirmutilisateur="non";};
+  $confirmutilisateur = substr($chainejson,strpos($chainejson, "_act0001759799\"")); if(substr($confirmutilisateur,0,4)=="_act"){$confirmutilisateur="oui";}else{$confirmutilisateur="non";};
   if($verifutilisateur=="oui"){
     if(($inscritutilisateur=="non")&&($confirmutilisateur=="non")){ 
       return "DIMF - Demande d'inscription mal formulée dans Je demande";};
@@ -926,15 +947,18 @@ function notetransaction($var3,$nomfichier,$contenufichier){
     if($destinataire=="inconnu"){
       if($verifutilisateur=="oui"){
         // inscription ou vérification
-        if($inscritutilisateur=="oui"){ $numutilisateur= $jsonenphp[$idtra][3]; $ajout=ajouteutilisateur($numutilisateur,"nompublic");  }; // inscription de l'utilisateur 
+        if($inscritutilisateur=="oui"){ $numutilisateur= $jsonenphp[$idtra][3]; 
+        // vérification de statut du vérificateur dans toile de confiance à écrire
+        
+        $ajout=ajouteutilisateur($numutilisateur,"nompublic");  }; // inscription de l'utilisateur 
         if($confirmutilisateur=="oui"){ return "TEST - Demande de confirmation"; }; // confirmation de l'utilisateur
       }else{
         return "DTDI - Destinataire inconnu" ; 
       };
     }else{
       // Destinataire connu
-      if($verifutilisateur=="oui"){  return "DIMF - Demande d'inscription le nom public est déjà utilisé"; };
-    }; 
+      if(($verifutilisateur=="oui")&&($inscritutilisateur=="oui")){  return "DIMF - Demande d'inscription le nom public est déjà utilisé"; };
+   }; 
   };
   
   $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
@@ -1148,6 +1172,7 @@ function revenuinconditionnel($var3){
   if($dernieresidtra[9] == $dernieresidtra[8]){ 
     return 0;
   }else{
+    if($dernieresidtra[8] == null ){ $dernieresidtra[8] = $dernieresidtra[9]-1 ;};
     if($dernieresidtra[9] > $dernieresidtra[8]){ 
       $nbjourrevenuinconditionnel = $dernieresidtra[9] - $dernieresidtra[8] ; 
     }else{ 
@@ -1221,20 +1246,39 @@ function suivi31jours($cheminfichier, $numancienjour, $numnouveaujour, $solde){
 };
 
 // supprime utilisateur avec son numéro et son nom public
-function supprimeutilisateur($var3,$nompublic){
-  if($nompublic=="inscription"){$nompublic="\"".$nompublic."\"";};
+function supprimeutilisateur($var3,$numpublic){
   $baseutilisateurs = constante("baseutilisateurs");
   $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel3");
   $fichierencours = fopen($cheminfichier, 'r+'); // ouverture en lecture ecriture autorisée pointeur au début
   while (!feof($fichierencours) ) { // cherche dans les lignes
-  $ligne = fgets($fichierencours, 1024); // ligne par ligne
-  $lignedenclair = decryptelestockage($ligne);
-  list($numutil, $numpass, $nompublic2, $avatar, $localite,$numpublic) = explode(",", $lignedenclair);   
-  if (($numutil == $var3) && ($nompublic == $nompublic2)){ 
-    file_put_contents($cheminfichier, str_replace($ligne, "", file_get_contents($cheminfichier)));
-  }; // fin du trouvé obsolete
+    $ligne = fgets($fichierencours, 1024); // ligne par ligne
+    $lignedenclair = decryptelestockage($ligne);
+    list($numutil, $numpass, $nompublic2, $avatar, $localite,$numpublic2) = explode(",", $lignedenclair);   
+      if (($numutil == $var3) && ($numpublic == $numpublic2)){ 
+        file_put_contents($cheminfichier, str_replace($ligne, "", file_get_contents($cheminfichier)));
+      }; // fin du trouvé obsolete
   }; // Fin de cherche dans les lignes
   fclose($fichierencours); // fermeture du fichier
+};
+
+// supprime le dossier de l'utilisateur supprimedossierutilisateur("00000","base");
+function supprimedossierutilisateur($numerodossier=""){
+  $base = constante("base");
+  $numdossier = "".$numerodossier;
+  $chemindossier = substr(tracelechemin($numdossier,$base,"",""), 0, -1);
+  if(is_dir($chemindossier)){
+    $repertoire = opendir($chemindossier);
+    while (false !== ($fichier = readdir($repertoire))) {
+      $cheminfichier = $chemindossier."/".$fichier; 
+      if ($fichier != ".." AND $fichier != "." AND !is_dir($fichier)) { unlink($cheminfichier);  }; 
+    }; //fin de la boucle sur le répertoire pour effacer les fichiers
+    closedir($repertoire);
+    rmdir($chemindossier); // efface répertoire
+    $dernierslash = strrpos($chemindossier, "/",-2); $chemindossier = substr($chemindossier,0,$dernierslash);
+    if($chemindossier."/" != $base){rmdir($chemindossier);}; // efface répertoire parent
+    $dernierslash = strrpos($chemindossier, "/",-2); $chemindossier = substr($chemindossier,0,$dernierslash);
+    if($chemindossier."/" != $base){rmdir($chemindossier);};  // efface répertoire grand parent
+  };
 };
 
 // pour tester si la proposition est encore valide
@@ -1267,31 +1311,50 @@ function testdestinataire($pourqui,$demandeur){
   return "nonautorise" ; 
 };
 
+// teste si l'utilisateur est inscrit dans la base
+function testeutilisateurunique($numprive,$nompublic){
+  $nompublic="\"".$nompublic."\"";
+  $baseutilisateurs = constante("baseutilisateurs");
+  $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel3");
+  $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture seule pointeur début fichier
+  $etatutilisateur = "inconnu";
+  $existe = FALSE; // Testeur de boucle 
+  while (!feof($fichierencours)  && !$existe ) { // cherche dans les lignes
+    $ligne = fgets($fichierencours, 1024); // ligne par ligne
+    $lignedenclair = decryptelestockage($ligne);
+    list($numutil, $numpass, $nompublic2, $avatar, $localite,$numpublic) = explode(",", $lignedenclair);   
+    if ($numprive == $numutil){ $etatutilisateur = "numpriveconnu"; $existe = TRUE; }; // numprivé trouvé
+    if ($nompublic == $nompublic2){ $etatutilisateur = "nompublicconnu"; $existe = TRUE; }; // nompublic trouvé
+  }; // Fin de cherche dans les lignes
+  fclose($fichierencours); // fermeture du fichier
+  return $etatutilisateur;
+};
+
 // renvoie le chemin d'accès en fonction de l'identifiant 
 function tracelechemin($numerofichier,$sousrep,$nomfichier,$defriche="") {
-      $nofichier=$numerofichier;
-      $accesf[0]=strlen($nofichier);
-      $numrep = 0;
-      $chemin = "";  $ouvrechemin = "";
-      if( $accesf[0] % 2 == 1 ){ $decal=1; }else{ $decal=0; };
-      for ($x = $accesf[0]; $x >0 ; $x--) {
-        if($x % 2 != 1){
-          $numrep +=1;
-          $accesf[$numrep] = substr($nofichier, $x-$decal, 2);
-          $chemin = $chemin.$accesf[$numrep]."/";
-          if (substr($chemin,0,1)=="/"){$chemin=substr($chemin,1);};
-          $ouvrechemin = $sousrep.$chemin; if($defriche=="ouvre"){ if(!is_dir($ouvrechemin)){ mkdir($ouvrechemin); };  };
-        };
-      };
-      if( $accesf[0] % 2 == 1 ){
-        $accesf[1] = substr($nofichier, 0, 1);
-      }else{
-        $accesf[1] = substr($nofichier, 0, 2); 
-      };
-      $chemin = $chemin.$accesf[1]."/";
-      $ouvrechemin = $sousrep.$chemin;  if($defriche=="ouvre"){  if(!is_dir($ouvrechemin)){ mkdir($ouvrechemin); };  };
-      return $ouvrechemin.$nomfichier;
+  $nofichier=$numerofichier;
+  $accesf[0]=strlen($nofichier);
+  $numrep = 0;
+  $chemin = "";  $ouvrechemin = "";
+  if( $accesf[0] % 2 == 1 ){ $decal=1; }else{ $decal=0; };
+  for ($x = $accesf[0]; $x >0 ; $x--) {
+    if($x % 2 != 1){
+      $numrep +=1;
+      $accesf[$numrep] = substr($nofichier, $x-$decal, 2);
+      $chemin = $chemin.$accesf[$numrep]."/";
+      if (substr($chemin,0,1)=="/"){$chemin=substr($chemin,1);};
+      $ouvrechemin = $sousrep.$chemin; if($defriche=="ouvre"){ if(!is_dir($ouvrechemin)){ mkdir($ouvrechemin); };  };
     };
+  };
+  if( $accesf[0] % 2 == 1 ){
+    $accesf[1] = substr($nofichier, 0, 1);
+  }else{
+    $accesf[1] = substr($nofichier, 0, 2); 
+  };
+  $chemin = $chemin.$accesf[1]."/";
+  $ouvrechemin = $sousrep.$chemin;  if($defriche=="ouvre"){  if(!is_dir($ouvrechemin)){ mkdir($ouvrechemin); };  };
+  return $ouvrechemin.$nomfichier;
+};
 
 // renvoie la proposition acceptée ou annulée
 function transactionaccann($prefixe,$idtra,$contenufichiertra,$dateaccepte,$noaccepteur){

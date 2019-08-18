@@ -285,6 +285,7 @@ function autorisationqr(){
     if(utilisateur=="u0"){$('#validqr').attr("class","qr1"); identification();};
     chargemoi('maproposition');
   }else{ /* transaction non autorisée */
+    
   }; /* fin de transaction autorisée ou pas */
 };
 
@@ -998,6 +999,7 @@ $("#utilisationchoisidemande").click(function() { inverseoffredemande("demande")
 /* ajout des onclick pour demande à qui */
 $("#inputdemandeaqui").focus(function() { supprimeautorisationqr(); });
 $("#inputdemandeaqui").blur(function() { validedemandeaqui(); });
+$("#inputdemandeaqui").keypress(function(){ if (event.keyCode==13){ $("#inputactivite").focus(); }; });
 
 /* ajout des onclick du DA&#8634; */
 $("#offrecompensationdetails").click(function() { changeClass(offremontants,'voit','cache'); });
@@ -1218,13 +1220,19 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
         inscription(1);
         break; // page d'inscription nouvel utilisateur
+        case "NURI":
+        menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi); 
+        $('.alerte').html("<br><i class='eval2'>Demande d'annulation du compte effectuée</i><br>");
+        break; // demande d'annulation d'inscription par le nouvel utilisateur
         case "NUCC":
-        alert("l'identifiant et le mot de passe ont été changés"); identification();
+        alert("l'identifiant et le mot de passe ont été changés"); $(".inscription2").hide(); $(".inscription3").hide(); identification();
         break; // page d'inscription nouvel utilisateur
         case "ERDP":
         $('#confirmationinputcode').focus(); break; // ("Manque le code de la transaction");  
         case "NULL":
-        alert("Le fichier "+demandefich+" n'existe pas");
+        if($(".appentete .nomutilisateur").text() !== "inscription"){
+          alert("Le fichier "+demandefich+" n'existe pas");
+          };
         break;
         case "<?ph":
         $('.alerte').html("<br><i class='eval2'>Vérification d'utilisateur indisponible sur le serveur</i><br>");

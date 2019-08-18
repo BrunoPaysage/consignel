@@ -37,19 +37,19 @@ iframe {} /* inclusion de quelque chose */
 blockquote {} /* citation longue */
 
 span {}
-span.lettrine {font-size:1.4em;color:#fff;background-color:#070;border-top:solid 5px #070;line-height: 1.2em;}
 
-h1 {font-size:1.75em;}   /* corps 21 */
-h2 {font-size:1.33em;}   /* corps 16 */
-h3 {font-size:1.17em;}   /* corps 14 */
-h4, h5, h6 {font-size:1.08em;} /* corps 13 */
+h1 {font-size:2em;}   /* corps 24 */
+/* h2 {font-size:1.5em;}   corps 18 */
+h2 {font-size:1.66em;}   /* corps 20 */
+h3 {font-size:1.33em;}   /* corps 16 */
+h4, h5, h6 {font-size:1.17em;} /* corps 14 */
 h4 {font-style:oblique;}
 
-p, figurecaption {font-size: 0.92em;line-height: 1.17em; text-align:justify; padding-top:0.17em; padding-bottom:0.17em;}
-#acceptetransactionstatut {font-size: 0.92em;line-height: 1.17em;}
+p, figurecaption {font-size: 1em;line-height: 1.33em; text-align:justify; padding-top:0.17em; padding-bottom:0.17em;}
+#acceptetransactionstatut {font-size: 1em;line-height: 1.33em;}
 
 blockquote {font-style:oblique;border-left:1px solid #008;padding-left:1em;} /* citation longue */
-pre {font-family: courier;font-size:0.92em; overflow: auto;}  /* corps 11 *//* texte préformaté */
+pre {font-family: courier;font-size:1em; overflow: auto;}  /* corps 12 *//* texte préformaté */
 a:link { color:#009 ;}
 a:hover {font-weight: bold;}
 a:visited { color: #004;}
@@ -61,25 +61,25 @@ a.inactif img{ display: none;}
 abbr {}
 acronym {}
 address {font-style: normal;}
-big {font-size:1.17em;font-weight: bold;}
+big {font-size:1.33em;font-weight: bold;}
 cite {}
-code {font-family: courier;font-size:0.83em; background-color:#eef;display:block;overflow:auto;white-space:nowrap;}
+code {font-family: courier;font-size:0.92em; background-color:#eef;display:block;overflow:auto;white-space:nowrap;}
 del {}
 defn {}
 em {font-size:1.12em;font-weight: bold;color:#002;}
 font {}
 img {}
 ins {background-color:#ff6;}
-kbd {font-family: arial , sans-serif;}
+/* kbd {font-family: arial , sans-serif;} */
 q {quotes: '"' '"' "¬´" "¬ª";}
 s {}
 samp {}
-small {font-size: 0.83em;}
+small {font-size: 0.92em;}
 strike {}
 strong {font-size:1.12em;font-weight: bold;color:#200;}
 strong:hover {background-color:#800;}
-sub {font-size: 0.83em;}
-sup {font-size: 0.83em;vertical-align: super; line-height: 0.55em;}
+sub {font-size: 0.5em;}
+sup {font-size: 0.5em;vertical-align: super; line-height: 0.55em;}
 tt {} 
 var {} 
 b {} 
@@ -87,28 +87,15 @@ u {}
 i {} 
 center {} 
 
-ol {margin-left: 1.17em; list-style: decimal;} 
-ul {margin-left: 1.17em; list-style: disc;} 
-li {font-size: 0.92em;line-height: 1.17em; } 
+ol {margin-left: 1.33em; list-style: decimal;} 
+ul {margin-left: 1.33em; list-style: disc;} 
+li {font-size: 1em;line-height: 1.33em; } 
 li.vide {display : list-item;
   list-style-image : url(carre01.gif);
 } 
 li.sinon { list-style:none; margin-left:-1.2em; }
 li.sinon2 { list-style:none; margin-left:0em; }
 
-
-
-.listecle li:hover {background-color:#cce;}
-.listecle li:hover ul {background-color:#ffe;}
-.listecle ul ul { display:none;}
-.listecle ul li:hover ul { display: block; }
-.listecle ul li:hover ul ul { display: none; }
-.listecle ul ul li:hover ul { display: block; }
-.listecle ul ul li:hover ul ul { display: none; }
-.listecle ul ul ul li:hover ul { display: block; }
-.listecle ul ul ul li:hover ul ul { display: none; }
-.listecle ul ul ul ul li:hover ul { display: block; }
-.listecle ul ul ul ul li:hover ul ul { display: none; }
 fieldset {} 
 form {} 
 label {} 
@@ -119,9 +106,9 @@ tbody {}
 tfoot {} 
 thead {} 
 tr {}
-th  {font-size: 0.92em;line-height: 1.17em; } 
+th  {font-size: 1em;line-height: 1.33em; } 
 th th, th td {font-size: 1em;line-height: 1em; } 
-td  {font-size: 0.92em;line-height: 1.17em; } 
+td  {font-size: 1em;line-height: 1.33em; } 
 td th, td td {font-size: 1em;line-height: 1em; } 
 /* balises html5 */
 nav {}
@@ -168,46 +155,15 @@ p + h3, div.jugem + h3 {margin-top: 1em;}
 h3.titreliste {font-size: medium; font-weight: bold; color:#335; margin-top: 1em; margin-bottom: 0px; text-align:left;}
 h3.titreliste a {text-decoration: none; color:#335;}
 
-.date {line-height:0.75em;}
-.dossier {line-height:0.75em;}
+.date {line-height:0.83em;}
+.dossier {line-height:0.83em;}
 /* balise table pour faire un graphique en ligne */
 table.tableenligne {display: inline-table; }
 
 
-/* balise table pour faire des tableaux */
 
-.tableau, .tableaulong {border:solid 1px #00f; margin:5px; border-collapse:collapse; background-color:#fff;}
-.tableau caption, .tableaulong caption {border-top:solid 5px #B48B1D;  padding:10px; }
-.tableau thead, .tableaulong thead  {border-bottom:solid 5px #0D7610;}
-.tableau tfoot, .tableaulong tfoot {border-top:solid 5px #64385A;} 
 
-.tableau td, .tableaulong td {border:solid 1px #990; padding:5px; }
-.tableau th, .tableaulong th {border:solid 1px #099; padding:5px; }
-.tableau tr.evidence, .tableaulong tr.evidence {border:solid 5px #59f;}
-.tableau tr.tableentete, .tableaulong tr.tableentete {border:dashed 2px #000;}
-.tableau td.evidence, .tableaulong td.evidence {border:solid 10px #f60;}
-.tableau col.evidence, .tableaulong col.evidence {border:solid 6px #f95;}
-.tableau col.tableentete, .tableaulong col.tableentete {border:solid 3px #03f;}
 
-.tableaulong {margin-bottom:32em; width:480px; }
-.tableaulong tbody {position:absolute; max-height:30em; overflow-y: scroll; }
-.tableaulong, .tableaulong tbody, .tableaulong tfoot {width:480px; margin-left:-1px;}
-.tableaulong tfoot {z-index:-1; position:absolute; margin-top:30em; }
-
-/* balise table pour faire des factures */
-.facture {width:100%; border-collapse:collapse; border:0;}
-.facture th, .facture td { padding-left:0.5em;padding-right:0.5em;}
-.facture thead  {background-color:#ccf; border-bottom: #007 solid 1px; }
-.facture thead th, .facture thead td {font-size: 0.83em; line-height: 1.17em; vertical-align:bottom; font-weight: normal; }
-.facture tbody td {padding-top:0.25em; text-align:left; }
-.facture tbody td+td {text-align:center;}
-.facture tbody td+td+td {text-align:right;}
-.facture tbody+tbody { border-top: #007 solid 1px; }
-.facture .taxes {font-size: 0.83em; line-height: 1.17em;}
-.facture .taxes td, .facture .totalavanttaxes td, .facture .totalaprestaxes td {text-align:right;}
-.facture .totalavanttaxes {font-weight: bold;}
-.facture tfoot  {background-color:#ccf; border-top: #007 solid 1px; font-weight: bold; padding-top:0.25px;}
-.facture tfoot td{ padding-top:0.5em;}
 /* coloration pour form avec 7 boutons radio pour jugement majoritaire */
 div.jugemaffiche span {display:inline-block; width:2em; text-align:center;}
 .jugem0 { background: url(eval0.png); padding:3px;}
@@ -233,7 +189,7 @@ td.eval0, td.eval1, td.eval2, td.eval3, td.eval4, td.eval5, td.eval6 { padding: 
 h2 { color: #00b; text-shadow: #99f 0px 3px 3px ;}
 h2:first-letter { font-size: 1.69em; }
 h3 { color:#335;}
-p.soustitre { margin-top: -0.25em; margin-bottom: 0.5em; font-size: 0.75em ;}
+p.soustitre { margin-top: -0.25em; margin-bottom: 0.5em; font-size: 0.83em ;}
 p { text-align: justify ;}
 
 .unecolonne {width: 100%;}
@@ -309,21 +265,21 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 /* utilisation */
 #draggable {  }
 .ui-menu {list-style-type: none;  background: #fff ; width:270px;}
-.ui-menu-item {  padding-left:1em; border-bottom:solid 1px #aaa; }
+.ui-menu-item {  padding-left:1em; line-height:1.5;border-bottom:solid 1px #aaa; }
 .ui-helper-hidden-accessible {display:none;}
 .offre h3, .demande h3 {padding-top:5px; padding-left:1.5em;}
 h3 .utilisation { cursor: pointer; } 
 .utilisation .recherche {padding-left:20px;padding-right:20px;}
 .utilisation .recherche input {}
-.utilisation #poubelle {min-height:10em; width:5px; height:calc(80vh - 11em  );  background:#eee; float:left; padding:0em;}
-.utilisation #poubelle2 {min-height:10em; width:5px; height:calc(80vh - 11em );  background:#eee; float:right; padding:0em;}
+.utilisation #poubelle {min-height:10em; width:5px; height:calc(70vh - 11em  );  background:#eee; float:left; padding:0em;}
+.utilisation #poubelle2 {min-height:10em; width:5px; height:calc(70vh - 11em );  background:#eee; float:right; padding:0em;}
 .utilisation .memorise {width:15px; height:50px;  background:#eee; float:right;  padding-top:0.5em; padding-bottom:0.5em;}
 #choixenattente {width:auto; height:50px; background:#fee; overflow-y: auto; overflow-x: hidden; padding:0.5em;}
 #choixenattente div {display:inline-block; float:left; margin:2px;} #choixenattente div h5 {float:left;}
 #choixenattente * {color:#f00;}
 
-#offrechoisi, #demandechoisi, #offreconfirme, #demandeconfirme {min-height:10em; width:auto; height: calc(80vh - 12em ); padding:0.5em; background:#efe; overflow-y: auto; overflow-x: hidden; }
-#offreconfirme, #demandeconfirme {min-height:10em; background:#fff; border:solid 3px #efe; height: calc(80vh - 12em  - 6px);}
+#offrechoisi, #demandechoisi, #offreconfirme, #demandeconfirme {min-height:10em; width:auto; height: calc(70vh - 12em ); padding:0.5em; background:#efe; overflow-y: auto; overflow-x: hidden; }
+#offreconfirme, #demandeconfirme {min-height:10em; background:#fff; border:solid 3px #efe; height: calc(70vh - 12em  - 6px);}
 #offrechoisi *, #demandechoisi * , #offreconfirme * , #demandeconfirme * { padding:0;}
 #offrechoisi div, #demandechoisi div , #offreconfirme div , #demandeconfirme div { padding-top:0.5em;}
 #offrechoisi div .environnement, #demandechoisi div .environnement, #offreconfirme div .environnement, #demandeconfirme div .environnement {background:#cfc; }
@@ -392,29 +348,6 @@ h3 .utilisation { cursor: pointer; }
 
 @media only screen and (min-width: 768px) {
 .suivi {transform: scale(1.25, 1.25);}
-h1 {font-size:2em;}
-h2 {font-size:1.75em;}
-h2:first-letter { font-size: 1.75em; }
-h3 {font-size:1.5em;}
-h3 input {font-size:0.7em;}
-h4, h5, h6 {font-size:1.2em; line-height: 1.4em; }
-* a {font-size:1.17em;}
-p, figurecaption {font-size: 1.12em; line-height: 1.17em; text-align:justify; padding-top:0.17em; padding-bottom:0.17em;}
-pre, strong {font-size:1.22em;}
-code, small, sub, sup {font-size:1.13em;}
-sup {line-height: 0.85em;}
-sub {font-size:0.85em;}
-ol, ul {font-size:1.27em;}
-li, th, td {font-size:1.12em; line-height: 1.27em; }
-th th, th td,td th, td td {font-size:1.2em; line-height: 1.2em; }
-.menupref * {font-size:0.87em;}
-input {font-size:1em;}
-.suivi {font-size:0.75em;}
-.date, p.soustitre {line-height:0.95em;}
-.dossier {line-height:0.95em;}
-#dacoffre div, #dacdemande div {padding-left:1.1em; }
-.appentete img.utilisateur {height:3em; }
-.ui-menu-item {  font-size:0.85em; }
 
 }
 
