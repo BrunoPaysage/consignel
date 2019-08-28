@@ -229,7 +229,7 @@ function acceptetransaction($var3,$notransaction){
     $base=constante("base");
     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
     $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
-   ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc."\n");
+   ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc.",\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
     $idtraprecedente = $dernieresidtra[0];
@@ -258,7 +258,7 @@ function acceptetransaction($var3,$notransaction){
     remplacefichier($cheminfichier, $nouveauresumeacc);
     // Mise à jour du fichier -suiviresume.json dans la base de l'accepteur
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
-    ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc."\n");
+    ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc.",\n");
     // mise à jour du fichier mesopportunites dans la base de l'accepteur
     $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
     // mise à jour du fichier demandeaqui dans la base de l'accepteur et du proposeur
@@ -274,7 +274,7 @@ function acceptetransaction($var3,$notransaction){
       // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
       $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$noaccepteur);
       $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
-      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveauproacc."\n");
+      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveauproacc.",\n");
       // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
       $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
       $idtraprecedenteproposeur = $dernieresidtra[0];
@@ -472,7 +472,7 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     if($var38="\DA↺\"\n"){$base=$base."/DA↺/";}; // note les refus si le répertoire existe
     $nouveautraann = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,$demandeur);
     $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); 
-    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraann."\n");
+    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraann.",\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraann);
     $idtraprecedente = $dernieresidtra[0];
@@ -978,9 +978,10 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $nomfichier = substr($idtra,0,14)."-suivi.json";
   ajouteaufichier($cheminfichier.$nomfichier, $transactionsuivi);
   // fichier des transactions dans le compte de l'utilisateur
-  $transaction = preg_replace( "/(],\")|(] ,\")/", "],\n\"", $transaction);
-  $transaction = preg_replace( "/^({ )/", "", $transaction);
-  $transaction = preg_replace( "/(] })/", "],\n", $transaction);
+//  $transaction = preg_replace( "/(],\")|(] ,\")/", "],\n\"", $transaction);
+//  $transaction = preg_replace( "/^({ )/", "", $transaction);
+//  $transaction = preg_replace( "/(] })/", "],\n", $transaction);
+  $transaction = $transaction.",\n";
   $base=constante("base");
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");  
   ajouteaufichier($cheminfichier,$transaction);

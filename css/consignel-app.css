@@ -243,6 +243,7 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 /* margin-left de le cible 135 margin left du rond à la médiane 139 */
 .suivi .cible {margin:0px; float:left; position: absolute; top:0; left:0; margin-left:135px;  width: 24px; height: 24px; border-radius: 14px; background: transparent; border: dotted 3px green;}
 .suivi .rond {position: absolute; top:0; left:0; margin-left:139px; margin-top:4px; width: 22px; height: 22px; border-radius: 14px; background: #0a0; border: solid 0px #000; }
+.suivi .barredisponible sup {font-size:0.83em;}
 
 /* inscription */
 .inscription {}
@@ -271,15 +272,16 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 h3 .utilisation { cursor: pointer; } 
 .utilisation .recherche {padding-left:20px;padding-right:20px;}
 .utilisation .recherche input {}
-.utilisation #poubelle {min-height:10em; width:5px; height:calc(70vh - 11em  );  background:#eee; float:left; padding:0em;}
-.utilisation #poubelle2 {min-height:10em; width:5px; height:calc(70vh - 11em );  background:#eee; float:right; padding:0em;}
+.utilisation #poubelle {min-height:11em; width:5px;  background:#eee; float:left; padding:0em;}
+.utilisation #poubelle2 {min-height:11em; width:5px;  background:#eee; float:right; padding:0em;}
 .utilisation .memorise {width:15px; height:50px;  background:#eee; float:right;  padding-top:0.5em; padding-bottom:0.5em;}
 #choixenattente {width:auto; height:50px; background:#fee; overflow-y: auto; overflow-x: hidden; padding:0.5em;}
 #choixenattente div {display:inline-block; float:left; margin:2px;} #choixenattente div h5 {float:left;}
 #choixenattente * {color:#f00;}
 
-#offrechoisi, #demandechoisi, #offreconfirme, #demandeconfirme {min-height:10em; width:auto; height: calc(70vh - 12em ); padding:0.5em; background:#efe; overflow-y: auto; overflow-x: hidden; }
-#offreconfirme, #demandeconfirme {min-height:10em; background:#fff; border:solid 3px #efe; height: calc(70vh - 12em  - 6px);}
+#offrechoisi, #demandechoisi, #offreconfirme, #demandeconfirme {min-height:10em; width:auto; padding:0.5em; background:#efe; overflow-y: auto; overflow-x: hidden; }
+#offreconfirme, #demandeconfirme {min-height:10em; background:#fff; border:solid 3px #efe; }
+
 #offrechoisi *, #demandechoisi * , #offreconfirme * , #demandeconfirme * { padding:0;}
 #offrechoisi div, #demandechoisi div , #offreconfirme div , #demandeconfirme div { padding-top:0.5em;}
 #offrechoisi div .environnement, #demandechoisi div .environnement, #offreconfirme div .environnement, #demandeconfirme div .environnement {background:#cfc; }
@@ -294,6 +296,8 @@ h3 .utilisation { cursor: pointer; }
 #offrechoisi span.supprime, #demandechoisi span.supprime { cursor: pointer; }
 #offrechoisi span.preciseactivite, #demandechoisi span.preciseactivite { cursor: pointer; }
 #offreconfirme span.preciseactivite, #demandeconfirme span.preciseactivite { cursor: pointer; }
+#dacoffre {clear:left;}
+#dacdemande {clear:right;}
 #dacoffre h3, #dacdemande h3 {padding-top:5px; padding-left:1.5em; }
 #dacoffre div, #dacdemande div {padding-left:0.9em; }
 

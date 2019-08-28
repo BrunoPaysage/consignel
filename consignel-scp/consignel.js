@@ -299,6 +299,7 @@ function cachetout(){
 function changegraphsuivi(disponible,unjour,dispomini,dispomaxi){ 
   $("#suiviappli").prepend("changegraphsuivi(disponible,unjour,dispomini,dispomaxi) <br>");
   var dispo=disponible;
+  var disporond=Math.round(dispo*100)/100;
   var dispo1jour=unjour;
   var dispo14jours=14*unjour;
   var dispo1an=365*unjour;
@@ -314,7 +315,7 @@ function changegraphsuivi(disponible,unjour,dispomini,dispomaxi){
   var pxgauche=pxmin+(1-(dispo1an-dispo)/(dispo1an-dispomin))*(pxmax-pxmin); 
   var dispopx = ""+(Math.round(pxgauche)-1)+"px"; 
   $(".suivi .barredisponible").css({"margin-left":dispopx});
-  var dispotext=""; if (dispo<dispo14jours){dispotext="&nbsp;<sup>"+dispo+"</sup>"}; 
+  var dispotext=""; if (dispo<dispo14jours){dispotext="&nbsp;<sup>"+disporond+"</sup>"}; 
   $(".suivi .barredisponible").html(dispotext);
 
   dispomin=dispomini; dispo=disponible; dispo1an=dispomaxi;
