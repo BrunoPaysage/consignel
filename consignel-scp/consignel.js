@@ -425,6 +425,11 @@ function changeClass(elem, className1,className2){
 elem.className = (elem.className == className1)?className2:className1; 
 }
 
+/* changement de type par un clic */
+function changeType(elem, type1,type2){ 
+elem.type = (elem.type == type1)?type2:type1; 
+}
+
 /* change la liste des autocomplete */
 function changedeliste(quelinput, queldiv){
   var codeutilisateur = codequiutilise();
@@ -923,7 +928,6 @@ chargevaleursrefmini();
 $('.utilisation').show(); $('#inputactivite').focus();
 if (valeururl("var1").length > 15){cachetout(); $(".confirmation").show(); verifieurlpropose(); confirmationokinputcode();}; 
 
-
 $("#suiviappli").prepend("function() .autocomplete<br>");
 /* autocomplete le input avec fichier json listequoimini, listefaire, listequoi, listepourqui, listeparqui */
 $( function() { 
@@ -955,6 +959,9 @@ $(".suivicompte .rond").click(function() { clicsuividd("rond"); });
 $(".suivicompte .barredisponible").click(function() { clicsuividd("suivibarre"); });
 
 /* ajout des onchange sur le html incription et arretesession*/
+$("#inscription0voit").click(function() { changeType(formulaireaccesutilisateur,'text','password'); });
+$("#inscription1voit").click(function() { changeType(formulaireaccespass,'text','password'); });
+
 $("#formulaireaccesutilisateur").change(function() { valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
 $("#formulaireaccespass").change(function() { valideutilisateur(nettoieinput($("#formulaireaccespass").val())); });
 $("#inscr2nom").change(function() { nettoieinput($("#inscr2nom").val()); inscription(2); });
@@ -992,7 +999,6 @@ $("#acceptetransactionoui").click(function() { acceptetransaction("oui"); });
 $("#acceptetransactionmodifie").click(function() { acceptetransaction("modifie"); });
 $("#acceptetransactionnon").click(function() { acceptetransaction("non"); });
 
-
 /* ajout des onclick pour inverser offre et demande */
 $("#utilisationchoisioffre").click(function() { inverseoffredemande("offre"); });
 $("#utilisationchoisidemande").click(function() { inverseoffredemande("demande"); });
@@ -1001,6 +1007,7 @@ $("#utilisationchoisidemande").click(function() { inverseoffredemande("demande")
 $("#inputdemandeaqui").focus(function() { supprimeautorisationqr(); });
 $("#inputdemandeaqui").blur(function() { validedemandeaqui(); });
 $("#inputdemandeaqui").keypress(function(){ if (event.keyCode==13){ $("#inputactivite").focus(); }; });
+
 
 /* ajout des onclick du DA&#8634; */
 $("#offrecompensationdetails").click(function() { changeClass(offremontants,'voit','cache'); });

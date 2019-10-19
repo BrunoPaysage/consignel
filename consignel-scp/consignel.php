@@ -760,6 +760,7 @@ function inscription($var3,$contenufichier){
   $chaineinscription = substr($contenufichier,2,strlen($contenufichier)-4); 
   list($nompublic, $numpublic, $numprive, $numsecret) = explode(",", $chaineinscription);
   $etatutilisateur = testeutilisateurunique($numprive,$nompublic);
+  // $nompublic garde les majuscules
   $detailutilisateur =",".$numsecret.",".$nompublic.",\"avatar01.png\",\"Marieville\",".$identifiantlocal.",";
   if($etatutilisateur =="inconnu"){
     // change le fichier .consignel3
