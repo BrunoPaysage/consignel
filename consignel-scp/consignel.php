@@ -302,6 +302,14 @@ function acceptetransaction($var3,$notransaction){
       // Mise à jour du fichier  gain365jours dans la base du proposeur
       $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-gain365jours.json");
       $revenujournalierproposeur = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldacoffre + $consigneloffrepaiement, $ancienneteproposeur);
+      // mise à jour du fichier accepteurs dans la base du proposeur
+      $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-accepteurs.json");
+      if (strlen($nojour) == 3){ $ladate = substr($dateaccepte,0,4).$nojour; }else{
+        if (strlen($nojour) == 2){ $ladate = substr($dateaccepte,0,4)."0".$nojour; }else{
+          if (strlen($nojour) == 1){ $ladate = substr($dateaccepte,0,4)."00".$nojour; };
+        };
+      };
+      $listeaccepteurs = accepteurs($cheminfichier, $noaccepteur, $ladate);
       // Mise à jour du fichier -resume.json dans la base du proposeur
       $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1];
       $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-resume.json");
@@ -317,6 +325,30 @@ function acceptetransaction($var3,$notransaction){
   }
   else
   {return "TEST - Réponse serveur: Proposition innacceptable type ".$debut;};
+};
+
+// garde les accepteurs dans la dernière année et retourne leur liste
+function accepteurs($cheminfichier, $numaccepteur, $nouveaujour){
+  $fichier = $cheminfichier;
+  $accepteur = $numaccepteur;
+  $jour = $nouveaujour;
+  $obsolete = $jour - 1000;
+  $listeaccepteurs="";
+  // ouvrir le fichier json
+  $accepteursdates = json_decode(decryptelestockage(file_get_contents($fichier)),true);
+  // mettre à jour avec la dernière entrée
+  if($accepteur != "DA↺"){  $accepteursdates[$accepteur] = $jour; };
+  // Nettoyage des dates obsoletes
+  foreach ($accepteursdates as $cle => $valeur) {
+    if($valeur<$obsolete){unset($accepteursdates[$cle]);}else{$listeaccepteurs = $listeaccepteurs.$cle.",";};
+  };
+  $listeaccepteurs = "[".substr($listeaccepteurs,0,-1)."]";
+
+  // enregistre le fichier modifié
+  $accepteurscryptes = cryptepourstockage(json_encode($accepteursdates));
+  file_put_contents($fichier, $accepteurscryptes);
+  // retourne lla liste des accepteurs
+  return $listeaccepteurs;
 };
 
 // ajoute une chaine dans une liste triée de type tableau de chaines
@@ -393,11 +425,11 @@ function ajoutelesconnexions($cheminfich2,$chainecontenu) {
 
 // ajoute utilisateur
 function ajouteutilisateur($numutilisateur,$detailutilisateur){
-  $base = constante("base");
+  $base = constante("base"); $avatar = constante("avatar"); $localite = constante("localite");
   $baseutilisateurs = constante("baseutilisateurs");
   $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel3");
   if($detailutilisateur=="nompublic"){ 
-    $detailutilisateur= ",61612,\"inscription\",\"avatar01.png\",\"Marieville\",61612,";
+    $detailutilisateur= ",61612,\"inscription\",\"".$avatar."\",\"".$localite."\",61612,";
   };
   $inscriptionutilisateur = "\n".$numutilisateur.$detailutilisateur;
   $fichierencours = fopen($cheminfichier, 'a'); 
@@ -579,6 +611,86 @@ function codelenom($variable){
     return $totalvariable;
 };
 
+// confiance(qui,date) renvoit un tableau des accepteurs
+function confiance( $x,$jour ){
+  $entree=[]; 
+  if( !is_array($x) ){ $entree[$x]=$x; }else{ foreach ($x as $cle => $valeur) { $entree[$cle] = $cle; }; };
+  $obsolete = $jour - 1000;
+  $confiance = constante("confiance");
+  $sortie = [];
+  $base=constante("base");
+  foreach ($entree as $cle) {
+  // pour chaque entrée
+    $accepteursentree = [];
+    $fichier = tracelechemin($entree[$cle],$base,$entree[$cle]."-accepteurs.json");
+    $fichierajour = 1;
+    $accepteursdates = json_decode(decryptelestockage(file_get_contents($fichier)),true);
+    foreach ($accepteursdates as $cle => $valeur) {
+    // pour chaque accepteur de l'élément entré
+      if ($cle == $x) { continue; };
+      if($valeur > $obsolete){
+        // s'il n'est pas obsolète
+        $sortie[$cle] += 1;
+      }else{
+        // s'il est obsolète
+        unset($accepteursdates[$cle]); $fichierajour = 0;
+      }; // fin de s'il est ou n'est pas obsolète
+      if($fichierajour == 0){   
+        // si le fichier n'est pas à jour
+        $accepteurscryptes = cryptepourstockage(json_encode($accepteursdates));
+        file_put_contents($fichier, $accepteurscryptes);
+      };
+      if(count($accepteursdates) < $confiance){   
+       // s'il n'y a pas assez d'accepteurs annulation
+        foreach ($accepteursdates as $cle => $valeur) {
+          $sortie[$cle] -= 1 ; 
+          if( $sortie[$cle] <= 0 ){ unset($sortie[$cle]); };
+        };
+      };
+    }; // fin de pour chaque accepteur de l'élément entré
+  }; // fin de pour chaque entrée
+  return $sortie;
+};
+
+// niveau de confiance par le nombre d'accepteurs avec 2 degrés de séparation
+function confianceinscription($numdemandeur,$jour, $degre ){
+  $degrecumul = [];
+  unset($degre0);
+  $degre0 = confiance( $numdemandeur,$jour, 0 ); // confiance directe selon le nombre d'accepteurs requis
+  if (count($degre0)==0) {  return "non pas assez d'accepteurs directs" ;};
+  foreach ($degre0 as $cle => $valeur) { 
+    if (array_key_exists($cle, $degrecumul)) {
+      $degrecumul[$cle] += $degre0[$cle]; unset($degre0[$cle]);
+    }else{
+      $degrecumul[$cle] += $degre0[$cle];
+    }; 
+  };
+  if (count($degre0)==0) {  return "non pas assez d'accepteurs directs" ;};
+  unset($degre1);
+  $degre1 = confiance( $degre0 , $jour, 1 ); // confiance avec 1 degrés de spéaration
+  unset($degre1[$numdemandeur]);
+  foreach ($degre1 as $cle => $valeur) { 
+    if (array_key_exists($cle, $degrecumul)) {
+      $degrecumul[$cle] += $degre1[$cle]; unset($degre1[$cle]);
+    }else{
+      $degrecumul[$cle] += $degre1[$cle];
+    }; 
+  };
+  if (count($degre1)==0) {  return "non pas assez d'accepteurs degré de séparation 1" ;};
+  unset($degre2);
+  $degre2 = confiance( $degre1 , $jour, 2 ); // confiance avec 2 degrés de spéaration
+  unset($degre2[$numdemandeur]);
+  foreach ($degre2 as $cle => $valeur) { 
+    if (array_key_exists($cle, $degrecumul)) { 
+      $degrecumul[$cle] += $degre2[$cle]; unset($degre2[$cle]);
+    }else{
+      $degrecumul[$cle] += $degre2[$cle];
+    }; 
+  };
+  if (count($degre2)==0) {  return "non pas assez d'accepteurs degré de séparation 2" ;};
+  return "oui";
+};
+
 // renvoi des valeurs de compensation d'impact
 function consignelsuivi($propositionenjson,$nompropostion){
   $consignelsuivi = ["test",0,0];
@@ -758,10 +870,11 @@ function inputvalide($entree){
 function inscription($var3,$contenufichier){
   $identifiantlocal = $var3; 
   $chaineinscription = substr($contenufichier,2,strlen($contenufichier)-4); 
+   $avatar = constante("avatar"); $localite = constante("localite");
   list($nompublic, $numpublic, $numprive, $numsecret) = explode(",", $chaineinscription);
   $etatutilisateur = testeutilisateurunique($numprive,$nompublic);
   // $nompublic garde les majuscules
-  $detailutilisateur =",".$numsecret.",".$nompublic.",\"avatar01.png\",\"Marieville\",".$identifiantlocal.",";
+  $detailutilisateur =",".$numsecret.",".$nompublic.",\"".$avatar."\",\"".$localite."\",".$identifiantlocal.",";
   if($etatutilisateur =="inconnu"){
     // change le fichier .consignel3
     ajouteutilisateur($numprive,$detailutilisateur);
@@ -880,7 +993,6 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $debut = strpos($chainejson, "tra");
   $fin = strpos($chainejson, "\" :");
   $idtra = substr($chainejson,$debut,$fin-$debut);
- 
   $jsonenphp = json_decode($chainejson,true);
   if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
   $paiement = paiement($jsonenphp,$idtra);
@@ -927,40 +1039,67 @@ function notetransaction($var3,$nomfichier,$contenufichier){
 
  
   // détection de demande d'inscription ou de vérification d'utilisateur unique
-  $verifutilisateur = substr($chainejson,strpos($chainejson, "_act0001760145\"")); if(substr($verifutilisateur,0,4)=="_act"){$verifutilisateur="oui";}else{$verifutilisateur="non";};
-  $inscritutilisateur = substr($chainejson,strpos($chainejson, "_act0001644192\"")); if(substr($inscritutilisateur,0,4)=="_act"){$inscritutilisateur="oui";}else{$inscritutilisateur="non";};
-  $confirmutilisateur = substr($chainejson,strpos($chainejson, "_act0001759799\"")); if(substr($confirmutilisateur,0,4)=="_act"){$confirmutilisateur="oui";}else{$confirmutilisateur="non";};
-  if($verifutilisateur=="oui"){
-    if(($inscritutilisateur=="non")&&($confirmutilisateur=="non")){ 
-      return "DIMF - Demande d'inscription mal formulée dans Je demande";};
-  }else{
-    if(($inscritutilisateur=="oui")||($confirmutilisateur=="oui")){ return "DIMF - Demande d'inscription mal formulée dans J'offre";};
-  };
-
-// return "TEST - ".$inscritutilisateur." -- ".$verifutilisateur." -- ".$confirmutilisateur;
-  
-  // identification du destinataire de l'offre 
-  if($jsonenphp[$idtra][3]=="0"){
-    if(($inscritutilisateur=="oui")||($confirmutilisateur=="oui")){ return "DIMF - Demande d'inscription il manque A qui (nom public du nouvel utilisateur)";};
-    $destinataire = "0";  
-  }else{
-    $destinataire = leiddupseudo($jsonenphp[$idtra][3]); 
-    if($destinataire=="inconnu"){
-      if($verifutilisateur=="oui"){
-        // inscription ou vérification
-        if($inscritutilisateur=="oui"){ $numutilisateur= $jsonenphp[$idtra][3]; 
-        // vérification de statut du vérificateur dans toile de confiance à écrire
-        
-        $ajout=ajouteutilisateur($numutilisateur,"nompublic");  }; // inscription de l'utilisateur 
-        if($confirmutilisateur=="oui"){ return "TEST - Demande de confirmation"; }; // confirmation de l'utilisateur
-      }else{
-        return "DTDI - Destinataire inconnu" ; 
-      };
+  $debutverifutilisateur = strpos($chainejson, "_act0001760145\""); 
+  $verifutilisateuroffdem = substr($chainejson,$debutverifutilisateur-16,3);   
+  $debutinscritutilisateur = strpos($chainejson, "_act0001644192\""); 
+  $inscritutilisateuroffdem = substr($chainejson,$debutinscritutilisateur-16,3);   
+  $debutconfirmutilisateur = strpos($chainejson, "_act0001759799\""); 
+  $confirmutilisateuroffdem = substr($chainejson,$debutconfirmutilisateur-16,3);  
+  // demande d'inscription d'utilisateur unique 
+  if( ($verifutilisateuroffdem == "off" ) && ( $inscritutilisateuroffdem == "dem" ) && !$debutconfirmutilisateur ){
+    // identification du destinataire de l'offre 
+    if($jsonenphp[$idtra][3]=="0"){
+      return "DIMF - Demande d'inscription il manque A qui (nom public du nouvel utilisateur)";
+      $destinataire = "0";  
     }else{
-      // Destinataire connu
-      if(($verifutilisateur=="oui")&&($inscritutilisateur=="oui")){  return "DIMF - Demande d'inscription le nom public est déjà utilisé"; };
-   }; 
+      $destinataire = leiddupseudo($jsonenphp[$idtra][3]); 
+      if($destinataire=="inconnu"){
+        if($verifutilisateuroffdem=="off"){
+          $numutilisateur= $jsonenphp[$idtra][3]; 
+          // vérification si le proposeur est autorisé à faire l'inscription en fonction de la toile de confiance avec numéro demandeur et date annéejour
+          $nojour = date_format(date_create(substr($idtra,3,8)),"z");
+          if (strlen($nojour) == 3){ $ladate = substr($dateaccepte,0,4).$nojour; }else{
+            if (strlen($nojour) == 2){ $ladate = substr($dateaccepte,0,4)."0".$nojour; }else{
+             if (strlen($nojour) == 1){ $ladate = substr($dateaccepte,0,4)."00".$nojour; };
+            };
+          };
+          $jourinscription = substr($idtra,3,4).$ladate;
+          $verificateurautorise = confianceinscription($identifiantlocal , $jourinscription );
+          return "TEST - inscripteur : ".$verificateurautorise." ";
+          if($verificateurautorise != "oui"){ return "DINO - Demande d'inscription non autorisée"; };        
+          // L'ajout de l'utilisateur est autorisé
+          $ajout=ajouteutilisateur($numutilisateur,"nompublic");  
+           
+        }else{
+          return "DTDI - Destinataire inconnu" ; 
+        };
+      }else{
+        // Destinataire connu
+        return "DIMF - Demande d'inscription le nom public est déjà utilisé"; 
+     }; 
+    };
+
+
   };
+  // demande de vérification d'utilisateur unique
+  if( $debutconfirmutilisateur && $debutverifutilisateur && !$debutinscritutilisateur ){
+    if( ($verifutilisateuroffdem == "off" ) && ( $confirmutilisateuroffdem == "dem" ) ){
+    // ok ne rien faire ici mais détecter dans l'acceptation
+    }else{
+      return "DIMF - C'est le demandeur qui doit faire la vérification de confirmation d'utilisateur unique";
+    };
+  };
+  if( $debutinscritutilisateur && $debutconfirmutilisateur ){
+    return "DIMF - Impossible de faire une inscription et une confirmation en même temps";
+  };
+  if( $debutinscritutilisateur && ( $verifutilisateuroffdem != "off" )  ){
+    return "DIMF - Demande mal formulée pour l'inscription";
+  };
+  if( $debutconfirmutilisateur && ( !$debutverifutilisateur )  ){
+    return "DIMF - Demande mal formulée pour la confirmation d'inscription";
+  };
+  
+ 
   
   $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
   if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ; $transaction = "";  };
@@ -1465,7 +1604,10 @@ function constante($nom){
   if($nom == "baseutilisateurs"){ return "../consignel-base/0"; };
   if($nom == "basehistorique"){ return "../consignel-base/2/"; };
   if($nom == "baseavatars"){ return "../consignel-app/"; }; 
+  if($nom == "avatar"){ return "avatar01.png"; };
   if($nom == "baselocalite"){ return "../localite/"; }; 
+  if($nom == "localite"){ return "Marieville"; }; 
+  if($nom == "confiance"){ return "2"; }; // nombre d'accepteurs pour pouvoir inscrire une nouvelle personne
 };
 
 function baseminimale(){

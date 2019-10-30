@@ -1,0 +1,19 @@
+<h3>00000-acepteurs.json : dates d'acceptation et accepteurs de l'année</h3> 
+<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-base.html">consignel-base</a>/<a href="base_00.html">00</a>/accepteurs</p>
+<p class="utilisation">Le script php écrit ce fichier pour chaque proposition accepté de transaction sans redondance. Il le lit pour vérifier si l'utilisateur a le droit de faire l'ouverture d'un compte</p>
+<p class="identification">
+Le nom du fichier se lit<br>
+<b>00000</b>-accepteurs.json : identifiant de l'utilisateur<br>
+00000-<b>accepteurs</b>.json : identifiant de la nature du fichier<br>
+00000-accepteurs<b>.json</b> : extension du fichier simplifiant la protection .htaccess. <br>
+Le contenu est un fichier json crypté. 
+</p>
+<p class="structure">Le fichier contient:<br>
+encode pour stokage ["id1":"numjour",""id2":"numjour",...]</p>
+<div class="contenu"><p>Les éléments des enregistrements sont les suivants:</p>
+<ul>
+<li>"id1" : "Numéro interne d'identification de la personne qui accepte"</li>
+<li>"numjour" : "Numéro du jour de l'acceptation commençant par les 4 chiffres de l'année suivi des 3 chiffres du numéro de jour dans l'année"</li>
+</ul>
+<p></p>
+</div>

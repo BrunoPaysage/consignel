@@ -1262,6 +1262,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "DIMF":
         alert(contenuretour); break; // "Demande d'inscription mal formulée"
+        case "DINO":
+        alert(contenuretour); break; // "Demande d'inscription non autorisée pas assez de références du proposeur"
         case "PACT":
         $("#acceptetransactionstatut").html("Ma proposition est encore active");
         menudetailproposition("matransaction"); affichedetailproposition(contenuretour,"matransaction");
