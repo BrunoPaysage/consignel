@@ -611,12 +611,20 @@ function codelenom($variable){
     return $totalvariable;
 };
 
+// renvoit le nombre d'utilisateurs
+function compteinscrits(){
+  $baseutilisateurs = constante("baseutilisateurs");
+  $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel3");  $contenu = explode("\n",file_get_contents($cheminfichier));
+  $nbincrits = count($contenu);
+  return $nbincrits;
+};
+
 // confiance(qui,date) renvoit un tableau des accepteurs
-function confiance( $x,$jour ){
-  $entree=[]; 
+function confiance( $x, $jour, $nbaccepteursmin ){
+  $entree=[];   
+  $sortie = [];
   if( !is_array($x) ){ $entree[$x]=$x; }else{ foreach ($x as $cle => $valeur) { $entree[$cle] = $cle; }; };
   $obsolete = $jour - 1000;
-  $confiance = constante("confiance");
   $sortie = [];
   $base=constante("base");
   foreach ($entree as $cle) {
@@ -653,11 +661,15 @@ function confiance( $x,$jour ){
 };
 
 // niveau de confiance par le nombre d'accepteurs avec 2 degrés de séparation
-function confianceinscription($numdemandeur,$jour, $degre ){
+function confianceinscription($numdemandeur, $jour ){
+  $nbinscrits = compteinscrits();
+  if($nbinscrits < 10){ return "oui"; };
+  $nbaccepteurs = 5;
+  if($nbinscrits < 30){ $nbaccepteurs = 3; if($nbinscrits < 20){ $nbaccepteurs = 2;  }; };
   $degrecumul = [];
   unset($degre0);
-  $degre0 = confiance( $numdemandeur,$jour, 0 ); // confiance directe selon le nombre d'accepteurs requis
-  if (count($degre0)==0) {  return "non pas assez d'accepteurs directs" ;};
+  $degre0 = confiance( $numdemandeur,$jour, $nbaccepteurs ); // confiance directe selon le nombre d'accepteurs requis
+  if (count($degre0)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs directs" ;};
   foreach ($degre0 as $cle => $valeur) { 
     if (array_key_exists($cle, $degrecumul)) {
       $degrecumul[$cle] += $degre0[$cle]; unset($degre0[$cle]);
@@ -665,9 +677,9 @@ function confianceinscription($numdemandeur,$jour, $degre ){
       $degrecumul[$cle] += $degre0[$cle];
     }; 
   };
-  if (count($degre0)==0) {  return "non pas assez d'accepteurs directs" ;};
+  if (count($degre0)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs directs" ;};
   unset($degre1);
-  $degre1 = confiance( $degre0 , $jour, 1 ); // confiance avec 1 degrés de spéaration
+  $degre1 = confiance( $degre0 , $jour, $nbaccepteurs ); // confiance avec 1 degrés de spéaration
   unset($degre1[$numdemandeur]);
   foreach ($degre1 as $cle => $valeur) { 
     if (array_key_exists($cle, $degrecumul)) {
@@ -676,18 +688,18 @@ function confianceinscription($numdemandeur,$jour, $degre ){
       $degrecumul[$cle] += $degre1[$cle];
     }; 
   };
-  if (count($degre1)==0) {  return "non pas assez d'accepteurs degré de séparation 1" ;};
+  if (count($degre1)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs a 1 degré de séparation" ;};
   unset($degre2);
-  $degre2 = confiance( $degre1 , $jour, 2 ); // confiance avec 2 degrés de spéaration
+  $degre2 = confiance( $degre1 , $jour, $nbaccepteurs ); // confiance avec 2 degrés de spéaration
   unset($degre2[$numdemandeur]);
   foreach ($degre2 as $cle => $valeur) { 
-    if (array_key_exists($cle, $degrecumul)) { 
+    if (array_key_exists($cle, $degrecumul)) {
       $degrecumul[$cle] += $degre2[$cle]; unset($degre2[$cle]);
     }else{
       $degrecumul[$cle] += $degre2[$cle];
     }; 
   };
-  if (count($degre2)==0) {  return "non pas assez d'accepteurs degré de séparation 2" ;};
+  if (count($degre2)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs à 2 degrés de séparation" ;};
   return "oui";
 };
 
@@ -1065,8 +1077,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
           };
           $jourinscription = substr($idtra,3,4).$ladate;
           $verificateurautorise = confianceinscription($identifiantlocal , $jourinscription );
-          return "TEST - inscripteur : ".$verificateurautorise." ";
-          if($verificateurautorise != "oui"){ return "DINO - Demande d'inscription non autorisée"; };        
+          if($verificateurautorise != "oui"){ return "DINO - Vous ne pouvez pas inscrire un nouvel utilisateur (".$verificateurautorise.")"; };        
           // L'ajout de l'utilisateur est autorisé
           $ajout=ajouteutilisateur($numutilisateur,"nompublic");  
            
@@ -1607,7 +1618,6 @@ function constante($nom){
   if($nom == "avatar"){ return "avatar01.png"; };
   if($nom == "baselocalite"){ return "../localite/"; }; 
   if($nom == "localite"){ return "Marieville"; }; 
-  if($nom == "confiance"){ return "2"; }; // nombre d'accepteurs pour pouvoir inscrire une nouvelle personne
 };
 
 function baseminimale(){
