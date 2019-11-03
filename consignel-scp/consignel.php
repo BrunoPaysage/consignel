@@ -620,7 +620,7 @@ function compteinscrits(){
 };
 
 // confiance(qui,date) renvoit un tableau des accepteurs
-function confiance( $x, $jour, $nbaccepteursmin ){
+function confiance( $x, $jour, $nbaccepteursmin, $nbaccepteursmax ){
   $entree=[];   
   $sortie = [];
   if( !is_array($x) ){ $entree[$x]=$x; }else{ foreach ($x as $cle => $valeur) { $entree[$cle] = $cle; }; };
@@ -633,6 +633,7 @@ function confiance( $x, $jour, $nbaccepteursmin ){
     $fichier = tracelechemin($entree[$cle],$base,$entree[$cle]."-accepteurs.json");
     $fichierajour = 1;
     $accepteursdates = json_decode(decryptelestockage(file_get_contents($fichier)),true);
+    if(count($accepteursdates)>$nbaccepteursmax){ continue;};
     foreach ($accepteursdates as $cle => $valeur) {
     // pour chaque accepteur de l'élément entré
       if ($cle == $x) { continue; };
@@ -664,12 +665,12 @@ function confiance( $x, $jour, $nbaccepteursmin ){
 function confianceinscription($numdemandeur, $jour ){
   $nbinscrits = compteinscrits();
   if($nbinscrits < 10){ return "oui"; };
-  $nbaccepteurs = 5;
+  $nbaccepteurs = 5; // centralité de degré minimale
   if($nbinscrits < 30){ $nbaccepteurs = 3; if($nbinscrits < 20){ $nbaccepteurs = 2;  }; };
+  $nbaccepteursmax=100; // centralité de degré excessive
   $degrecumul = [];
   unset($degre0);
-  $degre0 = confiance( $numdemandeur,$jour, $nbaccepteurs ); // confiance directe selon le nombre d'accepteurs requis
-  if (count($degre0)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs directs" ;};
+  $degre0 = confiance( $numdemandeur,$jour, $nbaccepteurs, $nbaccepteursmax ); // confiance directe selon le nombre d'accepteurs requis
   foreach ($degre0 as $cle => $valeur) { 
     if (array_key_exists($cle, $degrecumul)) {
       $degrecumul[$cle] += $degre0[$cle]; unset($degre0[$cle]);
@@ -677,9 +678,9 @@ function confianceinscription($numdemandeur, $jour ){
       $degrecumul[$cle] += $degre0[$cle];
     }; 
   };
-  if (count($degre0)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs directs" ;};
+  if (count($degre0)==0) {  return "DINO - Vous avez trop ou pas assez de personnes acceptant vos propositions" ;};
   unset($degre1);
-  $degre1 = confiance( $degre0 , $jour, $nbaccepteurs ); // confiance avec 1 degrés de spéaration
+  $degre1 = confiance( $degre0 , $jour, $nbaccepteurs, $nbaccepteursmax ); // confiance avec 1 degrés de séparation
   unset($degre1[$numdemandeur]);
   foreach ($degre1 as $cle => $valeur) { 
     if (array_key_exists($cle, $degrecumul)) {
@@ -688,9 +689,9 @@ function confianceinscription($numdemandeur, $jour ){
       $degrecumul[$cle] += $degre1[$cle];
     }; 
   };
-  if (count($degre1)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs a 1 degré de séparation" ;};
+  if (count($degre1)==0) {  return "DINO - Pas assez de confiance a 1 degré de séparation" ;};
   unset($degre2);
-  $degre2 = confiance( $degre1 , $jour, $nbaccepteurs ); // confiance avec 2 degrés de spéaration
+  $degre2 = confiance( $degre1 , $jour, $nbaccepteurs, $nbaccepteursmax ); // confiance avec 2 degrés de séparation
   unset($degre2[$numdemandeur]);
   foreach ($degre2 as $cle => $valeur) { 
     if (array_key_exists($cle, $degrecumul)) {
@@ -699,7 +700,7 @@ function confianceinscription($numdemandeur, $jour ){
       $degrecumul[$cle] += $degre2[$cle];
     }; 
   };
-  if (count($degre2)==0) {  return "DINO - Vous n'avez pas assez d'accepteurs à 2 degrés de séparation" ;};
+  if (count($degre2)==0) {  return "DINO - Pas assez de confiance à 2 degrés de séparation" ;};
   return "oui";
 };
 
