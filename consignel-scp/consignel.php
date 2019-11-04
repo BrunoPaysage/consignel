@@ -268,6 +268,7 @@ function acceptetransaction($var3,$notransaction){
     $listedemandeaqui = ajoutealaliste($noproposeur,"demandeaqui",$lepseudoaccepteur);
    
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
+    
   
     
     if($var38<>"\"DA↺\"\n"){
@@ -318,7 +319,10 @@ function acceptetransaction($var3,$notransaction){
       $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-suiviresume.json");  
       ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeaccproposeur."\n");
       // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base du proposeur à faire
+      
+      
     };
+ 
     // renvoi du nouveau résumé de l'accepteur
     return "TACC - ".$nouveauresumeacc;
 
@@ -361,6 +365,7 @@ function ajoutealaliste($var3,$nomfichier,$item){
   $tableaucontenufichier = explode(",",$contenufichier);
   natsort($tableaucontenufichier);
   $tableaucontenufichier = array_unique($tableaucontenufichier);
+  if( !$tableaucontenufichier[0] ){ unset( $tableaucontenufichier[0] ); }; // pour compatibilité ancienne .baseconsignel3
   $contenufichier = implode(",",$tableaucontenufichier);
   $contenufichier = "[".$contenufichier."]";
   $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");
