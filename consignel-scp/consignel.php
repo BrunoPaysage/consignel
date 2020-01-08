@@ -268,7 +268,8 @@ function acceptetransaction($var3,$notransaction){
     $listedemandeaqui = ajoutealaliste($noproposeur,"demandeaqui",$lepseudoaccepteur);
    
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
-    
+    $description = extraitlesactivites($nouveautraacc);
+    return "TEST - mise à jour quoi.json ".$description;
   
     
     if($var38<>"\"DA↺\"\n"){
@@ -365,7 +366,7 @@ function ajoutealaliste($var3,$nomfichier,$item){
   $tableaucontenufichier = explode(",",$contenufichier);
   natsort($tableaucontenufichier);
   $tableaucontenufichier = array_unique($tableaucontenufichier);
-  if( !$tableaucontenufichier[0] ){ unset( $tableaucontenufichier[0] ); }; // pour compatibilité ancienne .baseconsignel3
+  if( !$tableaucontenufichier[0] ){ unset( $tableaucontenufichier[0] ); }; 
   $contenufichier = implode(",",$tableaucontenufichier);
   $contenufichier = "[".$contenufichier."]";
   $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");

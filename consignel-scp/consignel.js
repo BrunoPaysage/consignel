@@ -1004,6 +1004,7 @@ $("#utilisationchoisioffre").click(function() { inverseoffredemande("offre"); })
 $("#utilisationchoisidemande").click(function() { inverseoffredemande("demande"); });
 
 /* ajout des onclick pour demande à qui */
+$("#inputdemandeaqui").click(function() { $("#inputdemandeaqui").focus(); });
 $("#inputdemandeaqui").focus(function() { supprimeautorisationqr(); });
 $("#inputdemandeaqui").blur(function() { validedemandeaqui(); });
 $("#inputdemandeaqui").keypress(function(){ if (event.keyCode==13){ $("#inputactivite").focus(); }; });
@@ -1014,6 +1015,7 @@ $("#offrecompensationdetails").click(function() { changeClass(offremontants,'voi
 $("#offrecompensationconfirmedetails").click(function() { changeClass(offremontantsconfirme,'voit','cache'); });
 $("#demandecompensationdetails").click(function() { changeClass(demandemontants,'voit','cache'); });
 $("#demandecompensationconfirmedetails").click(function() { changeClass(demandemontantsconfirme,'voit','cache'); });
+
 
 /* ajout des onclick preferences */
 $(".testindicateurdd input").change(function() { changesuivi(); });
