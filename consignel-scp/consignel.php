@@ -167,7 +167,7 @@ function acceptetransaction($var3,$notransaction){
   }; // Fin de while cherche dans les lignes
   fclose($fichierencours); // fermeture du fichier
 
-  if($debut=="DTAO"){
+  if(($debut=="DTAO")||($debut=="DTAR")){
     // vérifications complémentaires avant d'enregistrer la transaction
     $resumecpt = resumecompte($var3); 
     $derniercompte = explode( ',', $resumecpt );
@@ -223,8 +223,28 @@ function acceptetransaction($var3,$notransaction){
     
     $transactionsuivi = "\"".$idtraacc."\",".$var33.",".$var32.",\"".$dateaccepte."\",\"".$noaccepteur."\",".$var36.",".$var37.",".$var38;
     ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
+
+
+
+
     // ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
-    ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi); 
+    if($debut=="DTAO"){
+      ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi);
+    };
+    if($debut=="DTAR"){
+    // mise dans un dossier
+    //  if(!is_dir($cheminfichier."acc".$notransaction."/")){ mkdir($cheminfichier."acc".$notransaction."/"); };
+    //  ajouteaufichier($cheminfichier."acc".$notransaction."/".$noaccepteur."-".$dateaccepte.".json", $transactionsuivi);
+      
+    // transformation en proposition
+    // $nouveauresumeidtra = passedemande($noaccepteur,$nomfichiertra,$contenufichiertra);  
+    // return "PEAA - ".$nouveauresumeidtra  // le nouveau résumé et ne nom de transaction sont chainées
+    };
+
+
+
+
+     
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
     $base=constante("base");
     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
@@ -268,8 +288,8 @@ function acceptetransaction($var3,$notransaction){
     $listedemandeaqui = ajoutealaliste($noproposeur,"demandeaqui",$lepseudoaccepteur);
    
     // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
-    $description = extraitlesactivites($nouveautraacc);
-    return "TEST - mise à jour quoi.json ".$description;
+//    $description = extraitlesactivites($nouveautraacc);
+//    return "TEST - mise à jour quoi.json ".$description;
   
     
     if($var38<>"\"DA↺\"\n"){
@@ -918,7 +938,8 @@ function inversetransaction($idtra,$contenufichiertra,$dateaccepte,$noproposeur)
   $acclocal = preg_replace( $cherchenooffre, $nointerim , $contenufichiertra);
   $acclocal = preg_replace( $cherchenodemande, $nooffre , $acclocal);
   $acclocal = preg_replace( $chercheinterim, $nodemande , $acclocal);
-  $notra = "acc".$idtra2; $cherchenotra = "/(tra".$idtra2.")/"; 
+  $notra = "acc".$idtra2; 
+  $cherchenotra = "/(tra".$idtra2.")/"; 
   $acclocal = preg_replace( $cherchenotra, $notra , $acclocal);
   $acclocalenphp = json_decode($acclocal,true);
   $notra = "acc".substr($idtra,3);
@@ -1014,6 +1035,8 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $idtra = substr($chainejson,$debut,$fin-$debut);
   $jsonenphp = json_decode($chainejson,true);
   if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
+  // Demande au DA↺ non autorisée
+  if($jsonenphp[$idtra][3]==182097){ return "DTRD - Erreur proposition. Le DA↺ ne peut pas être destinataire d'une proposition"; };
   $paiement = paiement($jsonenphp,$idtra);
   if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
   $consigneloffrepaiement = 0; // -$paiement[1]; propositions de paiements en consignel du proposeur à déduire au moment de la proposition déjà compté par le da↺
@@ -1241,6 +1264,9 @@ function paiement($propositionenjson,$nompropostion){
 
   return $paiement;
 };
+
+
+
 
 // retourne doubletroc = achat ou vente de monnaie; simple troc = troc ou achat ou vente de produits
 function queltypetroc($noact){
@@ -1543,7 +1569,30 @@ function transactionstatut($demandeur, $notransaction){
     if($var48=="\"DA↺\"\n"){$pseudo = "\"DA↺\"\n";}else{$pseudo = lepseudode($proposeur);};
     if ($var45 == "\"".$nodemandeur."\""){ return "ADAC - ".$pseudo."\"".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà acceptée par vous
     if ($var48 == "\"".$nodemandeur."\"\n"){ return "PACC - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition faite par vous a déjà été acceptée
+    
+//    $nodestinataire = pourqui($cheminfichier."acc".$notransaction.".json");
+    if (file_exists($cheminfichier."tra".$notransaction.".json")) { 
+      $fichierencours2 = fopen($cheminfichier."tra".$notransaction.".json", 'r');
+      $ligne2 = decryptelestockage(fgets($fichierencours2, 1024)); // une seule ligne
+      list($var41b, $var42b, $var43b, $var44b, $var45b) = explode(",", $ligne2);
+    };
+    // si la proposition est unique renvoyer TNDI
+    if($var44b=="\"0\""){
+      // $destinataire="pourtous";
+      // Test expiration
+      $dureeexpire = substr($var45b, 1,-2);
+      if(testeexpiration($var41,$dureeexpire)=="pasexpire"){
+        // vérifier la disponibilité en stock
+        $disponible="oui";
+        if($disponible=="oui"){
+        
+          return "DTAR - ".$pseudo."\"".contenutra($cheminfichier.$idtra.".json");     // Demande de transaction autorisée à tous réutilisable Envoi multiple du lien  
+
+        };
+      };
+    };// si la proposition est non attribuée non expirée et disponible renvoyer DTAR
     return "TNDI - Cette proposition n'est pas disponible";
+    
   }; // ADAC - PACC - TNDI
   if (file_exists($cheminfichier."ann".$notransaction.".json")) { 
     $fichierencours = fopen($cheminfichier."ann".$notransaction.".json", 'r');

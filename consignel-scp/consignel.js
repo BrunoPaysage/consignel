@@ -14,6 +14,13 @@ function acceptetransaction(accepteouinon){
   if(acceptation == "oui"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
   if(acceptation == "non"){ chargemoi('refuseuneproposition'); }; /* fin du non */
   if(acceptation == "modifie"){ actualiselaproposition("pasmaproposition"); }; /* fin du modifie */
+
+
+
+  if(acceptation == "demande"){ alert("en cours d'écriture"); chargemoi('accepteuneproposition'); }; /* fin du oui */
+
+
+  if(acceptation == "annuledemande"){ alert("Ce numéro de demande est celui du proposeur initial. Utilisez le numéro de votre demande pour faire l'annulation"); }; /* fin du annule demande */
 };
 
 /* Affichage et activation de la page d'utilisation */
@@ -36,6 +43,9 @@ changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaude
 function actualiselaproposition(dequi){
   if((dequi=="")||(dequi=="undefined")){dequi="mapropostion";};
   $("#suiviappli").prepend("actualiselaproposition(dequi) <br>");
+  var proposeurinitial=$("#utilisationchoisidemande .confirmation").text().substring(1);
+  proposeurinitial=proposeurinitial.substring(0,proposeurinitial.indexOf("\""));
+  $("#inputdemandeaqui").val(proposeurinitial);
   $("#offrechoisi").show();  $("#demandechoisi").show();
   var dansqui = ""; var dansqui2 ="";
   var codeitemchoisi = ""; var itemchoisi = ""; var quantite = 1; var unite = "h"; var consignel = 0; var argent = 0; var mlc = 0; var environnement = 0; var duree = 0; var social = 0; var foisparan = 0; var dureedevie = 0;
@@ -998,6 +1008,8 @@ $("#acceptetransactionannuler").click(function() { acceptetransaction("annulemoi
 $("#acceptetransactionoui").click(function() { acceptetransaction("oui"); });
 $("#acceptetransactionmodifie").click(function() { acceptetransaction("modifie"); });
 $("#acceptetransactionnon").click(function() { acceptetransaction("non"); });
+$("#passerdemandeoui").click(function() { acceptetransaction("demande"); });
+$("#passerdemandeannuler").click(function() { acceptetransaction("annuledemande"); });
 
 /* ajout des onclick pour inverser offre et demande */
 $("#utilisationchoisioffre").click(function() { inverseoffredemande("offre"); });
@@ -1225,6 +1237,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+contenuretour+",,");
         var paramgraph = contenuretour.split(","); 
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
+        
+        // retirer l'item de la liste des propositions ou aller chercher la liste sur le serveur à faire
+        
+        
         break; 
         case "NUCI":
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
@@ -1258,6 +1274,14 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#acceptetransactionstatut").html("Cette transaction n'existe pas");
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Cette transaction n'existe pas"); break;
+
+
+        case "DTAR":
+        $("#acceptetransactionstatut").html("Demander si disponible");
+        menudetailproposition("passerdemande"); affichedetailproposition(latransaction,propositiondequi);
+        break; 
+
+
         case "DTAO":
         $("#acceptetransactionstatut").html("Transaction disponible");
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
@@ -1269,6 +1293,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "PACT":
         $("#acceptetransactionstatut").html("Ma proposition est encore active");
         menudetailproposition("matransaction"); affichedetailproposition(contenuretour,"matransaction");
+        
         break; 
         case "ADAC":
         $("#acceptetransactionstatut").html("J'ai déja accepté cette proposition");
@@ -1298,6 +1323,9 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "DTNO":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré transaction non autorisée erreur calcul ↺onsignel"); break; 
+        case "DTRD":
+        responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
+        alert("Non enregistré demandes au DA↺ non autorisées"); break; 
         case "DTRT":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré transaction non autorisée genre réécrire l'histoire"); break; 
@@ -1635,10 +1663,17 @@ $("#utilisationchoisioffre span.confirmation").html("Je donne");
 $('#confirmationacceptetransaction').attr("class","actif"); 
 $("#confirmationacceptetransaction div").hide();
 $("#acceptetransactionstatut").show();
+
 if(menutra == "matransaction"){$("#confirmationacceptetransaction .matransaction").show(); $("#confirmationacceptetransaction .matransaction button").show(); };
+
 if(menutra == "matransactionfermee"){$("#confirmationacceptetransaction .matransaction").show(); $("#acceptetransactionannuler").hide(); };
-if(menutra == "pasmatransaction"){$("#confirmationacceptetransaction .pasmatransaction ").show(); $("#confirmationacceptetransaction .pasmatransaction button").show(); };
-if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasmatransaction").show();  $("#acceptetransactionoui").hide();  $("#acceptetransactionnon").hide(); };
+
+if(menutra == "pasmatransaction"){$("#confirmationacceptetransaction .pasmatransaction ").show(); $("#confirmationacceptetransaction .pasmatransaction button").show(); $("#acceptetransactionoublier").hide();};
+
+if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasmatransaction").show();  $("#acceptetransactionoui").hide();  $("#acceptetransactionnon").hide(); $("#acceptetransactionoublier").show(); };
+
+if(menutra == "passerdemande"){$("#confirmationacceptetransaction .passerdemande ").show(); $("#confirmationacceptetransaction .passerdemande button").show(); };
+
 if(menutra == "attente"){$('#confirmationacceptetransaction').attr("class","attente");};
 };
 
