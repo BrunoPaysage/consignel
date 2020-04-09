@@ -167,7 +167,9 @@ function acceptetransaction($var3,$notransaction){
   }; // Fin de while cherche dans les lignes
   fclose($fichierencours); // fermeture du fichier
 
-  if(($debut=="DTAO")||($debut=="DTAR")){
+  // DTAO acceptation d'une proposition non encore accpatée
+  //DTAR voir dans le else utiliser une proposition déjà acceptée mais ouverte à tous
+  if($debut=="DTAO"){
     // vérifications complémentaires avant d'enregistrer la transaction
     $resumecpt = resumecompte($var3); 
     $derniercompte = explode( ',', $resumecpt );
@@ -224,27 +226,9 @@ function acceptetransaction($var3,$notransaction){
     $transactionsuivi = "\"".$idtraacc."\",".$var33.",".$var32.",\"".$dateaccepte."\",\"".$noaccepteur."\",".$var36.",".$var37.",".$var38;
     ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
 
-
-
-
     // ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
-    if($debut=="DTAO"){
-      ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi);
-    };
-    if($debut=="DTAR"){
-    // mise dans un dossier
-    //  if(!is_dir($cheminfichier."acc".$notransaction."/")){ mkdir($cheminfichier."acc".$notransaction."/"); };
-    //  ajouteaufichier($cheminfichier."acc".$notransaction."/".$noaccepteur."-".$dateaccepte.".json", $transactionsuivi);
-      
-    // transformation en proposition
-    // $nouveauresumeidtra = passedemande($noaccepteur,$nomfichiertra,$contenufichiertra);  
-    // return "PEAA - ".$nouveauresumeidtra  // le nouveau résumé et ne nom de transaction sont chainées
-    };
-
-
-
-
-     
+    ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi);
+    
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
     $base=constante("base");
     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
@@ -349,7 +333,61 @@ function acceptetransaction($var3,$notransaction){
 
   }
   else
-  {return "TEST - Réponse serveur: Proposition innacceptable type ".$debut;};
+  {
+    if($debut=="DTAR"){
+      // mise dans un dossier
+      //  if(!is_dir($cheminfichier."acc".$notransaction."/")){ mkdir($cheminfichier."acc".$notransaction."/"); };
+      //  ajouteaufichier($cheminfichier."acc".$notransaction."/".$noaccepteur."-".$dateaccepte.".json", $transactionsuivi);
+        
+      // transformation en proposition
+      if (file_exists($cheminfichier.$nomfichiertra)) {
+        $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
+      }else{
+        return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
+      };
+      $dateaccepte = date("Ymd_Hi");
+      $noproposeur = preg_replace( "/\D/", "", $var38);
+      
+      // vérification si la proposition $notra a été faite récement
+      $noinitial=substr($idtra,16); 
+      $notra="tra".$dateaccepte.$noinitial;
+      $cheminfichier = ouvrelechemin($notra); // chemin dans base2 par date
+      $nomfichiersuivi= substr($notra,0,14)."-suivi.json";
+      if (file_exists($cheminfichier.$nomfichiersuivi)) {
+        $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
+        $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
+        while (!feof($fichierencours) && !$ligneexiste) { // cherche dans les lignes
+          $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
+          list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
+          list($var41a,$var41b,$var41c) = explode("_", $var41); 
+          $var41c=substr($var41c,0,-1);
+          $var48 = preg_replace( "/\D/", "", $var48);
+          $noinitial2=substr($noinitial,1);
+         if ($var41c == $noinitial2){ // même numéro d'offre
+            if($var48 == $var3){ // même proposeur
+              return "PTDE - ||".$idtra;
+               $ligneexiste = TRUE;
+            };
+          }; // Fin de transaction trouvée
+        }; // Fin de while cherche dans les lignes
+        fclose($fichierencours); // fermeture du fichier
+      };  
+    
+      $nouveaucontenutra = passedemande($idtra,$contenufichiertra,$dateaccepte,$noproposeur);
+      $debut = strpos($nouveaucontenutra, "tra");
+      $fin = strpos($nouveaucontenutra, "\" :");
+      $idnouveautra = substr($nouveaucontenutra,$debut,$fin-$debut);  
+      // Si la transaction existe renvoyer déjà enregistrée
+      // sinon
+      $noteproposition = notetransaction($var3,"mestransactions",$nouveaucontenutra);  
+      return "PTDD - ".substr($noteproposition,7)."||".$idnouveautra;
+      // fin du si enregistrée ou pas
+  
+    }else{
+      // ni DTAO ni DTAR
+      return "TEST - Réponse serveur: Proposition innacceptable type ".$debut;
+    };
+  };
 };
 
 // garde les accepteurs dans la dernière année et retourne leur liste
@@ -1194,6 +1232,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
   ajouteaufichier($cheminfichier,$idtra.",".$nouveauresume."\n");
   // ajout de la proposition dans les opportunités si c'est un utilisateur identifié
+        $destinataire = leiddupseudo($jsonenphp[$idtra][3]); 
   if($destinataire != 0){ $laliste = ajoutealaliste($destinataire,"mesopportunites","\"".$idtra.".json\"" ); };
   // envoi le retour à l'utilisateur - La proposition est en attente d'acceptation
   return "PEAA - ".$nouveauresume;
@@ -1265,8 +1304,31 @@ function paiement($propositionenjson,$nompropostion){
   return $paiement;
 };
 
-
-
+// transforme une transaction à tous en proposition du demandeur au proposeur
+function passedemande($idtra,$contenufichiertra,$dateaccepte,$noproposeur){
+  $dateinitiale = substr($idtra,3,14);
+  $nooffre = "off".$dateinitiale; $cherchenooffre = "/(".$nooffre.")/"; 
+  $nodemande = "dem".$dateinitiale; $cherchenodemande = "/(".$nodemande.")/"; 
+  $nointerim = "ttt".$dateinitiale; $chercheinterim = "/(".$nointerim.")/"; 
+  $contenu = preg_replace( $cherchenooffre, $nointerim , $contenufichiertra);
+  $contenu = preg_replace( $cherchenodemande, $nooffre , $contenu);
+  $contenu = preg_replace( $chercheinterim, $nodemande , $contenu);
+  $changedate = $dateaccepte."_"; $cherchenotra = "/(".$dateinitiale.")/"; 
+  $contenu = preg_replace( $cherchenotra, $changedate , $contenu);
+  $noinitial=substr($idtra,16);
+  $notra="tra".$dateaccepte.$noinitial;
+  $contenuenphp = json_decode($contenu,true);
+  $nooffretra = $contenuenphp[$notra][0];
+  $nodemandetra = $contenuenphp[$notra][1];
+  $contenuenphp[$notra][0] = $nodemandetra;
+  $contenuenphp[$notra][1] = $nooffretra;
+  $contenuenphp[$notra][2] = $dateaccepte;
+  $contenuenphp[$notra][3] = $noproposeur;
+  $contenuenphp[$notra][4] = "30";
+  $contenu = json_encode($contenuenphp);
+  $cherche2pt = "/(:)/";  $contenu = preg_replace( $cherche2pt, " :" , $contenu);
+  return $contenu;
+};
 
 // retourne doubletroc = achat ou vente de monnaie; simple troc = troc ou achat ou vente de produits
 function queltypetroc($noact){

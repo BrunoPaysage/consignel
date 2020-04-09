@@ -16,8 +16,8 @@ function acceptetransaction(accepteouinon){
   if(acceptation == "modifie"){ actualiselaproposition("pasmaproposition"); }; /* fin du modifie */
 
 
-
-  if(acceptation == "demande"){ alert("en cours d'écriture"); chargemoi('accepteuneproposition'); }; /* fin du oui */
+// alert("en cours d'écriture");
+  if(acceptation == "demande"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
 
 
   if(acceptation == "annuledemande"){ alert("Ce numéro de demande est celui du proposeur initial. Utilisez le numéro de votre demande pour faire l'annulation"); }; /* fin du annule demande */
@@ -903,6 +903,7 @@ function codequiutilise(){
 }; /* fin codequiutilise */
 
 function confirmationokinputcode(){
+  $(".validation").hide(); 
   $("#suiviappli").prepend("confirmationokinputcode() <br>");
   var entree=nettoieinputtra($('#confirmationinputcode').val()); 
   if (entree == "" ){verifieurlpropose(); entree=nettoieinputtra($('#confirmationinputcode').val()); $('#confirmationinputcode').focus();};
@@ -1228,6 +1229,27 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         var paramgraph = nouveauresume.split(","); 
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
         break;
+        
+        case "PTDE":
+        $("#acceptetransactionstatut").html("Passer demande déjà enregistrée");
+        menudetailproposition("passerdemandefermee"); 
+        $(".validation").show(); 
+        var codetra="\?var1\="+responseTxt.substring(responseTxt.indexOf("||")+2);
+        modifieqr(codetra);
+        break;
+        case "PTDD":
+        $("#acceptetransactionstatut").html("Passer demande enregistrée");
+        menudetailproposition("passerdemandefermee"); 
+        $(".validation").show(); 
+        var codetra="\?var1\="+responseTxt.substring(responseTxt.indexOf("||")+2);
+        modifieqr(codetra);
+        alert("Votre demande est enregistrée"); $('#validqr').attr("class","qr3"); 
+        var nouveauresume = responseTxt.substring(7,responseTxt.substring(responseTxt.indexOf("||")));
+        $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+nouveauresume+",,");
+        var paramgraph = nouveauresume.split(","); 
+        changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
+        break;
+
         case "PDEN":
         alert("Présentez le code qr"); $("#acceptetransactionstatut").html("");//ne rien faire proposition déjà enregistrée
         break;
@@ -1274,14 +1296,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#acceptetransactionstatut").html("Cette transaction n'existe pas");
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Cette transaction n'existe pas"); break;
-
-
         case "DTAR":
         $("#acceptetransactionstatut").html("Demander si disponible");
         menudetailproposition("passerdemande"); affichedetailproposition(latransaction,propositiondequi);
         break; 
-
-
         case "DTAO":
         $("#acceptetransactionstatut").html("Transaction disponible");
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
@@ -1293,7 +1311,6 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "PACT":
         $("#acceptetransactionstatut").html("Ma proposition est encore active");
         menudetailproposition("matransaction"); affichedetailproposition(contenuretour,"matransaction");
-        
         break; 
         case "ADAC":
         $("#acceptetransactionstatut").html("J'ai déja accepté cette proposition");
@@ -1329,9 +1346,20 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "DTRT":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré transaction non autorisée genre réécrire l'histoire"); break; 
+
+
         case "DTNC":
-        responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
-        alert("Proposition non conforme. Relancer la page et reformulez la proposition"); break; 
+        var temporaire1=$("#confirmationinputcode").val();
+        var temporaire2=$("#validqr .qrcodetexte").text();
+        if(temporaire2.indexOf(temporaire1)!=-1){
+          $("#acceptetransactionstatut").html("La demande déjà enregistrée");
+          menudetailproposition("passerdemandefermee"); 
+        }else{
+          responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
+          alert("Proposition non conforme. Relancer la page et reformulez la proposition");                    
+        };
+        break; 
+        
         case "DTIN":
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Proposition interdite. Spéculation, etc."); break; 
