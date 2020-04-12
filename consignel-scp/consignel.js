@@ -14,6 +14,7 @@ function acceptetransaction(accepteouinon){
   if(acceptation == "oui"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
   if(acceptation == "non"){ chargemoi('refuseuneproposition'); }; /* fin du non */
   if(acceptation == "modifie"){ actualiselaproposition("pasmaproposition"); }; /* fin du modifie */
+ /*  if(acceptation == "oublieopportunite"){ chargemoi("oublieopportunite"); }; supprimé acces direct au lieu de passer par cette fonction */
 
 
 // alert("en cours d'écriture");
@@ -46,6 +47,8 @@ function actualiselaproposition(dequi){
   var proposeurinitial=$("#utilisationchoisidemande .confirmation").text().substring(1);
   proposeurinitial=proposeurinitial.substring(0,proposeurinitial.indexOf("\""));
   $("#inputdemandeaqui").val(proposeurinitial);
+  // à faire ajouter la mise à jour du nombre de jours restant dans #offrenbjours sub
+  
   $("#offrechoisi").show();  $("#demandechoisi").show();
   var dansqui = ""; var dansqui2 ="";
   var codeitemchoisi = ""; var itemchoisi = ""; var quantite = 1; var unite = "h"; var consignel = 0; var argent = 0; var mlc = 0; var environnement = 0; var duree = 0; var social = 0; var foisparan = 0; var dureedevie = 0;
@@ -84,7 +87,7 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
   if(accepte=="accepte"){
     $("#utilisationchoisioffre span.confirmation").html("J'ai donné");
     $("#utilisationchoisidemande span.confirmation").html(dequi+" m'a donné");
-    };
+  };
   if (nomproposition == "demandeuneproposition"){
     $("#offreconfirme").html("demande "+$("#mstockdemandeuneproposition").text());
   }else{
@@ -97,6 +100,10 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
     // $("#demandeconfirme").append( numtra+"<br>"); // nom de la transaction
     // $("#demandeconfirme").append( objson[numtra][0]+"<br>"); // numéro de l'offre
     var numoff = "off"+objson[numtra][2]+"_"+objson[numtra][0]; // id de l'offre
+    var dateetra = objson[numtra][2].substring(0,8); // date de la transaction
+    var dureetra = objson[numtra][4]; // duree de la transaction
+    var ecartjours = diffjour(dateetra); // nombre de jours depuis la proposition
+    $("#offrenbjours sub").html((dureetra-ecartjours)+" j");
     // $("#demandeconfirme").append( objson[numoff][0]+"<br>"); // liste des act offerts
     // $("#demandeconfirme").append( objson[numoff]+"<br>"); // valeurs de l'offre
     var ou="#demandemontantsconfirme"; 
@@ -653,6 +660,9 @@ function chargemoitout(nomdonnees){
 function chargemoi(nomdonnees){
   $("#suiviappli").prepend("chargemoi("+nomdonnees+") ... ");
   $(".statut"+nomdonnees).html("...");
+  if (nomdonnees == "oublieopportunite"){
+    var nomdonnees2 = "oublieopportunite"; var nomdonnees = "mesopportunites";  
+  };
   var dansdiv="#mstock"+nomdonnees;
   var dansspansuivi=".fichierspersonnels .statut"+nomdonnees;
   var dansspansuivi2=".fichierspersonnels .statut2"+nomdonnees;
@@ -675,6 +685,7 @@ function chargemoi(nomdonnees){
       if (nomdonnees == "refuseuneproposition" ){envoi = "oui";};
       if (nomdonnees == "annuleuneproposition" ){envoi = "oui";};
       if (nomdonnees == "inscription" ){envoi = "oui";};
+      if (nomdonnees2 == "oublieopportunite"){envoi = "oui";};
       if(envoi=="oui"){
         /* envoi de données */
         fichierlocaljson = undefined;
@@ -690,7 +701,11 @@ function chargemoi(nomdonnees){
   if(!fichierlocaljson){
     /* rien dans localstorage */
     $("#suiviappli").prepend("depuis le serveur <br>");
-    demandefichier(dansdiv,nomdonnees,dansspansuivi,nomfichierlocal,dansspansuivi2);
+    if (nomdonnees2 == "oublieopportunite"){
+      demandefichier(dansdiv,nomdonnees2,dansspansuivi,nomfichierlocal,dansspansuivi2);
+    }else{
+      demandefichier(dansdiv,nomdonnees,dansspansuivi,nomfichierlocal,dansspansuivi2);     
+    };
   }; /* fin du pas dans localstorage */
   if(fichierlocaljson){
     if(fichierlocaljson=="[]"){
@@ -737,6 +752,21 @@ function chiffreladate(ladate){
   var minutes=d.getMinutes(); if(minutes<10){chiffreladate=chiffreladate+"0"+minutes;}else{chiffreladate=chiffreladate+minutes;};
   return chiffreladate ;
 }; /* fin de chiffreladate */
+
+/* chiffreladate en format 201809021-0723 longueur fixe*/
+function dureerestante(dateetra,dureetra,d){ 
+  var d = ladate;
+  $("#suiviappli").prepend("dureerestante("+ladate+" "+dureeoff+" "+d+") <br>");
+  var nbjoursrestant = dureeoff;
+  
+/*  var chiffreladate=""+d.getFullYear();
+  var mois=d.getMonth()+1; if(mois<10){chiffreladate=chiffreladate+"0"+mois;}else{chiffreladate=chiffreladate+mois;};
+  var jour=d.getDate(); if(jour<10){chiffreladate=chiffreladate+"0"+jour;}else{chiffreladate=chiffreladate+jour;};
+  var heure=d.getHours(); if(heure<10){chiffreladate=chiffreladate+"_0"+heure;}else{chiffreladate=chiffreladate+"_"+heure;};
+  var minutes=d.getMinutes(); if(minutes<10){chiffreladate=chiffreladate+"0"+minutes;}else{chiffreladate=chiffreladate+minutes;};
+*/
+  return nbjoursrestant ;
+}; /* fin de dureerestante */
 
 /* usage de l'offre choisie */
 function choixactivite(itemchoisi){
@@ -1006,6 +1036,8 @@ confirmationokinputcode(); });
 $("#confirmationokinputcode").click(function() { confirmationokinputcode(); });
 $("#acceptetransactionactualiser").click(function() { acceptetransaction("actualisemoi"); });
 $("#acceptetransactionannuler").click(function() { acceptetransaction("annulemoi"); });
+$("#acceptetransactionoublier").click(function() { chargemoi("oublieopportunite"); });
+$("#acceptetransactionoublier2").click(function() { chargemoi("oublieopportunite"); });
 $("#acceptetransactionoui").click(function() { acceptetransaction("oui"); });
 $("#acceptetransactionmodifie").click(function() { acceptetransaction("modifie"); });
 $("#acceptetransactionnon").click(function() { acceptetransaction("non"); });
@@ -1014,6 +1046,7 @@ $("#passerdemandeannuler").click(function() { acceptetransaction("annuledemande"
 
 /* ajout des onclick pour inverser offre et demande */
 $("#utilisationchoisioffre").click(function() { inverseoffredemande("offre"); });
+$("#offrenbjours").click(function() { clicmenupreferences(); $("#dureeexpire").focus(); });
 $("#utilisationchoisidemande").click(function() { inverseoffredemande("demande"); });
 
 /* ajout des onclick pour demande à qui */
@@ -1149,6 +1182,11 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
   $("#suiviappli").prepend("demandefichier("+queldiv+", "+nomdonnees+", "+quelspansuivi+", "+quelfichierlocal+", "+quelspansuivi2+" ) ... ");
   var retourdansdiv = queldiv;
   var demandefich = nomdonnees;
+  if (demandefich == "oublieopportunite"){
+    var demandefich2 = "oublieopportunite"; demandefich = "mesopportunites";
+  }else{
+    var demandefich2 = ""; demandefich = nomdonnees;
+  };
   var dansspansuivi = quelspansuivi;
   var dansspansuivi2 = quelspansuivi2;
   var nomfichierlocal = quelfichierlocal;
@@ -1156,21 +1194,26 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
   var nomutil3= nettoieinput($("#formulaireaccespass").val());
   var tableauretour= $(".retourserveur").html().split(",");
   if(tableauretour.length==1 || nomutil3=="" || tableauretour[1]==0){
-    $("#suiviappli").prepend("Pas de code de session fichier "+nomdonnees+" non demandé au serveur <br>");/* si le serveur n'a pas encore renvoyé de code de session */
+    $("#suiviappli").prepend("Pas de code de session fichier "+demandefich+" non demandé au serveur <br>");/* si le serveur n'a pas encore renvoyé de code de session */
     $(".appentete .nomutilisateur").html("... mode démo ... utilisateur inconnu");
     var quiutilise = codequiutilise();
     return; /* on ne demande pas les fichiers pour un utilisateur non identifié */
   }else{
-    $("#suiviappli").prepend("encodage de la demande de fichier "+nomdonnees+" pour le serveur <br>");
+    $("#suiviappli").prepend("encodage de la demande de fichier "+demandefich+" pour le serveur <br>");
     /* le code de session existe ("codedesession "+tableauretour[1]);*/
     var nomcode = codelenom((codelenom(nomutil2)*tableauretour[1])+""); /* chiffre le nom d'utilisateur avec le code session */
     var nomcode2 = codelenom(codelenom(nomutil3)*tableauretour[1]+""); /* chiffre le mot de passe avec le code session */
-    var nomcode3 = codelenom(demandefich)*tableauretour[1]; /* chiffre la demande de fichier avec le code de session */
+    if (demandefich2 == "oublieopportunite"){
+     var nomcode3 = codelenom(demandefich2)*tableauretour[1]; /* chiffre la demande de fichier avec le code de session */     
+    }else{
+     var nomcode3 = codelenom(demandefich)*tableauretour[1]; /* chiffre la demande de fichier avec le code de session */  
+    };
+    
     var nomcode4 = codelenom(nomutil2+nomutil3); /* chiffre le code d'acces local */
   };
   
   var var4="";
-  if((nomdonnees=="demandeuneproposition") || (nomdonnees=="accepteuneproposition") || (nomdonnees=="annuleuneproposition") || (nomdonnees=="refuseuneproposition")){
+  if((demandefich=="demandeuneproposition") || (demandefich=="accepteuneproposition") || (demandefich=="annuleuneproposition") || (demandefich=="refuseuneproposition") || (demandefich2=="oublieopportunite")){
     var nodemande = nettoieinputtra($("#confirmationinputcode").val()) ;
     if (nodemande.length <= 14){
       $("#confirmationinputcode").css('color', 'red');
@@ -1183,7 +1226,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     };
   };
   var var5="";
-  if(nomdonnees=="maproposition"){
+  if(demandefich=="maproposition"){
     if ($("#matransaction").text()=="..."){
       /* pas de transaction à transférer */
     }else{
@@ -1192,7 +1235,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
       var5="&var5="+var5
     };
   };
-  if(nomdonnees=="inscription"){
+  if(demandefich=="inscription"){
     var nomupublic= nettoieinput($("#formulaireaccesutilisateur").val());
     var codenomupublic= codelenom(nomupublic);
     var codenomutil= codelenom(nettoieinput($("#inscr2nom2").val()));
@@ -1201,13 +1244,13 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var5="{ "+ var5 +" } ";
     var5 = encryptepourtransfert(var5);
     var5="&var5="+var5
-  };
+  };  
 
   var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
   $("#suiviappli").prepend("script php demandeauserveur envoyé au serveur <br>");
   $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success") {
-      $("#suiviappli").prepend("fichier "+nomdonnees+" arrivé depuis le serveur<br>");
+      $("#suiviappli").prepend("fichier "+demandefich+" arrivé depuis le serveur<br>");
       responseTxt = decryptetransfert(responseTxt);
       var testebr = responseTxt.indexOf("<br>"); 
       var testretour = responseTxt.substring(0,4);
@@ -1340,6 +1383,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "DTNO":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré transaction non autorisée erreur calcul ↺onsignel"); break; 
+        case "DTRA":
+        alert(contenuretour); break; // "Proposition non enregistré. Le destinataire ne peut pas être soi-même"
         case "DTRD":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Non enregistré demandes au DA↺ non autorisées"); break; 
@@ -1375,11 +1420,18 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#acceptetransactionstatut").html("Transaction refusée"); propositionrefusee(contenuretour);
         break; 
         case "TRIN":
-        $("#acceptetransactionstatut").html("Transaction inconnue"); propositionrefusee(contenuretour);
+        $("#acceptetransactionstatut").html("Transaction inconnue"); 
+        if($("#confirmationinputcode").val()){
+          var listeconfirmation = JSON.parse(decryptediv($("#mstockmesopportunites").text()));
+//          alert($("#confirmationinputcode").val()+" "+listeconfirmation.indexOf($("#confirmationinputcode").val()));
+          if(listeconfirmation.indexOf($("#confirmationinputcode").val())!=-1){chargemoi("oublieopportunite");};
+        };
+        propositionrefusee(contenuretour);
         break; 
         case "PEXP":
         $("#acceptetransactionstatut").html("Ma proposition est expirée");
-        menudetailproposition("matransactionfermee"); affichedetailproposition(contenuretour,"matransaction"); 
+        menudetailproposition("matransactionfermee");  
+        $("#acceptetransactionoublier2").show(); affichedetailproposition(contenuretour,"matransaction"); 
         break; 
         case "AEXP":
         $("#acceptetransactionstatut").html("Cette proposition est expirée");
@@ -1418,7 +1470,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         var storageoui = $("#localstoragemoi").prop("checked");
         var storagedisponible=testestorage(); 
         if(storageoui==1 && storagedisponible == "oui"){ /* met le div dans localstorage */
-          $("#suiviappli").prepend("stokage local du fichier "+nomdonnees+" arrivé du serveur <br>");
+          $("#suiviappli").prepend("stokage local du fichier "+demandefich+" arrivé du serveur <br>");
           if(responseTxt.length ==1){
             $(dansspansuivi).html("<i class='eval2'> - "+demandefich+" fichier vide sur le serveur et dans le stokage local" + " -</i>"); 
             $(dansspansuivi2).html("<i class='eval2'>&nbsp;</i>"); 
@@ -1427,14 +1479,14 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
           $(dansspansuivi).html("<i class='eval3'> - "+demandefich+" chargé depuis le serveur et mis dans le stockage local" + " -</i>"); 
           $(dansspansuivi2).html("<i class='eval3'>&nbsp;</i>"); 
         };
-        if(nomdonnees=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
-        if(nomdonnees=="mesopportunites"){ 
+        if(demandefich=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
+        if(demandefich=="mesopportunites"){ 
           changedeliste("#confirmationinputcode", "#mstockmesopportunites"); 
             if($("#changeaideinputconfirmation").text() != "ø"){
               $("#acceptetransactionstatut").html("tapez 2, choisissez et clic sur ok");
             };
         };
-        if(nomdonnees=="demandeaqui"){ changedeliste("#inputdemandeaqui", "#mstockdemandeaqui"); };
+        if(demandefich=="demandeaqui"){ changedeliste("#inputdemandeaqui", "#mstockdemandeaqui"); };
         break;
       }; /* Fin du switch */
     }; /* Fin de la fonction de retour succès */
@@ -1443,6 +1495,16 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     };
   }); /* Fin du .load */
 }; 
+
+function diffjour(datefichier){
+  var anneef=datefichier.substring(0,4); 
+  var moisf=datefichier.substring(4,6)-1; 
+  var jourf=datefichier.substring(6,8);
+  var d1 = new Date(anneef,moisf,jourf);
+  var d2 = new Date(); // date actuelle 
+  var WNbJours = d2.getTime() - d1.getTime();
+  return Math.ceil(WNbJours/86400000)-1; // 1000*60*60*24 
+};
 
 /* efface l'entête utilisateur inconnu */
 function effacelentete(){
@@ -1694,11 +1756,11 @@ $("#acceptetransactionstatut").show();
 
 if(menutra == "matransaction"){$("#confirmationacceptetransaction .matransaction").show(); $("#confirmationacceptetransaction .matransaction button").show(); };
 
-if(menutra == "matransactionfermee"){$("#confirmationacceptetransaction .matransaction").show(); $("#acceptetransactionannuler").hide(); };
+if(menutra == "matransactionfermee"){$("#confirmationacceptetransaction .matransaction").show(); $("#acceptetransactionannuler").hide(); $("#acceptetransactionoublier2").hide();};
 
 if(menutra == "pasmatransaction"){$("#confirmationacceptetransaction .pasmatransaction ").show(); $("#confirmationacceptetransaction .pasmatransaction button").show(); $("#acceptetransactionoublier").hide();};
 
-if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasmatransaction").show();  $("#acceptetransactionoui").hide();  $("#acceptetransactionnon").hide(); $("#acceptetransactionoublier").show(); };
+if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasmatransaction").show();  $("#acceptetransactionoui").hide();  $("#acceptetransactionnon").hide();$("#acceptetransactionoublier").hide(); };
 
 if(menutra == "passerdemande"){$("#confirmationacceptetransaction .passerdemande ").show(); $("#confirmationacceptetransaction .passerdemande button").show(); };
 
@@ -1882,6 +1944,12 @@ function oksoldedisponible(){
   };
   return ok;
 };
+
+/* fonction pour retirer un item de la liste des opportunités
+function oublieopportunite(idtrainoportune){
+  chargemoi("oublieopportunite");
+};
+ */
 
 /* prépare le input avec le choixfaire, le choixquoi etc */
 function proposechoix(){
@@ -2247,6 +2315,7 @@ if(statusTxt == "error") { $('.alerte').html("<br><i class='eval0'> - Serveur in
 function validdureeexpire(){
 var dureeexpirelocale = $("#dureeexpire").val();
 if((dureeexpirelocale=="")||(dureeexpirelocale<1)||(dureeexpirelocale>365)){$("#dureeexpire").val("1")};
+$("#offrenbjours sub").html($("#dureeexpire").val()+" "+"j");
 miseajourdesvaleurs();
 }; 
 

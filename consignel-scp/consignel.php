@@ -121,6 +121,8 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       if($lademande==87558){ $noteproposition = notetransaction($var3,"mestransactions",$donnee5); echo cryptepourtransfert($noteproposition); }; // fin de "maproposition"
       if($lademande==116020){ $mestransactions = fichierperso($var3,"mestransactions"); echo cryptepourtransfert($mestransactions); }; // fin de "mestransactions"
       if($lademande==118535){ $mesopportunites = fichierperso($var3,"mesopportunites"); echo cryptepourtransfert($mesopportunites); }; // fin de "mesopportunites"
+      if($lademande==151695){ $oublieopportunite = retireopportunite($var3,$donnee4);   fichierperso($var3,"mesopportunites"); echo cryptepourtransfert($mesopportunites); 
+      }; // fin de "oublieopportunite"
       if($lademande==211910){ $transactionrefusee = refusetransaction($var3,$donnee4); echo cryptepourtransfert($transactionrefusee); }; // fin de "refuseuneproposition"
       if($lademande==211873){ $transactionannulee = annuleproposition($var3,$donnee4); echo cryptepourtransfert($transactionannulee); }; // fin de "annuleuneproposition"
       if($lademande==232828){  
@@ -1074,7 +1076,12 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $jsonenphp = json_decode($chainejson,true);
   if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
   // Demande au DA↺ non autorisée
-  if($jsonenphp[$idtra][3]==182097){ return "DTRD - Erreur proposition. Le DA↺ ne peut pas être destinataire d'une proposition"; };
+  if($jsonenphp[$idtra][3]==182097){ return "DTRD - Proposition non enregistré. Le DA↺ ne peut pas être destinataire d'une proposition"; };
+  // Demande à soi même non autorisée
+  //$destinataireautorise=testdestinatairedepot($jsonenphp[$idtra][3],$var3);
+  if("nonautorise"==testdestinatairedepot($jsonenphp[$idtra][3],$var3)){
+    return "DTRA - Proposition non enregistré. Le destinataire ne peut pas être soi-même";
+  };
   $paiement = paiement($jsonenphp,$idtra);
   if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
   $consigneloffrepaiement = 0; // -$paiement[1]; propositions de paiements en consignel du proposeur à déduire au moment de la proposition déjà compté par le da↺
@@ -1409,6 +1416,13 @@ function retiredelaliste($var3,$nomfichier,$item){
   return $contenufichier;
 };
 
+// retire un item de la liste des opportunitées
+function retireopportunite($var3,$donnee4){
+  $listeopportunite = retiredelaliste($var3,"mesopportunites","tra".$donnee4.".json");
+  return "TEST - retire opportunite ".$listeopportunite;
+
+};
+
 // mise à jour du compte avec le revenu inconditionnel
 function revenuinconditionnel($var3){
   $base = constante("base");
@@ -1436,7 +1450,7 @@ function revenuinconditionnel($var3){
     $loffre="\"off".$ladate."_".$codeoffre."\" : [\"act0002220560\",1,\"u\",0,0,0,0,0,0,0,0],";
     $lademande="\"dem".$ladate."_".$codedemande."\" : [\"act000537234\",1,\"u\",0,0,0,0,0,0,0,0]";
     $demandeaqui=$var3;
-    $dureeexpire=1;
+    $dureeexpire=31;
     $latransaction= "[\"".$codeoffre."\",\"".$codedemande."\",\"".$ladate."\",\"".$demandeaqui."\",\"".$dureeexpire."\"]";
     $chaineretour = "revenuinconditionnel";
     $codelatransaction=codelenom($latransaction.$chaineretour);
@@ -1549,13 +1563,21 @@ function testelechemin($nomtransaction){
       return $chemin;
     };
 
-// pour tester si le destinataire de la proposition est autorisé
+// pour tester si le destinataire de la proposition est autorisé pour acceptation d'une proposistion
 function testdestinataire($pourqui,$demandeur){
   $desti = preg_replace( "/\D/", "", $pourqui) ; $tesqui = preg_replace( "/\D/", "", $demandeur) ;
   if($desti == "0"){ return "autorise" ; };
   if($tesqui == $desti){ return "autorise" ; };
   if(lepseudode($tesqui, "nopseudo") == $desti){ return "autorise" ; };
   return "nonautorise" ; 
+};
+// pour tester si le destinataire de la proposition est autorisé pour dépot d'une proposistion
+function testdestinatairedepot($pourqui,$demandeur){
+  $desti = preg_replace( "/\D/", "", $pourqui) ; $tesqui = preg_replace( "/\D/", "", $demandeur) ;
+  if($desti == "0"){ return "autorise" ; };
+  if($tesqui == $desti){ return "nonautorise" ; };
+  if(lepseudode($tesqui, "nopseudo") == $desti){ return "nonautorise" ; };
+  return "autorise" ; 
 };
 
 // teste si l'utilisateur est inscrit dans la base
@@ -1668,6 +1690,7 @@ function transactionstatut($demandeur, $notransaction){
     $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
     list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
     if ($var48 == "\"".$nodemandeur."\"\n"){ return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition de votre part expirée sans être acceptée
+    if ($var48 == $var3){ return "PEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition de votre part expirée sans être acceptée
     if ($var45 == "\"".$nodemandeur."\""){ return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition est expirée
     if ($var45 == "\"0\""){ return "AEXP - ".contenutra($cheminfichier.$idtra.".json"); }; // Cette proposition est expirée
     return "TNDI - Cette proposition n'est pas disponible";
