@@ -121,7 +121,7 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       if($lademande==87558){ $noteproposition = notetransaction($var3,"mestransactions",$donnee5); echo cryptepourtransfert($noteproposition); }; // fin de "maproposition"
       if($lademande==116020){ $mestransactions = fichierperso($var3,"mestransactions"); echo cryptepourtransfert($mestransactions); }; // fin de "mestransactions"
       if($lademande==118535){ $mesopportunites = fichierperso($var3,"mesopportunites"); echo cryptepourtransfert($mesopportunites); }; // fin de "mesopportunites"
-      if($lademande==151695){ $oublieopportunite = retireopportunite($var3,$donnee4);   fichierperso($var3,"mesopportunites"); echo cryptepourtransfert($mesopportunites); 
+      if($lademande==151695){ $oublieopportunite = retireopportunite($var3,$donnee4);echo cryptepourtransfert($oublieopportunite); 
       }; // fin de "oublieopportunite"
       if($lademande==211910){ $transactionrefusee = refusetransaction($var3,$donnee4); echo cryptepourtransfert($transactionrefusee); }; // fin de "refuseuneproposition"
       if($lademande==211873){ $transactionannulee = annuleproposition($var3,$donnee4); echo cryptepourtransfert($transactionannulee); }; // fin de "annuleuneproposition"
@@ -233,7 +233,8 @@ function acceptetransaction($var3,$notransaction){
     
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
     $base=constante("base");
-    $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$var38nombre);
+    $pseudoaccepteur=lepseudode($var38nombre, "noid");    
+    $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteur);
     $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc.",\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
@@ -265,8 +266,10 @@ function acceptetransaction($var3,$notransaction){
     // Mise à jour du fichier -suiviresume.json dans la base de l'accepteur
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
     ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc.",\n");
+    
     // mise à jour du fichier mesopportunites dans la base de l'accepteur
-    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
+//    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
+
     // mise à jour du fichier demandeaqui dans la base de l'accepteur et du proposeur
     $lepseudoproposeur = lepseudode($noproposeur);
     $listedemandeaqui = ajoutealaliste($noaccepteur,"demandeaqui",$lepseudoproposeur);
@@ -280,7 +283,8 @@ function acceptetransaction($var3,$notransaction){
     
     if($var38<>"\"DA↺\"\n"){
       // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
-      $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$noaccepteur);
+      $pseudoaccepteur=lepseudode($noaccepteur, "noid");
+      $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteur);
       $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
       ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveauproacc.",\n");
       // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
@@ -317,7 +321,8 @@ function acceptetransaction($var3,$notransaction){
           if (strlen($nojour) == 1){ $ladate = substr($dateaccepte,0,4)."00".$nojour; };
         };
       };
-      $listeaccepteurs = accepteurs($cheminfichier, $noaccepteur, $ladate);
+      $pseudoaccepteur=lepseudode($noaccepteur, "noid");
+      $listeaccepteurs = accepteurs($cheminfichier, $pseudoaccepteur, $ladate);
       // Mise à jour du fichier -resume.json dans la base du proposeur
       $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1];
       $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-resume.json");
@@ -396,6 +401,7 @@ function acceptetransaction($var3,$notransaction){
 function accepteurs($cheminfichier, $numaccepteur, $nouveaujour){
   $fichier = $cheminfichier;
   $accepteur = $numaccepteur;
+  if(substr($accepteur,0,1)=="\""){$accepteur=substr($accepteur,1);$accepteur=substr($accepteur,0,-1);};
   $jour = $nouveaujour;
   $obsolete = $jour - 1000;
   $listeaccepteurs="";
@@ -988,6 +994,7 @@ function inversetransaction($idtra,$contenufichiertra,$dateaccepte,$noproposeur)
   $acclocalenphp[$notra][0] = $nodemandetra;
   $acclocalenphp[$notra][1] = $nooffretra;
   $acclocalenphp[$notra][2] = $dateaccepte;
+  if(substr($noproposeur,0,1)=="\""){$noproposeur=substr($noproposeur,1);$noproposeur=substr($noproposeur,0,-1);};
   $acclocalenphp[$notra][3] = $noproposeur;
   $acclocal = json_encode($acclocalenphp);
   return $acclocal;
@@ -1419,8 +1426,8 @@ function retiredelaliste($var3,$nomfichier,$item){
 // retire un item de la liste des opportunitées
 function retireopportunite($var3,$donnee4){
   $listeopportunite = retiredelaliste($var3,"mesopportunites","tra".$donnee4.".json");
-  return "TEST - retire opportunite ".$listeopportunite;
-
+  $mesopportunite=fichierperso2($var3,"mesopportunites");
+  return $mesopportunite;
 };
 
 // mise à jour du compte avec le revenu inconditionnel

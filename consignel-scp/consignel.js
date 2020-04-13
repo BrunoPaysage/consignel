@@ -83,6 +83,12 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
   effaceconfirmation();
   var nomproposition = noproposition;
   var dequi = propositiondequi; 
+    if(dequi.length>18){
+      $("#utilisationchoisidemande").css("font-size","2.75vw")
+    }else{
+      $("#utilisationchoisidemande").css("font-size","4vw")
+    };
+
   if(dequi!="matransaction"){$("#utilisationchoisidemande span.confirmation").html(dequi+" me donne");};
   if(accepte=="accepte"){
     $("#utilisationchoisioffre span.confirmation").html("J'ai donné");
@@ -809,7 +815,7 @@ cachetout(); $('#suiviappli').prepend('clic menu ----- inscription choix arrêt 
 /* click menu utilisation */
 function clicmenuutilisation(){
 var utilisateur = codequiutilise(); if (utilisateur == "u0 "){effacelentete();};
-cachetout(); $('.utilisation').show(); $('#suiviappli').prepend('clic menu ----- utilisation <br>'); $('#inputactivite').focus();
+cachetout(); $('.utilisation').show(); $('#suiviappli').prepend('clic menu ----- utilisation <br>'); validdureeexpire(); $('#inputactivite').focus();
 };
 
 /* click menu confirmation */
@@ -939,6 +945,8 @@ function confirmationokinputcode(){
   if (entree == "" ){verifieurlpropose(); entree=nettoieinputtra($('#confirmationinputcode').val()); $('#confirmationinputcode').focus();};
   utilisateur = codequiutilise();
   if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
+  if (entree == "mes transactions" ){mestransaction();};
+  
   $("#confirmationinputcode").css('color', '');
   effacedemandeproposition();
   chargemoi('demandeuneproposition'); 
@@ -1357,7 +1365,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "ADAC":
         $("#acceptetransactionstatut").html("J'ai déja accepté cette proposition");
-        menudetailproposition("pasmatransactionfermee"); affichedetailproposition(latransaction,propositiondequi,"accepte"); 
+        menudetailproposition("pasmatransactionfermee"); $("#acceptetransactionoublier").show();
+        affichedetailproposition(latransaction,propositiondequi,"accepte"); 
         break; 
         case "PACC":
         responseTxt = responseTxt.substring(7);
@@ -1435,7 +1444,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "AEXP":
         $("#acceptetransactionstatut").html("Cette proposition est expirée");
-        menudetailproposition("pasmatransactionfermee"); 
+        menudetailproposition("pasmatransactionfermee"); $("#acceptetransactionoublier").show(); 
         affichedetailproposition(contenuretour,""); 
         break; 
         case "TNDI":
