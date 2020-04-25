@@ -400,7 +400,6 @@ function changeaideinputactivite(option){
     $("#suiviappli").prepend("transforme en "+optionlocale+"<br>");
   };
   $("#changeaideinputactivite").html(optionlocale);
-//  if (optionlocale=="ø"){$("#inputactivite").autocomplete("option","source",[]);};
   if (optionlocale=="ø"){  var listeduinput = JSON.parse($("#listestockevaleursrefmini").text());
   $("#inputactivite").autocomplete("option","source",listeduinput); };
   if (optionlocale=="ȫ"){changedeliste("#inputactivite", "#stockecherchequoimini");};
@@ -435,9 +434,6 @@ function changeaideinputconfirmation(option){
     $("#suiviappli").prepend("transforme en "+optionlocale+"<br>");
   };
   $("#changeaideinputconfirmation").html(optionlocale);
-//  if (optionlocale=="ø"){$("#inputactivite").autocomplete("option","source",[]);};
-//  if (optionlocale=="ø"){  var listeconfirmation = JSON.parse(decryptediv($("#mstockmesopportunites").text()));
-//  $("#confirmationinputcode").autocomplete("option","source",listeconfirmation); };
   if (optionlocale=="ø"){$("#confirmationinputcode").autocomplete("option","source",[]);};
   if (optionlocale=="ȫ"){changedeliste("#confirmationinputcode", "#stockecherchemesopportunites");};
   if (optionlocale=="ǜ"){changedeliste("#confirmationinputcode", "#mstockmesopportunites");};
@@ -463,21 +459,28 @@ function changedeliste(quelinput, queldiv){
   if(quelinput=="#confirmationinputcode"){idchangeaide = "#changeaideinputconfirmation"};
   var listedudiv = $(queldiv).text();
   if(listedudiv != "..."){
-// session expirée renvoi utilisateur inconnu dans le div
-if(listedudiv.substring(0,4)==" , 0"){listedudiv="..."; $(queldiv).html("...");};
-};
-
-// $(".alerte").html(queldiv);
-if(listedudiv.length > 5){ /*div contenant plus que ... */
-  try {var listeduinput = JSON.parse(decryptediv(listedudiv));}
-  catch (err){var listeduinput = JSON.parse($("#stockevaleursrefmini").text()); alert("Le fichier du div "+queldiv+" est mal chargé"); $("#changeaideinputactivite").html("ø");};
-  $(quelinput).autocomplete("option","source",listeduinput);
-  if(queldiv[1]=="s"){$(idchangeaide).html("ȫ");};
-  if(queldiv[1]=="m"){$(idchangeaide).html("ǜ");};
-}else{
-  $(idchangeaide).html("ø");  
-};
+    // session expirée renvoi utilisateur inconnu dans le div
+    if(listedudiv.substring(0,4)==" , 0"){listedudiv="..."; $(queldiv).html("...");};
+  };
+  
+  // $(".alerte").html(queldiv);
+  if(listedudiv.length > 5){ /*div contenant plus que ... */
+    try {var listeduinput = JSON.parse(decryptediv(listedudiv));}
+    catch (err){var listeduinput = JSON.parse($("#stockevaleursrefmini").text()); alert("Le fichier du div "+queldiv+" est mal chargé"); $("#changeaideinputactivite").html("ø");};
+    $(quelinput).autocomplete("option","source",listeduinput);
+    if(queldiv[1]=="s"){$(idchangeaide).html("ȫ");};
+    if(queldiv[1]=="m"){$(idchangeaide).html("ǜ");};
+  }else{
+    $(idchangeaide).html("ø");  
+  };
 }; 
+
+/* change la couleur des items dans les listes déroulantes en fonction du contenu */
+function changdelistecouleur(){
+  $(".ui-menu-item-wrapper").each(function(index){
+    if($(this).text()){$(this).addClass("eval0");};
+  });
+};
 
 /* change les id d'un div de proposition */
 function changelesid(numid){
@@ -807,6 +810,16 @@ function choisisansunite(lenomchoisi,laquantite,lunite){
   return lenomsansunite;
 };
 
+/* donne une valeur de class selon le nom de l'item */
+function classidtra(idtra){
+  if(idtra.substring(0,3)=="tra"){return "eval6";};
+  if(idtra.substring(0,3)=="dac"){return "eval5";}; 
+  if(idtra.substring(0,3)=="acc"){return "eval3";};      if(idtra.substring(0,3)=="ann"){return "eval1";};
+  if(idtra.substring(0,3)=="ref"){return "eval0";};
+  if(idtra.substring(0,3)=="exp"){return "discret";};    
+  return "";
+};
+
 /* click menu incription */
 function clicmenuinscription(){
 cachetout(); $('#suiviappli').prepend('clic menu ----- inscription choix arrêt session<br>'); $('.arretesession').show(); $('.suivi .statut').html('100'); arretesession(); 
@@ -946,7 +959,6 @@ function confirmationokinputcode(){
   utilisateur = codequiutilise();
   if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
   if (entree == "mes transactions" ){mestransaction();};
-  
   $("#confirmationinputcode").css('color', '');
   effacedemandeproposition();
   chargemoi('demandeuneproposition'); 
@@ -991,9 +1003,27 @@ $( "#inputcherchepourqui" ).autocomplete({ source: listepourqui, select: functio
 var listeparqui = [];
 $( "#inputchercheparqui" ).autocomplete({ source: listeparqui, select: function (event, ui) { $("#inputchercheparqui").val(ui.item.label); proposechoix();}, }); 
 var listeconfirmation = [];
-$( "#confirmationinputcode" ).autocomplete({ source: listeconfirmation, select: function (event, ui) { $("#confirmationinputcode").val(ui.item.label); confirmationokinputcode();}, }); 
+$( "#confirmationinputcode" ).autocomplete({ 
+  source: listeconfirmation, 
+  select: function (event, ui) { 
+    $("#confirmationinputcode").val(ui.item.label);  
+    confirmationokinputcode();}, 
+  }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+   return $( "<li>" )
+   .append( "<a><span class=\""+classidtra(item.label)+"\">&nbsp;</span> " + item.label + "</a>" )
+   .appendTo( ul );
+};
+               
 var listedemandeaqui = [];
 $( "#inputdemandeaqui" ).autocomplete({ source: listedemandeaqui, select: function (event, ui) { $("#inputdemandeaqui").val(ui.item.label); validedemandeaqui();}, }); 
+
+var changementopportunite=$("confirmationinputcode").val();
+$('#confirmationinputcode').change(function() {
+       if (contents!=$(this).html()){
+           alert('Handler for .change() called.');
+           contents = $(this).html();
+       }
+});
 
 /* ajout des onclick sur le html menupref */
 $("h2.localisation").click(function() { clicpageweb();  });
@@ -1101,6 +1131,7 @@ $("#developpementetsuivi").click(function() { changeClass(stockage,'voit','cache
 
 /* ajout des onclick validation qr */
 $("#validqr").click(function() { autorisationqr(); });
+
 
 /* 
 $("#xx").click(function() { xx(xx); });
@@ -1306,7 +1337,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break;
         case "TACC":
         $("#acceptetransactionstatut").html("Transaction acceptée");
-        menudetailproposition("pasmatransactionfermee");  
+        menudetailproposition("pasmatransactionfermee");  $("#acceptetransactionoublier").show();
         $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+contenuretour+",,");
         var paramgraph = contenuretour.split(","); 
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
@@ -1349,8 +1380,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Cette transaction n'existe pas"); break;
         case "DTAR":
         $("#acceptetransactionstatut").html("Demander si disponible");
-        menudetailproposition("passerdemande"); affichedetailproposition(latransaction,propositiondequi);
-        break; 
+        menudetailproposition("passerdemande");
+        affichedetailproposition(latransaction,propositiondequi);                  break; 
         case "DTAO":
         $("#acceptetransactionstatut").html("Transaction disponible");
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
@@ -1371,7 +1402,9 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "PACC":
         responseTxt = responseTxt.substring(7);
         $("#acceptetransactionstatut").html("Ma proposition a déjà été acceptée");
-        menudetailproposition("matransactionfermee"); affichedetailproposition(responseTxt,"matransaction"); 
+        menudetailproposition("matransactionfermee");  
+        $("#acceptetransactionoublier2").show();
+        affichedetailproposition(responseTxt,"matransaction"); 
         break; 
         case "DABR":
         $("#acceptetransactionstatut").html("Ma proposition a été annulée");
@@ -1490,10 +1523,11 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         };
         if(demandefich=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
         if(demandefich=="mesopportunites"){ 
-          changedeliste("#confirmationinputcode", "#mstockmesopportunites"); 
-            if($("#changeaideinputconfirmation").text() != "ø"){
-              $("#acceptetransactionstatut").html("tapez 2, choisissez et clic sur ok");
-            };
+          effaceconfirmation();
+          changedeliste("#confirmationinputcode", "#mstockmesopportunites");
+          if($("#changeaideinputconfirmation").text() != "ø"){
+            $("#acceptetransactionstatut").html("tapez 2, choisissez et clic sur ok");
+          };
         };
         if(demandefich=="demandeaqui"){ changedeliste("#inputdemandeaqui", "#mstockdemandeaqui"); };
         break;
@@ -1567,8 +1601,8 @@ function effaceutilisation(){
 /* nettoyage interface */
 function effaceconfirmation(){
   $("#suiviappli").prepend("effaceutilisation() <br>");
-  $("#offreconfirmation").html("");
-  $("#demandeconfirmation").html("");
+  $("#offreconfirme").html("");
+  $("#demandeconfirme").html("");
   videlespan(".compensation .confirmation");
   videlespan(".demandecompensation .confirmation");
 };

@@ -120,8 +120,8 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       if($lademande==86012){ $mesvaleursref = fichierperso($var3,"mesvaleursref"); echo cryptepourtransfert($mesvaleursref); }; // fin de "mesvaleursref"
       if($lademande==87558){ $noteproposition = notetransaction($var3,"mestransactions",$donnee5); echo cryptepourtransfert($noteproposition); }; // fin de "maproposition"
       if($lademande==116020){ $mestransactions = fichierperso($var3,"mestransactions"); echo cryptepourtransfert($mestransactions); }; // fin de "mestransactions"
-      if($lademande==118535){ $mesopportunites = fichierperso($var3,"mesopportunites"); echo cryptepourtransfert($mesopportunites); }; // fin de "mesopportunites"
-      if($lademande==151695){ $oublieopportunite = retireopportunite($var3,$donnee4);echo cryptepourtransfert($oublieopportunite); 
+      if($lademande==118535){ $mesopportunites = fichierperso($var3,"mesopportunites"); $mesopportunites = testemesopportunites($var3,$mesopportunites) ; echo cryptepourtransfert($mesopportunites); }; // fin de "mesopportunites"
+      if($lademande==151695){ $oublieopportunite = retireopportunite($var3,$donnee4); echo cryptepourtransfert($oublieopportunite); 
       }; // fin de "oublieopportunite"
       if($lademande==211910){ $transactionrefusee = refusetransaction($var3,$donnee4); echo cryptepourtransfert($transactionrefusee); }; // fin de "refuseuneproposition"
       if($lademande==211873){ $transactionannulee = annuleproposition($var3,$donnee4); echo cryptepourtransfert($transactionannulee); }; // fin de "annuleuneproposition"
@@ -267,8 +267,11 @@ function acceptetransaction($var3,$notransaction){
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
     ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc.",\n");
     
-    // mise à jour du fichier mesopportunites dans la base de l'accepteur
-//    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
+    // mise à jour du fichier mesopportunites dans la base de l'accepteur et du proposeur
+    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
+    $listeopportunite = ajoutealaliste($noaccepteur,"mesopportunites","\"".$nomfichieracc."\"");
+    $listeopportunite = retiredelaliste($noproposeur,"mesopportunites",$nomfichiertra);
+    $listeopportunite = ajoutealaliste($noproposeur,"mesopportunites","\"".$nomfichieracc."\"");
 
     // mise à jour du fichier demandeaqui dans la base de l'accepteur et du proposeur
     $lepseudoproposeur = lepseudode($noproposeur);
@@ -868,7 +871,8 @@ function fichierperso($var3,$nomfichier){
   if (file_exists($cheminfichier)) { // vérification si le fichier existe
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
     while (!feof($fichierencours) ) { // cherche dans les lignes
-      $contenufichier = $contenufichier.decryptelestockage(fgets($fichierencours,1024))."<br>"; // ligne par ligne
+      $laligne = decryptelestockage(fgets($fichierencours,1024));
+      $contenufichier = $contenufichier.$laligne."<br>"; // ligne par ligne
     }; // Fin de cherche dans les lignes
     fclose($fichierencours); // fermeture du fichier
   }else{
@@ -1242,6 +1246,10 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");  
   remplacefichier($cheminfichier, $nouveauresume);
+  // ajout à la liste des opportunités du proposeur
+  
+  $listeopportunite = ajoutealaliste($identifiantlocal,"mesopportunites","\"".$nomfichiertra."\"");
+
   // met à jour l'archivage des résumés de compte consignel
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
   ajouteaufichier($cheminfichier,$idtra.",".$nouveauresume."\n");
@@ -1426,6 +1434,9 @@ function retiredelaliste($var3,$nomfichier,$item){
 // retire un item de la liste des opportunitées
 function retireopportunite($var3,$donnee4){
   $listeopportunite = retiredelaliste($var3,"mesopportunites","tra".$donnee4.".json");
+  $listeopportunite = retiredelaliste($var3,"mesopportunites","dac".$donnee4.".json");
+  $listeopportunite = retiredelaliste($var3,"mesopportunites","acc".$donnee4.".json");
+  $listeopportunite = retiredelaliste($var3,"mesopportunites","exp".$donnee4.".json");
   $mesopportunite=fichierperso2($var3,"mesopportunites");
   return $mesopportunite;
 };
@@ -1471,7 +1482,7 @@ function revenuinconditionnel($var3){
     // pas d'accetation automatique de la proposition de transaction besoin accord de l'utilisateur
     // ajoute la proposition dans la liste des opportunités de l'utilisateur
     $laliste = "";
-    $item= "\"tra".$ladate."_".$codelatransaction.".json\"";
+    $item= "\"dac".$ladate."_".$codelatransaction.".json\"";
     $laliste = ajoutealaliste($var3,"mesopportunites",$item );
 
     return $nbjourrevenuinconditionnel;
@@ -1585,6 +1596,21 @@ function testdestinatairedepot($pourqui,$demandeur){
   if($tesqui == $desti){ return "nonautorise" ; };
   if(lepseudode($tesqui, "nopseudo") == $desti){ return "nonautorise" ; };
   return "autorise" ; 
+};
+
+// teste l'actualité des opportunites
+function testemesopportunites($var3,$mesopportunites){
+//return "TEST - erreur du serveur d'opportunités |".$mesopportunites."|--";
+if(substr($mesopportunites,0,4)=="NULL"){return "TEST - Manque d'opportunités personnalisées";};
+  $mesopportunites=substr($mesopportunites,0,-4);
+  $jsonenphp = json_decode($mesopportunites,true);
+  if(json_last_error_msg() != "No error"){ return "TEST - erreur du serveur d'opportunités"; };
+  $nbentrees=count($jsonenphp);
+  for ($i = 0; $i <= $nbentrees-1; $i++) { 
+    $jsonenphp[$i]=$jsonenphp[$i]; 
+  };    
+  $phpenjson= json_encode($jsonenphp);
+return $phpenjson;
 };
 
 // teste si l'utilisateur est inscrit dans la base
@@ -1782,12 +1808,5 @@ function baseminimale(){
   initialisefichier("","baselocalite","valeursref.json");
 };
 
-// inscription d'un nouvel utilisateur
-// function nouvelutilisateur(){
-// vérification d'utilisateur vivant
-// vérification d'utilisateur unique
-// inscription des codes de vérification d'utilisateurs dans consignel-base/0/.baseconsignel3
-// ouvrelecompte($var3)
-// };
 
 ?>
