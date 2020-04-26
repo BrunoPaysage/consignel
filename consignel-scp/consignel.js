@@ -1066,6 +1066,26 @@ $("#inverseoffredemande").click(function() { inverseoffredemande(); });
 $("#inputactivite").keypress(function(){ if (event.keyCode==13){ okinputactivite(); }; }); 
 $("#rechercheokinputactivite").click(function() { okinputactivite(); });
 
+$('#offrechoisi').on('click', function (e) {
+    if (e.target == this) {
+      inverseoffredemande("offre");
+      $("#inputactivite").wrap("<span class=\"eval2\"></span>");
+      $("#inputactivite").parent().animate({backgroundColor: "#fff"},250).queue(function() {
+      $("#inputactivite").unwrap();$("#inputactivite").focus();
+      $(this).dequeue(); });
+    }
+});
+
+$('#demandechoisi').on('click', function (e) {
+    if (e.target == this) {
+      inverseoffredemande("demande");
+      $("#inputactivite").wrap("<span class=\"eval4\"></span>");
+      $("#inputactivite").parent().animate({backgroundColor: "#fff"},250).queue(function() {
+      $("#inputactivite").unwrap();$("#inputactivite").focus();
+      $(this).dequeue(); });
+    }
+});
+
 /* ajout des onclick et comportement input sur le html confirmation */
 $("#changeaideinputconfirmation").click(function() { changeaideinputconfirmation(); });
 $("#aidepropositions").click(function() { aidepropositions(); });
@@ -1401,7 +1421,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break; 
         case "PACC":
         responseTxt = responseTxt.substring(7);
-        $("#acceptetransactionstatut").html("Ma proposition a déjà été acceptée");
+        $("#acceptetransactionstatut").html("Ma proposition a été acceptée");
         menudetailproposition("matransactionfermee");  
         $("#acceptetransactionoublier2").show();
         affichedetailproposition(responseTxt,"matransaction"); 
@@ -1484,8 +1504,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#acceptetransactionstatut").html("Proposition non disponible"); propositionrefusee(contenuretour);
         break; 
         case "PANN":
-        $("#acceptetransactionstatut").html("Ma transaction est annulée");
-        menudetailproposition("matransactionfermee"); affichedetailproposition(contenuretour,"matransaction");  
+        $("#acceptetransactionstatut").html("J'ai annulé ma proposition");
+        menudetailproposition("matransactionfermee"); affichedetailproposition(contenuretour,"matransaction"); $("#acceptetransactionoublier2").show();  
         break; 
         case "0000":
         responseTxt = responseTxt.substring(4);

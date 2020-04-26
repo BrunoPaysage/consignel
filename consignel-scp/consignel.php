@@ -1248,7 +1248,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   remplacefichier($cheminfichier, $nouveauresume);
   // ajout à la liste des opportunités du proposeur
   
-  $listeopportunite = ajoutealaliste($identifiantlocal,"mesopportunites","\"".$nomfichiertra."\"");
+  $listeopportunite = ajoutealaliste($identifiantlocal,"mesopportunites","\"".$idtra.".json\"");
 
   // met à jour l'archivage des résumés de compte consignel
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
