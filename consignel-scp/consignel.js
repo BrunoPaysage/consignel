@@ -82,13 +82,8 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
   $("#suiviappli").prepend("affichedetailproposition("+noproposition+" "+propositiondequi+") <br>"); 
   effaceconfirmation();
   var nomproposition = noproposition;
-  var dequi = propositiondequi; 
-    if(dequi.length>18){
-      $("#utilisationchoisidemande").css("font-size","2.75vw")
-    }else{
-      $("#utilisationchoisidemande").css("font-size","4vw")
-    };
-
+  var dequi = propositiondequi;
+  if(dequi.length>18){ $("#utilisationchoisidemande").css("font-size","1em"); };
   if(dequi!="matransaction"){$("#utilisationchoisidemande span.confirmation").html(dequi+" me donne");};
   if(accepte=="accepte"){
     $("#utilisationchoisioffre span.confirmation").html("J'ai donné");
@@ -1434,11 +1429,24 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
         break; 
         case "DTMC":
-        responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
-        alert("Non enregistré - Manque de ↺onsignel pour faire la transaction"); break; 
+          menudetailproposition("matransactionfermee"); 
+          if($("#offrechoisi").is(":visible")){
+            responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
+            alert("Non enregistré - Manque de ↺onsignel pour faire la transaction"); 
+          };
+          if($("#offreconfirme").is(":visible")){
+            $("#acceptetransactionstatut").html("Non enregistré - Manque de ↺onsignel pour faire la transaction");
+          };
+        break; 
         case "DTCE":
-        responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
-        alert("Non enregistré dépense de ↺onsignel supérieure à 7 jours"); break; 
+          menudetailproposition("matransactionfermee"); 
+          if($("#offrechoisi").is(":visible")){
+            alert("Non enregistré dépense de ↺onsignel supérieure à 7 jours");                   responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);         
+          };
+          if($("#offreconfirme").is(":visible")){
+            $("#acceptetransactionstatut").html("Non enregistré dépense de ↺onsignel supérieure à 7 jours");
+          };
+        break; 
         case "DTDI":
         responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);
         alert("Le destinataire est inconnu. Vérifiez ou supprimez le destinataire"); break;
@@ -1485,7 +1493,6 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#acceptetransactionstatut").html("Transaction inconnue"); 
         if($("#confirmationinputcode").val()){
           var listeconfirmation = JSON.parse(decryptediv($("#mstockmesopportunites").text()));
-//          alert($("#confirmationinputcode").val()+" "+listeconfirmation.indexOf($("#confirmationinputcode").val()));
           if(listeconfirmation.indexOf($("#confirmationinputcode").val())!=-1){chargemoi("oublieopportunite");};
         };
         propositionrefusee(contenuretour);

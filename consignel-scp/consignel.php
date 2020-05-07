@@ -268,9 +268,9 @@ function acceptetransaction($var3,$notransaction){
     ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc.",\n");
     
     // mise à jour du fichier mesopportunites dans la base de l'accepteur et du proposeur
-    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
+//    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
     $listeopportunite = ajoutealaliste($noaccepteur,"mesopportunites","\"".$nomfichieracc."\"");
-    $listeopportunite = retiredelaliste($noproposeur,"mesopportunites",$nomfichiertra);
+//    $listeopportunite = retiredelaliste($noproposeur,"mesopportunites",$nomfichiertra);
     $listeopportunite = ajoutealaliste($noproposeur,"mesopportunites","\"".$nomfichieracc."\"");
 
     // mise à jour du fichier demandeaqui dans la base de l'accepteur et du proposeur
@@ -390,8 +390,13 @@ function acceptetransaction($var3,$notransaction){
       // Si la transaction existe renvoyer déjà enregistrée
       // sinon
       $noteproposition = notetransaction($var3,"mestransactions",$nouveaucontenutra);  
-      return "PTDD - ".substr($noteproposition,7)."||".$idnouveautra;
-      // fin du si enregistrée ou pas
+      if(substr($noteproposition,0,4)=="PEAA"){
+        return "PTDD - ".substr($noteproposition,7)."||".$idnouveautra;
+      }else{
+//        return "TEST - ".$noteproposition."||".$idnouveautra;
+        return $noteproposition;
+      };
+       // fin du si enregistrée ou pas
   
     }else{
       // ni DTAO ni DTAR
