@@ -1014,9 +1014,9 @@ $( "#inputdemandeaqui" ).autocomplete({ source: listedemandeaqui, select: functi
 
 var changementopportunite=$("confirmationinputcode").val();
 $('#confirmationinputcode').change(function() {
-       if (contents!=$(this).html()){
-           alert('Handler for .change() called.');
-           contents = $(this).html();
+       if (changementopportunite!=$(this).html()){
+//           alert('Handler for .change() called.');
+           changementopportunite = $(this).html();
        }
 });
 
@@ -1444,7 +1444,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
             alert("Non enregistré dépense de ↺onsignel supérieure à 7 jours");                   responseTxt = responseTxt.substring(4); affichedetailproposition(responseTxt);         
           };
           if($("#offreconfirme").is(":visible")){
-            $("#acceptetransactionstatut").html("Non enregistré dépense de ↺onsignel supérieure à 7 jours");
+            $("#acceptetransactionstatut").html("Non enregistré dépense de ↺onsignel supérieure à 7 jours <a href='../consignel/consignel-ref/consignel-comment/consignel-comment-negocier.html' target='reference'>Options pour commander");
           };
         break; 
         case "DTDI":
