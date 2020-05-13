@@ -2232,7 +2232,11 @@ function totalmontants(dansdiv, quelspan){
   var lesdiv = $(dansdivlocal+" div[id^=act]");
   for (i = 0; i < nbdiv; i++) {
     nomdudiv = "#"+$(lesdiv[i]).attr("id");
-    total = total + Number($(nomdudiv+" .quantite").text()) * Number($(nomdudiv+quelspan).text()) ;
+    if(quelspan==" .social"){
+      total = total + Number($(nomdudiv+" .quantite").text()) * Number($(nomdudiv+" .duree").text()) * Number($(nomdudiv+quelspan).text()) ;   
+    }else{
+      total = total + Number($(nomdudiv+" .quantite").text()) * Number($(nomdudiv+quelspan).text()) ;   
+    };
     total = Math.round(total*100)/100;
   };
   return total; 
