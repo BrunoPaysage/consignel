@@ -302,6 +302,7 @@ input#inputdemandeaqui {width:100%; }
 #dacdemande {clear:right;}
 #dacoffre h3, #dacdemande h3 {padding-top:5px; padding-left:1.5em; }
 #dacoffre div, #dacdemande div {padding-left:0.9em; }
+.listeact { text-overflow: ellipsis; word-wrap: break-word; }
 
 .doubletroc { background-color:#fee; }
 .simpletroc { }

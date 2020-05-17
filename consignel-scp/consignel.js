@@ -58,10 +58,17 @@ function actualiselaproposition(dequi){
     dansqui = "demandeconfirme" ; dansqui2 = "demandechoisi" ;
   };
   var nbdiv=$("#"+dansqui+" div[id^=act]").length; var lesdiv = $("#"+dansqui+" div[id^=act]"); var nomdudiv =""; var nomdudiv2 = "";
-  for (i = 0; i < nbdiv; i++) {
-    nomdudiv = "#"+$(lesdiv[i]).attr("id"); nomdudiv2= nomdudiv+"preciseact";
-    codeitemchoisi = nomdudiv.substring(4); itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text(); 
-    ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
+  for (var i = 0; i < nbdiv; i++) {
+    nomdudiv = "#"+$(lesdiv[i]).attr("id"); 
+    nomdudiv2= nomdudiv+"preciseact";
+    codeitemchoisi = nomdudiv.substring(4); 
+    
+alert(codeitemchoisi)    
+    
+    
+    
+    
+    itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text(); ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
   };
   if (dequi == "mapropostion"){ 
     dansqui = "demandeconfirme" ; dansqui2 = "demandechoisi" ;
@@ -69,10 +76,9 @@ function actualiselaproposition(dequi){
     dansqui = "offreconfirme" ; dansqui2 = "offrechoisi" ;
   };
   var nbdiv=$("#"+dansqui+" div[id^=act]").length; var lesdiv = $("#"+dansqui+" div[id^=act]"); var nomdudiv =""; var nomdudiv2 = "";
-  for (i = 0; i < nbdiv; i++) {
+  for (var i = 0; i < nbdiv; i++) {
     nomdudiv = "#"+$(lesdiv[i]).attr("id"); nomdudiv2= nomdudiv+"preciseact";
-    codeitemchoisi = nomdudiv.substring(4); itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text(); 
-    ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
+    codeitemchoisi = nomdudiv.substring(4); itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text();     ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
   };
   $("#menuprefutilisation").click();
 };
@@ -195,6 +201,16 @@ function ajoutediv(dansqui,prefixe,suffixe,itemchoisi,quantite,unite,consignel,a
   /* dansqui = div offrechoisi ou div demandechoisi, prefixe = act, suffixe= code du nom de l'item, itemchoisi = description en clair, quantité et unité si besoin */
   $("#suiviappli").prepend("ajoutediv("+dansqui+" "+prefixe+" "+suffixe+" "+itemchoisi+" "+quantite+" "+unite+" "+consignel+" "+argent+" "+mlc+" "+environnement+" "+duree+" "+social+" "+foisparan+" "+dureedevie+") <br>");
   var dansquilocal=dansqui; prefixelocal=prefixe; var suffixelocal=suffixe; var choisi=itemchoisi;
+
+
+
+
+
+alert("ajoutediv("+dansqui+" "+prefixe+" "+suffixe+" "+itemchoisi+" "+quantite+" "+unite+" "+consignel+" "+argent+" "+mlc+" "+environnement+" "+duree+" "+social+" "+foisparan+" "+dureedevie+") <br>");
+
+
+
+
   var typetroc = queltypetroc(suffixe);
   var quantitelocale=quantite;
   var unitelocale=unite;
@@ -209,7 +225,7 @@ function ajoutediv(dansqui,prefixe,suffixe,itemchoisi,quantite,unite,consignel,a
   var iddudiv=demandeid(prefixelocal,suffixelocal); /* act , code de l'item etc */
   var codedetailactivite = "";
   var nouveaudiv=" <div id='"+iddudiv+"' class='"+typetroc+"'><span class='quoi' onclick='modifie("+iddudiv+",\"quoi\")' >"+choisi+"</span> <span class='quantite' onclick='modifie("+iddudiv+",\"quantite\")' >"+quantitelocale+"</span>&nbsp;<span class='unite' onclick='modifie("+iddudiv+",\"unite\")' >"+unitelocale+"</span> <span class='supprime' onclick='supprimediv("+iddudiv+")' > <small>&#128465;</small> </span> <span id='"+iddudiv+"preciseactivite' class='preciseactivite' "+"onclick=\" changeClass("+iddudiv+"preciseact,\'voit\',\'cache\') \" > &#9064; </span> <span id=\""+iddudiv+"preciseact\" class='cache'><span class='codedunom'>"+iddudiv+"</span><span class='codedetailactivite'>"+codedetailactivite+"</span> <span class='consignel'>"+consignellocal+"</span>&nbsp;&#8634; <br><span class='argent' onclick='modifie("+iddudiv+",\"argent\")'>"+argentlocal+"</span>&nbsp;$ <span class='mlc' onclick='modifie("+iddudiv+",\"mlc\")'>"+mlclocale+"</span>&nbsp;mlc <span class='environnement' onclick='modifie("+iddudiv+",\"environnement\")'>"+environnementlocal+"</span>&nbsp;*E <span class='duree' onclick='modifie("+iddudiv+",\"duree\")'>"+dureelocale+"</span>&nbsp;h <span class='social' onclick='modifie("+iddudiv+",\"social\")'>"+sociallocal+"</span>&nbsp;*S <span class='foisparan' onclick='modifie("+iddudiv+",\"foisparan\")'>"+foisparanlocal+"</span>&nbsp;/a <span class='dureedevie' onclick='modifie("+iddudiv+",\"dureedevie\")'>"+dureedevielocale+"</span>&nbsp;a </span></div>";
-  $("#"+dansquilocal).prepend(nouveaudiv); 
+  $("#"+dansquilocal).append(nouveaudiv); 
   $("#"+iddudiv+" .quoi").html($("#"+iddudiv+" .quoi").text()); /* élimine les balises html du input*/
   modifie(iddudiv,"quantite");
 };
@@ -232,7 +248,7 @@ function ajoutediv2(dansqui,prefixe,suffixe,itemchoisi,quantite,unite,consignel,
   var iddudiv=demandeid(prefixelocal,suffixelocal); /* act , code de l'item etc */
   var codedetailactivite = "";
   var nouveaudiv=" <div id='"+iddudiv+"' class='"+typetroc+"'><span class='quoi' onclick='modifie2("+iddudiv+",\"quoi\")' >"+choisi+"</span> <span class='quantite' >"+quantitelocale+"</span>&nbsp;<span class='unite' >"+unitelocale+"</span> <span id='"+iddudiv+"preciseactivite' class='preciseactivite' "+"onclick=\" changeClass("+iddudiv+"preciseact,\'voit\',\'cache\') \" > &#9064; </span> <span id=\""+iddudiv+"preciseact\" class='cache'><span class='codedunom'>"+iddudiv+"</span><span class='codedetailactivite'>"+codedetailactivite+"</span> <span class='consignel'>"+consignellocal+"</span>&nbsp;&#8634; <br><span class='argent'>"+argentlocal+"</span>&nbsp;$ <span class='mlc'>"+mlclocale+"</span>&nbsp;mlc <span class='environnement'>"+environnementlocal+"</span>&nbsp;*E <span class='duree'>"+dureelocale+"</span>&nbsp;h <span class='social'>"+sociallocal+"</span>&nbsp;*S <span class='foisparan'>"+foisparanlocal+"</span>&nbsp;/a <span class='dureedevie'>"+dureedevielocale+"</span>&nbsp;a </span></div>";
-  $("#"+dansquilocal).prepend(nouveaudiv); 
+  $("#"+dansquilocal).append(nouveaudiv); 
   $("#"+iddudiv+" .quoi").html($("#"+iddudiv+" .quoi").text()); /* élimine les balises html du input*/
 };
 
