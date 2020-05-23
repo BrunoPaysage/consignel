@@ -45,6 +45,8 @@ h3 {font-size:1.33em;}   /* corps 16 */
 h4, h5, h6 {font-size:1.17em;} /* corps 14 */
 h4 {font-style:oblique;}
 
+h3.nomlong {font-size:1em;}
+
 p, figurecaption {font-size: 1em;line-height: 1.33em; text-align:justify; padding-top:0.17em; padding-bottom:0.17em;}
 #acceptetransactionstatut {font-size: 1em;line-height: 1.33em;}
 
@@ -260,7 +262,6 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 
 .appentete .menupref {display:block; float: right; margin-right:1em;} 
 .appentete p.connexionmenu {} .appentete .connexionmenu span {display: inline-block; margin-left:1em; margin-right:1em;} 
-
 
 
 /* utilisation */

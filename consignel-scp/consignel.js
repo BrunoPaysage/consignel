@@ -54,6 +54,7 @@ function actualiselaproposition(dequi){
   var codeitemchoisi = ""; var itemchoisi = ""; var quantite = 1; var unite = "h"; var consignel = 0; var argent = 0; var mlc = 0; var environnement = 0; var duree = 0; var social = 0; var foisparan = 0; var dureedevie = 0;
   if (dequi == "mapropostion"){ 
     dansqui = "offreconfirme" ; dansqui2 = "offrechoisi" ;
+    
   }else{ 
     dansqui = "demandeconfirme" ; dansqui2 = "demandechoisi" ;
   };
@@ -61,13 +62,7 @@ function actualiselaproposition(dequi){
   for (var i = 0; i < nbdiv; i++) {
     nomdudiv = "#"+$(lesdiv[i]).attr("id"); 
     nomdudiv2= nomdudiv+"preciseact";
-    codeitemchoisi = nomdudiv.substring(4); 
-    
-alert(codeitemchoisi)    
-    
-    
-    
-    
+    codeitemchoisi = nomdudiv.substring(7); 
     itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text(); ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
   };
   if (dequi == "mapropostion"){ 
@@ -78,7 +73,7 @@ alert(codeitemchoisi)
   var nbdiv=$("#"+dansqui+" div[id^=act]").length; var lesdiv = $("#"+dansqui+" div[id^=act]"); var nomdudiv =""; var nomdudiv2 = "";
   for (var i = 0; i < nbdiv; i++) {
     nomdudiv = "#"+$(lesdiv[i]).attr("id"); nomdudiv2= nomdudiv+"preciseact";
-    codeitemchoisi = nomdudiv.substring(4); itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text();     ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
+    codeitemchoisi = nomdudiv.substring(7); itemchoisi = $(nomdudiv+" .quoi").text(); quantite = $(nomdudiv+" .quantite").text(); unite = $(nomdudiv+" .unite").text(); consignel = $(nomdudiv2+" .consignel").text(); argent = $(nomdudiv2+" .argent").text(); mlc = $(nomdudiv2+" .mlc").text(); environnement = $(nomdudiv2+" .environnement").text(); duree = $(nomdudiv2+" .duree").text(); social = $(nomdudiv2+" .social").text(); foisparan = $(nomdudiv2+" .foisparan").text(); dureedevie = $(nomdudiv2+" .dureedevie").text();     ajoutediv(dansqui2,"act",codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie) ;
   };
   $("#menuprefutilisation").click();
 };
@@ -89,7 +84,7 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
   effaceconfirmation();
   var nomproposition = noproposition;
   var dequi = propositiondequi;
-  if(dequi.length>18){ $("#utilisationchoisidemande").css("font-size","1em"); };
+  if(dequi.length>18){ $("#utilisationchoisidemande").addClass("nomlong"); }else{ $("#utilisationchoisidemande").removeClass("nomlong"); };
   if(dequi!="matransaction"){$("#utilisationchoisidemande span.confirmation").html(dequi+" me donne");};
   if(accepte=="accepte"){
     $("#utilisationchoisioffre span.confirmation").html("J'ai donné");
@@ -201,16 +196,6 @@ function ajoutediv(dansqui,prefixe,suffixe,itemchoisi,quantite,unite,consignel,a
   /* dansqui = div offrechoisi ou div demandechoisi, prefixe = act, suffixe= code du nom de l'item, itemchoisi = description en clair, quantité et unité si besoin */
   $("#suiviappli").prepend("ajoutediv("+dansqui+" "+prefixe+" "+suffixe+" "+itemchoisi+" "+quantite+" "+unite+" "+consignel+" "+argent+" "+mlc+" "+environnement+" "+duree+" "+social+" "+foisparan+" "+dureedevie+") <br>");
   var dansquilocal=dansqui; prefixelocal=prefixe; var suffixelocal=suffixe; var choisi=itemchoisi;
-
-
-
-
-
-alert("ajoutediv("+dansqui+" "+prefixe+" "+suffixe+" "+itemchoisi+" "+quantite+" "+unite+" "+consignel+" "+argent+" "+mlc+" "+environnement+" "+duree+" "+social+" "+foisparan+" "+dureedevie+") <br>");
-
-
-
-
   var typetroc = queltypetroc(suffixe);
   var quantitelocale=quantite;
   var unitelocale=unite;
