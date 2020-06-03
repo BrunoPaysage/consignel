@@ -1553,6 +1553,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         if(demandefich=="mesopportunites"){ 
           effaceconfirmation();
           changedeliste("#confirmationinputcode", "#mstockmesopportunites");
+          if(demandefich2=="oublieopportunite"){$("#confirmationinputcode").val("").focus();};
           if($("#changeaideinputconfirmation").text() != "ø"){
             $("#acceptetransactionstatut").html("tapez 2, choisissez et clic sur ok");
           };
@@ -1965,6 +1966,8 @@ function nettoieinput(valinput){
   valinput = valinput.replace(remplacelesguillemets, 'ʺ');
   var remplaceappostrophes = new RegExp("'", 'g');
   valinput = valinput.replace(remplaceappostrophes, '’');
+  var remplacevirgule = new RegExp(",", 'g');
+  valinput = valinput.replace(remplacevirgule, 'ۄ');
 $("#suiviappli").prepend("nettoieinput("+valinput+") <br>");
   return valinput;
 };

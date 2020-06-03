@@ -201,7 +201,12 @@ function acceptetransaction($var3,$notransaction){
     $paiement = paiement($jsonenphp,$idtra);
     if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
     $consigneldemandepaiement = $paiement[1]; // propositions de dons en consignel du proposeur la dépense de l'accepteur  - $paiement[4] est déjà inclue dans le da↺ $consigneldemande 
-    if ((($soldeconsignelparjour * 7) + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = ""; };
+    $nbjoursenreserve=$soldeconsigneldisponible/$soldeconsignelparjour;
+    $nbjoursselonreserve=7;
+    if($nbjoursenreserve>30){$nbjoursselonreserve+=7;};
+    if($nbjoursenreserve>60){$nbjoursselonreserve+=7;};
+    if($nbjoursenreserve>90){$nbjoursselonreserve+=7;};
+    if ((($soldeconsignelparjour * $nbjoursenreserve) + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTCE - Refus dépense ↺onsignel excessive"; $transaction = ""; };
     if (($soldeconsigneldisponible + $consigneldemande + $consigneldemandepaiement)<0 ){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = ""; };
     
     //$soldemlcdisponible = ; à faire
@@ -279,13 +284,24 @@ function acceptetransaction($var3,$notransaction){
     $lepseudoaccepteur = lepseudode($noaccepteur);
     $listedemandeaqui = ajoutealaliste($noproposeur,"demandeaqui",$lepseudoaccepteur);
    
-    // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base de l'accepteur à faire
-//    $description = extraitlesactivites($nouveautraacc);
-//    return "TEST - mise à jour quoi.json ".$description;
-  
-    
+   
     if($var38<>"\"DA↺\"\n"){
-      // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
+    
+      // Mise à jour des fichiers xxxxx-quoi.json et xxxxx-mesvaleursref.json dans la base de l'accepteur
+      $lesactivites = extraitlesactivites($contenufichiertra);
+      $cheminvaleurs=tracelechemin($noaccepteur,$base,$noaccepteur."-mesvaleursref.json",$defriche="ouvre");
+      $ladescriptioncourte=ajoutealaliste($noaccepteur,"quoi",$lesactivites[1]);
+      $listevaleursref=listevaleurs($cheminvaleurs,$lesactivites[0]);
+      
+      // Mise à jour des valeurs moyennes dans la base générale de référence des produits et services à faire
+
+      // Mise à jour des fichiers xxxxx-quoi.json et xxxxx-mesvaleursref.json dans la base du proposeur
+      
+      $cheminvaleurs=tracelechemin($noproposeur,$base,$noproposeur."-mesvaleursref.json",$defriche="ouvre");
+      $ladescriptioncourte=ajoutealaliste($noproposeur,"quoi",$lesactivites[1]);
+      $listevaleursref=listevaleurs($cheminvaleurs,$lesactivites[0]);
+    
+      // ajout au fichier xxxxx-mestransactions.json dans la base du proposeur
       $pseudoaccepteur=lepseudode($noaccepteur, "noid");
       $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteur);
       $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
@@ -333,8 +349,6 @@ function acceptetransaction($var3,$notransaction){
       // Mise à jour du fichier -suiviresume.json dans la base du proposeur
       $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-suiviresume.json");  
       ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeaccproposeur."\n");
-      // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base du proposeur à faire
-      
       
     };
  
@@ -434,7 +448,11 @@ function accepteurs($cheminfichier, $numaccepteur, $nouveaujour){
 function ajoutealaliste($var3,$nomfichier,$item){
   $contenufichier = "".fichierperso2($var3,$nomfichier);
   $base=constante("base");
-  if($contenufichier==""){$virgule="";}else{$virgule=",";};
+  if($contenufichier[1]=="\n"){ 
+    if($contenufichier==""){$virgule="";}else{$virgule=",\n";};
+  }else{
+    if($contenufichier==""){$virgule="";}else{$virgule=",";};
+  };
   $contenufichier = substr($contenufichier,1,strlen($contenufichier)-2);
   $contenufichier = $contenufichier.$virgule."".$item."";
   $tableaucontenufichier = explode(",",$contenufichier);
@@ -443,6 +461,9 @@ function ajoutealaliste($var3,$nomfichier,$item){
   if( !$tableaucontenufichier[0] ){ unset( $tableaucontenufichier[0] ); }; 
   $contenufichier = implode(",",$tableaucontenufichier);
   $contenufichier = "[".$contenufichier."]";
+  if($contenufichier[1]==","){ $contenufichier="[".substr($contenufichier,2);  };
+  if($contenufichier[1]=="\n"){ if($contenufichier[2]==","){ $contenufichier="[\n".substr($contenufichier,3); }; };
+  if($contenufichier[1]=="\n"){ if($contenufichier[2]=="\n"){ $contenufichier="[\n".substr($contenufichier,3); }; };
   $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");
   ajouteaufichier($cheminfichierinclu, $contenufichier,"debut");
   return $contenufichier;
@@ -604,7 +625,6 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
      remplacefichier($cheminsansfichier."-resume.json", $nouveauresumeann);
     // Mise à jour du fichier -suiviresume.json dans la base du proposeur
     ajouteaufichier($cheminsansfichier."-suiviresume.json",$idtraann.",".$nouveauresumeann."\n");
-    // Mise à jour du fichier des fichiers de référence quoi.json et mesvaleursref.json dans la base du proposeur à faire
     
     // Retrait de la liste des opportunités de l'accepteur si l'accepteur est identifié
      if($demandeurchaine != "0"){
@@ -866,6 +886,35 @@ function dernieretat($codecompte){
   return $compilecompte;
 };
 
+// Fait la liste des act d'une transaction  et retourne le tableau
+function extraitlesactivites($contenufichiertra){
+  $lesactivites=[];
+  $description="";
+  $lesdescriptions="";
+  $chainedecoupe = $contenufichiertra;
+  $debut   = '_act';
+  $fin   = ']';
+  $pos = strpos($chainedecoupe, $debut);
+  while ($pos) {
+      $chainedecoupe = substr($chainedecoupe,$pos);
+      $posfin = strpos($chainedecoupe, $fin);
+      $chaineavant = "\"e".substr($chainedecoupe,7,$posfin-6);
+      $debut2  = strpos($chaineavant, '["');
+      $fin2 = strpos($chaineavant, ",");
+      $tableaudecoupe = explode("\"", $chaineavant);
+      $description=substr($chaineavant,$debut2+2,$fin2-$debut2-3)." 1".
+      $tableaudecoupe[5];
+      $tableaudecoupe[3]=$description;
+      $chaineavant=implode("\"", $tableaudecoupe);
+      print_r( "description: $description<br>");
+      $lesdescriptions =$lesdescriptions."\"".$description."\",\n";
+      $chainedecoupe = substr($chainedecoupe,$posfin);
+      $lesactivites[]=$chaineavant;
+      $pos = strpos($chainedecoupe, $debut);
+  };
+  return [$lesactivites,$lesdescriptions];
+};
+
 // Renvoi le contenu du fichier ligne par ligne
 function fichierperso($var3,$nomfichier){
   $identifiantlocal=$var3; 
@@ -1056,6 +1105,31 @@ function leiddupseudo($iddupseudo){
   };
 };
 
+// Ajoute les valeurs des act de la transaction à la liste mesvaleursref
+function listevaleurs($cheminfichier, $valeursaajouter){
+  $fichier = $cheminfichier;
+   if (file_exists($cheminfichier)) {
+     $contenu = json_decode(decryptelestockage(file_get_contents($fichier)),true);
+  } else {
+    file_put_contents($fichier, '{  }');
+    $contenu = json_decode(file_get_contents($fichier),true);
+  };
+  $nbact=count($valeursaajouter)-1;
+  for ($i = 0; $i <= $nbact; $i++) { 
+    $leschaines= explode("\"", $valeursaajouter[$i]);
+    $laclef = $leschaines[1];
+     $valeur = json_decode(substr($valeursaajouter[$i],strpos($valeursaajouter[$i],"[")+0) ,true);
+    if(array_key_exists($leschaines[1], $contenu)){
+      $contenu[$laclef] = $valeur;
+    }else{
+      $contenu[$laclef] = $valeur;
+     };
+  };
+  $contenucryptes = cryptepourstockage(json_encode($contenu));
+  file_put_contents($fichier, $contenucryptes);
+  return $contenu;
+};
+
 // supprime les références aux sessions obsoletes
 function nettoyagerefsessions(){
   $today = getdate();  $heureutilise = $today[hours]*60+$today[minutes];
@@ -1204,7 +1278,12 @@ function notetransaction($var3,$nomfichier,$contenufichier){
  
   
   $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
-  if ((($soldeconsignelparjour * 7) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ; $transaction = "";  };
+    $nbjoursenreserve=$soldeconsigneldisponible/$soldeconsignelparjour;
+    $nbjoursselonreserve=7;
+    if($nbjoursenreserve>30){$nbjoursselonreserve+=7;};
+    if($nbjoursenreserve>60){$nbjoursselonreserve+=7;};
+    if($nbjoursenreserve>90){$nbjoursselonreserve+=7;};
+  if ((($soldeconsignelparjour * $nbjoursenreserve) + $consigneloffre + $consigneloffrepaiement)<0){ return "DTCE - Refus dépense ↺onsignel excessive" ; $transaction = "";  };
   if (($soldeconsigneldisponible + $consigneloffre + $consigneloffrepaiement)<0){ return "DTMC - Refus solde ↺onsignel insuffisant"; $transaction = "";  };
   
   //  if (($soldedollardisponible + $dollaroffre)<0){  "solde dollar insuffisant"; $transaction = "";  };
