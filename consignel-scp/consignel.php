@@ -239,6 +239,7 @@ function acceptetransaction($var3,$notransaction){
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
     $base=constante("base");
     $pseudoaccepteur=lepseudode($var38nombre, "noid");    
+    $pseudoaccepteurlettre=antitaglettre($pseudoaccepteur);    
     $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteur);
     $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc.",\n");
@@ -274,9 +275,10 @@ function acceptetransaction($var3,$notransaction){
     
     // mise à jour du fichier mesopportunites dans la base de l'accepteur et du proposeur
 //    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
-    $listeopportunite = ajoutealaliste($noaccepteur,"mesopportunites","\"".$nomfichieracc."\"");
+    $nomopportunte= "acc-".substr($nomfichieracc,3,-5)."-".substr($pseudoaccepteurlettre,1,-1);
+    $listeopportunite = ajoutealaliste($noaccepteur,"mesopportunites","\"".$nomopportunte."\"");
 //    $listeopportunite = retiredelaliste($noproposeur,"mesopportunites",$nomfichiertra);
-    $listeopportunite = ajoutealaliste($noproposeur,"mesopportunites","\"".$nomfichieracc."\"");
+    $listeopportunite = ajoutealaliste($noproposeur,"mesopportunites","\"".$nomopportunte."\"");
 
     // mise à jour du fichier demandeaqui dans la base de l'accepteur et du proposeur
     $lepseudoproposeur = lepseudode($noproposeur);
@@ -670,7 +672,7 @@ function antitaghtml($entree){
   };
 }; 
 
-// nettoie les entrées nombre qui doivent avoir un format json et ne pas poser de problème javascript
+// nettoie les entrées nombre qui doivent avoir uniquement des nombres
 function antitagnb($entree){
   if(($entree=="undefined") || ($entree=="")){
     $entree="";
@@ -681,6 +683,21 @@ function antitagnb($entree){
 // fin du décodage
 // nettoyage de la demande de transaction
     $entree = preg_replace( '/[^\d_]/', '', $entree);
+    return $entree;
+  };
+}; // 
+
+// nettoie les entrées nombre qui doivent avoir uniquement des nombres
+function antitaglettre($entree){
+  if(($entree=="undefined") || ($entree=="")){
+    $entree="";
+  }else{
+// décode si transfert codé
+    $entree = decrypteletransfert($entree);
+//$entree = preg_replace( "/(encode pour transfert )/", '', $entree);
+// fin du décodage
+// nettoyage de la demande de transaction
+    $entree = preg_replace( '/[^\D_]/', '', $entree);
     return $entree;
   };
 }; // 
@@ -1517,11 +1534,17 @@ function retiredelaliste($var3,$nomfichier,$item){
 
 // retire un item de la liste des opportunitées
 function retireopportunite($var3,$donnee4){
-  $listeopportunite = retiredelaliste($var3,"mesopportunites","tra".$donnee4.".json");
-  $listeopportunite = retiredelaliste($var3,"mesopportunites","dac".$donnee4.".json");
-  $listeopportunite = retiredelaliste($var3,"mesopportunites","acc".$donnee4.".json");
-  $listeopportunite = retiredelaliste($var3,"mesopportunites","exp".$donnee4.".json");
-  $mesopportunite=fichierperso2($var3,"mesopportunites");
+//  $listeopportunite = retiredelaliste($var3,"mesopportunites","tra".$donnee4.".json");
+//  $listeopportunite = retiredelaliste($var3,"mesopportunites","dac".$donnee4.".json");
+//  $listeopportunite = retiredelaliste($var3,"mesopportunites","acc".$donnee4.".json");
+//  $listeopportunite = retiredelaliste($var3,"mesopportunites","exp".$donnee4.".json");
+  $contenufichier = "".fichierperso2($var3,"mesopportunites");
+  $debutdate=strpos($contenufichier,$donnee4);
+  $avant=substr($contenufichier,1,$debutdate);
+  $apres=substr($contenufichier,$debutdate);
+  $debutnom=substr(strrchr($avant, "\""),1,-1);
+  $finnom=substr($contenufichier,$debutdate,strpos($apres, "\""));
+  $mesopportunite = retiredelaliste($var3,"mesopportunites",$debutnom.$finnom);
   return $mesopportunite;
 };
 
@@ -1689,10 +1712,10 @@ if(substr($mesopportunites,0,4)=="NULL"){return "TEST - Manque d'opportunités p
   $mesopportunites=substr($mesopportunites,0,-4);
   $jsonenphp = json_decode($mesopportunites,true);
   if(json_last_error_msg() != "No error"){ return "TEST - erreur du serveur d'opportunités"; };
-  $nbentrees=count($jsonenphp);
-  for ($i = 0; $i <= $nbentrees-1; $i++) { 
-    $jsonenphp[$i]=$jsonenphp[$i]; 
-  };    
+//  $nbentrees=count($jsonenphp);
+//  for ($i = 0; $i <= $nbentrees-1; $i++) { 
+//    $jsonenphp[$i]=$jsonenphp[$i]; 
+//  };    
   $phpenjson= json_encode($jsonenphp);
 return $phpenjson;
 };
