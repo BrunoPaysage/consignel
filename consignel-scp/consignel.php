@@ -1707,9 +1707,9 @@ function testdestinatairedepot($pourqui,$demandeur){
 
 // teste l'actualité des opportunites
 function testemesopportunites($var3,$mesopportunites){
-//return "TEST - erreur du serveur d'opportunités |".$mesopportunites."|--";
-if(substr($mesopportunites,0,4)=="NULL"){return "TEST - Manque d'opportunités personnalisées";};
+if(substr($mesopportunites,0,4)=="NULL"){return "OPPV - Manque d'opportunités personnalisées";};
   $mesopportunites=substr($mesopportunites,0,-4);
+  if($mesopportunites==""){return "OPPV - Manque d'opportunités personnalisées";};
   $jsonenphp = json_decode($mesopportunites,true);
   if(json_last_error_msg() != "No error"){ return "TEST - erreur du serveur d'opportunités"; };
 //  $nbentrees=count($jsonenphp);
@@ -1822,8 +1822,14 @@ function transactionstatut($demandeur, $notransaction){
     $fichierencours = fopen($cheminfichier."ann".$notransaction.".json", 'r');
     $ligne = decryptelestockage(fgets($fichierencours, 1024)); // une seule ligne
     list($var41, $var42, $var43, $var44, $var45, $var46, $var47, $var48) = explode(",", $ligne);
-    if ($var48 == "\"".$nodemandeur."\"\n"){ return "PANN - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà annulée par vous
-    return "TNDI - Cette proposition n'est pas disponible";
+    if (($var48 == "\"".$nodemandeur."\"\n")&&($var45 == "\"".$nodemandeur."\"")){ return "PANN - ".contenutra($cheminfichier.$idtra.".json"); }; // Proposition déjà annulée par vous
+    if ($var45 == "\"".$nodemandeur."\""){ 
+      if($var48 == "\"DA↺\"\n"){$pseudo="DA↺";}else{$pseudo=lepseudode(substr($var48,1,-2));};
+      return "TREM - ".$pseudo."\"".contenutra($cheminfichier.$idtra.".json"); 
+    }; // Proposition refusée par vous
+    // retire de la liste des opportunités du demandeur
+    retireopportunite($nodemandeur,substr($notransaction,1,-1));
+    return "TNDI - Cette proposition n'est pas disponible ";
   }; // PANN - TNDI -
   if (file_exists($cheminfichier."exp".$notransaction.".json")) { 
     $fichierencours = fopen($cheminfichier."exp".$notransaction.".json", 'r');
@@ -1864,15 +1870,9 @@ function transactionstatut($demandeur, $notransaction){
           }; // La proposition est expirée 
           if($var48=="\"DA↺\"\n"){$pseudo = "\"DA↺\"\n";}else{$pseudo = lepseudode($proposeur);};
           if ($testdestinataire == "autorise"){ 
-          
-          
-            if(lepseudode($nodemandeur)=="\"inscription\""){
+             if(lepseudode($nodemandeur)=="\"inscription\""){
             return "NUCI - ".$pseudo."\"".contenutra($cheminfichier.$idtra.".json"); // changer .baseconsignel3
             };
-            
-            
-            
-            
             return "DTAO - ".$pseudo."\"".contenutra($cheminfichier.$idtra.".json"); 
           }; // J'ai le droit d'accepter cette proposition mais attention à disponibilité"; };
         };

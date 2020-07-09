@@ -780,20 +780,45 @@ function choixactivite(itemchoisi){
   var codechoisi=codelenom(itemchoisi);
   if(!itemchoisi){choisi=nettoieinput($("#inputactivite").val());};
   var etatoffredemande=$("#inverseoffredemande").text();
+  if(etatoffredemande==" - "){dansdiv="offrechoisi";}else{dansdiv="demandechoisi"};
   var tabref=refdevaleur("e"+codechoisi);
   var justeunite=0;
   if(!tabref){var tabref=refdevaleur("u"+codechoisi); justeunite=1;};
   if (!tabref){ 
-    /* inconnu dans les références */
-    if(etatoffredemande==" - "){dansdiv="offrechoisi";}else{dansdiv="demandechoisi"};
-    codechoisi=codeact(choisi,"h");
-    ajoutediv(dansdiv,"act",codechoisi,choisi,1,"h",-33,-15,-15,-56.4,1,1,1,1) ;
+    /* inconnu dans les références  essai avec quantité à 1 */
+    var unite=""; 
+    var choisi2="";
+    unite=choisi.substring(choisi.lastIndexOf(" "));
+    unite=nettoieunite(unite);
+    if(unite[0]=="ۄ"){
+      unite=unite.substring(1);
+      var quantite=choisi.substring(choisi.lastIndexOf(" "));
+      quantite=nettoiequantite(quantite);
+      choisi2=choisi.substring(0,choisi.lastIndexOf(" "))+" 1"+unite;
+    }else{
+      choisi2=choisi.substring(0,choisi.lastIndexOf(" "))+" 1"+unite;
+    };
+    var codechoisi2=codelenom(choisi2);
+    var tabref2=refdevaleur("e"+codechoisi2);
+    if (!tabref2){
+      codechoisi=codeact(choisi,"h");
+      /* item inconnu  */
+      ajoutediv(dansdiv,"act",codechoisi,choisi,1,"h",-33,-15,-15,-56.4,1,1,1,1) ;
+    }else{
+      /* quantité différente de 1  */
+      choisi3=choisi.substring(0,choisi.lastIndexOf(" "));
+      var quantite=choisi.substring(choisi.lastIndexOf(" "));
+      quantite=nettoiequantite(quantite);
+      if (quantite>0){tabref2[1]=quantite;};
+      ajoutediv(dansdiv,"act",codechoisi2,choisi3,tabref2[1],tabref2[2],tabref2[3],tabref2[4],tabref2[5],tabref2[6],tabref2[7],tabref2[8],tabref2[9],tabref2[10]) ;
+    
+    };
   }else{ 
     /* existe dans les références */
     var dansdiv="offrechoisi";
-    if(etatoffredemande==" - "){dansdiv="offrechoisi";}else{dansdiv="demandechoisi"};
     choisi=choisisansunite(choisi,tabref[1],tabref[2]);
-    if (justeunite==1){choisi="..."};ajoutediv(dansdiv,"act",codechoisi,choisi,tabref[1],tabref[2],tabref[3],tabref[4],tabref[5],tabref[6],tabref[7],tabref[8],tabref[9],tabref[10]) ;
+    if (justeunite==1){choisi="..."}; 
+    ajoutediv(dansdiv,"act",codechoisi,choisi,1,tabref[2],tabref[3],tabref[4],tabref[5],tabref[6],tabref[7],tabref[8],tabref[9],tabref[10]) ;
   };
   /* dansqui,prefixe,codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie */
 };
@@ -802,7 +827,12 @@ function choixactivite(itemchoisi){
 function choisisansunite(lenomchoisi,laquantite,lunite){
   $("#suiviappli").prepend("choisisansunite("+lenomchoisi+","+laquantite+","+lunite+") <br>");
   var mesure=laquantite+lunite;
-  var lenomsansunite=lenomchoisi.substring(0,lenomchoisi.lastIndexOf(mesure)-1);
+  var lenomsansunite="";
+  var debutmesure=lenomchoisi.lastIndexOf(mesure);
+  if(debutmesure=="-1"){mesure="1"+lunite; debutmesure=lenomchoisi.lastIndexOf(mesure);};
+  lenomsansunite=lenomchoisi.substring(0,lenomchoisi.lastIndexOf(mesure)-1);
+  //lenomsansunite=lenomchoisi;
+//alert("toto "+lenomsansunite);
   return lenomsansunite;
 };
 
@@ -1023,6 +1053,7 @@ $('#confirmationinputcode').change(function() {
 
 /* ajout des onclick sur le html menupref */
 $("h2.localisation").click(function() { clicpageweb();  });
+$("h2.localisation + p span.nomutilisateur").click(function() { $(".arretesession .statut").html("100"); clicmenuinscription();  });
 $("#menuprefinscription").click(function() { clicmenuinscription(); });
 $("#menuprefutilisation").click(function() { clicmenuutilisation(); });
 $("#menuprefconfirmation").click(function() { clicmenuconfirmation(); });
@@ -1490,6 +1521,11 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "TREF":
         $("#acceptetransactionstatut").html("Transaction refusée"); propositionrefusee(contenuretour);
         break; 
+        case "TREM":
+        $("#acceptetransactionstatut").html("J'ai refusé cette proposition");
+        menudetailproposition("pasmatransactionfermee"); $("#acceptetransactionoublier").show(); 
+        affichedetailproposition(latransaction,propositiondequi);
+        break; 
         case "TRIN":
         $("#acceptetransactionstatut").html("Transaction inconnue"); 
         if($("#confirmationinputcode").val()){
@@ -1521,6 +1557,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "TEST":
         responseTxt = responseTxt.substring(4);
         alert("Problème php "+responseTxt); break; 
+        case "OPPV":
+        $("#acceptetransactionstatut").html("Inscrivez le code de transaction");
+        menudetailproposition(""); 
+        break; 
         case "DTBR":
         $("#acceptetransactionstatut").html("Demande de transaction bien reçue");
         responseTxt = responseTxt.substring(7);
@@ -1974,10 +2014,28 @@ $("#suiviappli").prepend("nettoieinput("+valinput+") <br>");
 
 /* Précaution anti-script sur une entrée input */
 function nettoieinputnb(valinput){
+  $("#suiviappli").prepend("nettoieinputnb(valinput) <br>");
   var gardenchiffresettiret = new RegExp('[^\\d-]', 'gi');
   valinput = valinput.replace(gardenchiffresettiret, '');
-  $("#suiviappli").prepend("nettoieinputnb(valinput) <br>");
   return valinput;
+};
+
+/* enleve les lettres */
+function nettoiequantite(textequantite){
+  $("#suiviappli").prepend("nettoiequantite(quantite) <br>");
+  var enlevelettres = new RegExp('[^\\d^ۄ]', 'gi');
+  textequantite = textequantite.replace(enlevelettres, '');
+  var enlevevirgule = new RegExp('ۄ', 'gi');
+  textequantite = textequantite.replace(enlevevirgule, '.');
+  return textequantite;
+};
+
+/* enleve les nombres */
+function nettoieunite(texteunite){
+  $("#suiviappli").prepend("nettoieunite(valinput) <br>");
+  var enlevechiffres = new RegExp('[\\d., ]', 'gi');
+  texteunite = texteunite.replace(enlevechiffres, '');
+  return texteunite;
 };
 
 /* Précaution anti-script sur une entrée input demande transaction */
@@ -2075,7 +2133,7 @@ function queltypetroc(notransaction){
   return typetroc;
 }
 
-/* retourne le tableau des valeurs pour l'élément enum */
+/* retourne la valeur pour l'élément codeitem */
 function refdevaleur(codeitem){
   var identif=codeitem;
   if($("#stockevaleursref").text().length > 5){
