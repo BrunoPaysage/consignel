@@ -138,6 +138,27 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
   };
 };
 
+function humeur(refspan,montant){
+  var colhumeur="";
+  var refspan2=refspan.substring(0,refspan.lastIndexOf(" "));
+    $(refspan2).removeClass("eval0 eval1 eval2 eval3 eval4 eval5 eval6 eval7");
+  var impact = montant / constante("minimumviable");
+  if(impact>0){
+    if(impact > 2){ colhumeur="eval3";};
+    if(impact > 4){ colhumeur="eval4";};
+    if(impact > 6){ colhumeur="eval5";};
+    if(impact > 10){ colhumeur="eval0";};
+  }else{
+    if(impact < 0){colhumeur="eval2";};    
+    if(impact < -4){colhumeur="eval1";};
+    if(impact < -8){colhumeur="eval0";};
+  };
+    
+  if(colhumeur!=""){
+    $(refspan2).addClass(colhumeur);
+  };
+};
+
 /* affiche les items de la proposition */
 function afficheproposition(ou,id,valeurs,numproposetra){
   $("#suiviappli").prepend("afficheproposition(ou,id,variables) <br>");
@@ -149,6 +170,7 @@ function afficheproposition(ou,id,valeurs,numproposetra){
   switch (oulocal) {
     case "#demandemontantsconfirme":
       $("#demandecompensationconfirme .montant").html(variableslocales[3]);
+      humeur("#demandecompensationconfirme .montant",variableslocales[3]);
       $("#demandemontantsconfirme .argent").html(variableslocales[4]);
       $("#demandemontantsconfirme .mlc").html(variableslocales[5]);
       $("#demandemontantsconfirme .environnement").html(variableslocales[6]);
@@ -161,6 +183,7 @@ function afficheproposition(ou,id,valeurs,numproposetra){
     break;
     case "#offremontantsconfirme":
       $("#offrecompensationconfirme .montant").html(variableslocales[3]);
+      humeur("#offrecompensationconfirme .montant",variableslocales[3]);
       var resumetemp = $(".retourserveur").text();
       var paramgraph = resumetemp.split(",");
       var disponibletemp = Number(paramgraph[3])+ Number(variableslocales[3]);
@@ -1883,8 +1906,10 @@ if(menutra == "attente"){$('#confirmationacceptetransaction').attr("class","atte
 function miseajourdesvaleurs(){
   $("#suiviappli").prepend("miseajourdesvaleurs() <br>");
   $("#offrecompensation .montant").html(totalmontants("#offrechoisi"," .consignel"));
+  humeur("#offrecompensation .montant",totalmontants("#offrechoisi"," .consignel"));
   miseajourgraphique();
   $("#demandecompensation .montant").html(totalmontants("#demandechoisi"," .consignel"));
+  humeur("#demandecompensation .montant",totalmontants("#demandechoisi"," .consignel"));
   $("#offremontants .argent").html(totalmontants("#offrechoisi"," .argent"));
   $("#offremontants .mlc").html(totalmontants("#offrechoisi"," .mlc"));
   $("#offremontants .environnement").html(totalmontants("#offrechoisi"," .environnement"));

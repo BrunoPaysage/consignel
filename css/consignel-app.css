@@ -303,6 +303,8 @@ input#inputdemandeaqui {width:100%; }
 #dacdemande {clear:right;}
 #dacoffre h3, #dacdemande h3 {padding-top:5px; padding-left:1.5em; }
 #dacoffre div, #dacdemande div {padding-left:0.9em; }
+#offrecompensation {border-radius:0em 0.75em 0.75em 1em ;}
+#demandecompensation {border-radius: 0.75em 0em  1em 0.75em;}
 .listeact { text-overflow: ellipsis; word-wrap: break-word; }
 
 .doubletroc { background-color:#fee; }
