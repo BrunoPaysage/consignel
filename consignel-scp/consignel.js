@@ -1797,7 +1797,7 @@ function envoiavatar (data) {
       url: lurl,
       data: limage,
       type: 'POST',
-      error: function (jqXHR, exception) { alert("erreur serveur "+jqXHR+" "+exception); },
+      error: function (jqXHR, exception) { alert("Il faut se connecter avec les deux mots secrets pour changer votre image"); },
       success: function(responseTxt, statusTxt, xhr) {
 //        if(statusTxt == "success") {
           $("#suiviappli").prepend("fichier monavatar arrivé depuis le serveur<br>");
