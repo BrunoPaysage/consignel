@@ -138,27 +138,6 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
   };
 };
 
-function humeur(refspan,montant){
-  var colhumeur="";
-  var refspan2=refspan.substring(0,refspan.lastIndexOf(" "));
-    $(refspan2).removeClass("eval0 eval1 eval2 eval3 eval4 eval5 eval6 eval7");
-  var impact = montant / constante("minimumviable");
-  if(impact>0){
-    if(impact > 2){ colhumeur="eval3";};
-    if(impact > 4){ colhumeur="eval4";};
-    if(impact > 6){ colhumeur="eval5";};
-    if(impact > 10){ colhumeur="eval0";};
-  }else{
-    if(impact < 0){colhumeur="eval2";};    
-    if(impact < -4){colhumeur="eval1";};
-    if(impact < -8){colhumeur="eval0";};
-  };
-    
-  if(colhumeur!=""){
-    $(refspan2).addClass(colhumeur);
-  };
-};
-
 /* affiche les items de la proposition */
 function afficheproposition(ou,id,valeurs,numproposetra){
   $("#suiviappli").prepend("afficheproposition(ou,id,variables) <br>");
@@ -796,6 +775,19 @@ function dureerestante(dateetra,dureetra,d){
   return nbjoursrestant ;
 }; /* fin de dureerestante */
 
+/* Change l'avatar avec réduction de fichier et envoi vers le serveur */
+function changeavatar (file) {
+    if(typeof file ==="object"){
+      var reader = new FileReader();
+      reader.onloadend = function(evt) {  
+        resizeImage(reader.result, file); 
+      };
+      reader.readAsDataURL(file);
+    }else{
+      demandefichier("","retireavatar","","","");
+    };
+};
+
 /* usage de l'offre choisie */
 function choixactivite(itemchoisi){
   $("#suiviappli").prepend("choixactivite("+itemchoisi+") <br>");
@@ -845,6 +837,7 @@ function choixactivite(itemchoisi){
   };
   /* dansqui,prefixe,codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie */
 };
+
 
 /* fonction supprime la référence à l'unité dans le nom */
 function choisisansunite(lenomchoisi,laquantite,lunite){
@@ -1173,6 +1166,12 @@ $("#demandecompensationconfirmedetails").click(function() { changeClass(demandem
 
 /* ajout des onclick preferences */
 $(".testindicateurdd input").change(function() { changesuivi(); });
+
+$("#fichieravatarpoubelle").click(function() { changeavatar("annuleavatar"); });
+$("#inputfichieravatar").change(function(evt) { 
+  var file = evt.target.files[0];
+  changeavatar(file); });
+
 $("#dureeexpire").change(function() { validdureeexpire(); });
 $("#fluxconsignel").change(function() { validfluxconsignel(); });
 $("#localstoragepublic").change(function() { autoriselocalstorage(); });
@@ -1289,6 +1288,7 @@ function demandeid(prefixe,suffixe) {
 /* demande ou envoi de fichier au serveur */
 function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelspansuivi2){
   $("#suiviappli").prepend("demandefichier("+queldiv+", "+nomdonnees+", "+quelspansuivi+", "+quelfichierlocal+", "+quelspansuivi2+" ) ... ");
+  var demandeauserveur ="";
   var retourdansdiv = queldiv;
   var demandefich = nomdonnees;
   if (demandefich == "oublieopportunite"){
@@ -1321,6 +1321,14 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var nomcode4 = codelenom(nomutil2+nomutil3); /* chiffre le code d'acces local */
   };
   
+  if(demandefich=="monavatar"){
+    var4 = codelenom($(".appentete .nomutilisateur").text())*tableauretour[1]; /* chiffre l'autentification d'avatar */
+    demandeauserveur="?var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +"&var4="+var4;
+    if(demandefich=="monavatar"){
+      return demandeauserveur; // envoi du fichier par ajax POST dans envoiavatar
+    };
+  };
+  
   var var4="";
   if((demandefich=="demandeuneproposition") || (demandefich=="accepteuneproposition") || (demandefich=="annuleuneproposition") || (demandefich=="refuseuneproposition") || (demandefich2=="oublieopportunite")){
     var nodemande = nettoieinputtra($("#confirmationinputcode").val()) ;
@@ -1334,6 +1342,11 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
       var4="&var4="+var4;
     };
   };
+  if(demandefich=="retireavatar"){
+    var4 = codelenom($(".appentete .nomutilisateur").text())*tableauretour[1]; /* chiffre l'autentification d'avatar */
+    var4="&var4="+var4;
+  };
+  
   var var5="";
   if(demandefich=="maproposition"){
     if ($("#matransaction").text()=="..."){
@@ -1355,7 +1368,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var5="&var5="+var5
   };  
 
-  var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
+  demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
+
   $("#suiviappli").prepend("script php demandeauserveur envoyé au serveur <br>");
   $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success") {
@@ -1530,6 +1544,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         };
         break; 
         
+        case "ANAV":
+        responseTxt = responseTxt.substring(4); 
+        $(".appentete img.utilisateur").attr("src",contenuretour); break; 
+        
         case "DTIN":
         responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
         alert("Proposition interdite. Spéculation, etc."); break; 
@@ -1688,6 +1706,8 @@ function effaceutilisation(){
   videlespan(".compensation");
   videlespan(".demandecompensation");
   $("#inputdemandeaqui").val("");
+  $("#inputfichieravatar").val("");
+  
 };
 
 /* nettoyage interface */
@@ -1765,6 +1785,66 @@ var contenuencode="encode pour transfert "+clairlocal;
 return contenuencode;
 };
 
+function envoiavatar (data) {
+  var limage=JSON.stringify({ avatar: data });
+  limage=encryptepourtransfert(limage);
+  var demande=demandefichier("","monavatar","","","")
+//  var lurl='processjson2.php'+demande;
+  var serveurphp=constante("php");
+  $("#inputfichieravatar").removeClass("eval0");
+  var lurl= serveurphp+demande;
+    $.ajax({
+      url: lurl,
+      data: limage,
+      type: 'POST',
+      error: function (jqXHR, exception) { alert("erreur serveur "+jqXHR+" "+exception); },
+      success: function(responseTxt, statusTxt, xhr) {
+//        if(statusTxt == "success") {
+          $("#suiviappli").prepend("fichier monavatar arrivé depuis le serveur<br>");
+          responseTxt = decryptetransfert(responseTxt);
+          var testretour = responseTxt.substring(0,4);
+          var contenuretour = responseTxt.substring(7);
+          switch (testretour) {
+            case "TEST":
+            responseTxt = responseTxt.substring(4);
+            alert("Problème php "+responseTxt); break; 
+            case "AVAM":
+            $(".localisation img.utilisateur").attr("src",contenuretour);
+            break; 
+            case "ERAV":
+            responseTxt = responseTxt.substring(4);
+            $("#inputfichieravatar").addClass("eval0");
+            alert("Problème "+responseTxt); break; 
+            default :
+            break;
+        }; /* Fin du switch */
+//        };
+      } // Un éventuel callback
+    });
+  };
+
+/* donne de la couleur selon le montant sur le div englobant */
+function humeur(refspan,montant){
+  var colhumeur="";
+  var refspan2=refspan.substring(0,refspan.lastIndexOf(" "));
+    $(refspan2).removeClass("eval0 eval1 eval2 eval3 eval4 eval5 eval6 eval7");
+  var impact = montant / constante("minimumviable");
+  if(impact>0){
+    if(impact > 2){ colhumeur="eval3";};
+    if(impact > 4){ colhumeur="eval4";};
+    if(impact > 6){ colhumeur="eval5";};
+    if(impact > 10){ colhumeur="eval0";};
+  }else{
+    if(impact < 0){colhumeur="eval2";};    
+    if(impact < -4){colhumeur="eval1";};
+    if(impact < -8){colhumeur="eval0";};
+  };
+    
+  if(colhumeur!=""){
+    $(refspan2).addClass(colhumeur);
+  };
+};
+
 /* affiche la page d'identification */
 function identification(){
   $("#suiviappli").prepend("identification() <br>");
@@ -1774,6 +1854,24 @@ function identification(){
   videinput("#formulaireaccesutilisateur"); videinput("#formulaireaccespass"); videinput("#inscr2nom"); videinput("#inscr2nom2"); videinput("#inscr3secret"); videinput("#inscr3secret2"); 
   $("#formulaireaccesutilisateur").focus();
 };
+
+// redimensionner une image en conservant les proportions
+function imageSize (width, height, maxWidth, maxHeight) {
+    var newWidth = width, 
+        newHeight = height;
+    if (width > height) {
+      if (width > maxWidth) {
+        newHeight *= maxWidth / width;
+        newWidth = maxWidth;
+      }
+    } else {
+      if (height > maxHeight) {
+        newWidth *= maxHeight / height;
+        newHeight = maxHeight;
+      }
+    }
+    return { width: newWidth, height: newHeight };
+  };
 
 /* affiche la page d'inscption */
 function inscription(etapedinscription){
@@ -2181,6 +2279,36 @@ function refdevaleur(codeitem){
     return ref2;
   };
 };
+
+function resizeImage (data, file) {
+    var fileType = file.type;
+    var maxWidth = 180;
+    var maxHeight = 180;
+    // On charge le fichier dans une balise <img>
+    var image = new Image();
+    image.src = data;
+    // Une fois l'image chargée, on effectue les opérations suivantes
+    image.onload = function() {
+      // La fonction imageSize permet de calculer la taille finale du fichier en conservant les proportions
+      var size = imageSize(image.width, image.height, maxWidth, maxHeight),
+          imageWidth = size.width,
+          imageHeight = size.height,
+          // On créé un élément canvas 
+          canvas = document.createElement('canvas');
+      canvas.width = imageWidth;
+      canvas.height = imageHeight;
+      var ctx = canvas.getContext("2d");
+      // drawImage va permettre le redimensionnement de l'image // this représente ici notre image
+      ctx.drawImage(this, 0, 0, imageWidth, imageHeight);
+      // Permet d'exporter le contenu de l'élément canvas (notre image redimensionnée) au format base64
+      data = canvas.toDataURL(fileType);
+      // On supprime tous les éléments utilisés pour le redimensionnement
+      delete image;
+      delete canvas;
+//  $(".localisation img.utilisateur").attr("src",data);
+      envoiavatar(data);
+    }
+  };
 
 /* sans espace dans le nom */
 function sansespace(chaine){

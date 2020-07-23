@@ -228,6 +228,8 @@ a, button {cursor: pointer;}
 
 /* .appentete */
 h2.localisation {cursor: pointer;}
+.nomutilisateur:hover{cursor: pointer;}
+.nomutilisateur:hover::before { content: "Changer d'utilisateur  "; }
 
 /* .application */
 .application {border:solid 0px #555; width:98%; height:auto;overflow-y: auto; overflow-x: hidden; margin-left:auto; margin-right:auto;}
@@ -242,6 +244,10 @@ div.centre {margin:auto; margin-top:0px; margin-bottom:0px; border:0px}
 .suivi .suivi2, .suivi .suivi4 {width: 40px;} .suivi .suivi3 {width: 160px; } 
 
 .suivi .barredisponible {position: absolute; top:0; left:0; margin-left:149px; margin-top:4px; width: 0px; height: 20px; border: solid 1px #000; }
+
+.testindicateurdd input[type="number"]{ width:10em; }
+#dureeexpire , #fluxconsignel { width:3em; }
+
 /* margin-left de le cible 135 margin left du rond à la médiane 139 */
 .suivi .cible {margin:0px; float:left; position: absolute; top:0; left:0; margin-left:135px;  width: 24px; height: 24px; border-radius: 14px; background: transparent; border: dotted 3px green;}
 .suivi .rond {position: absolute; top:0; left:0; margin-left:139px; margin-top:4px; width: 22px; height: 22px; border-radius: 14px; background: #0a0; border: solid 0px #000; }
@@ -349,6 +355,9 @@ input#inputdemandeaqui {width:100%; }
 .ui-autocomplete { max-height: 20em; overflow-y: auto;
   overflow-x: hidden; /* prevent horizontal scrollbar */
 }
+
+/* .preferences */
+img.enligne{ height:25px; cursor:pointer; display:inline-block; margin-bottom:-0.25em;}
 
 .ui-autocomplete-loading { background: white url("patienter.gif") right center no-repeat; }
 

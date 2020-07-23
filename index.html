@@ -214,10 +214,10 @@ Confirmer le mot de passe<br>
 <div class="preferences valeurstest">
 <h3>Indicateur DD</h3>
 <div class="preferences testindicateurdd centre"><!-- Préliminaires test barre de suivi -->
-<input type=number id="disponible" placeholder="disponible" size="10">
-<input type=number id="unjour" placeholder="revenu par jour" value="100" size="10">
-<input type=number id="dispomin" placeholder="dispo bas derniers 31 jours" value="1000" size="10">
-<input type=number id="dispomax" placeholder="dispo haut derniers 31 jours" value="2000" size="10">
+<input type=number id="disponible" placeholder="disponible">
+<input type=number id="unjour" placeholder="revenu par jour" value="100" >
+<input type=number id="dispomin" placeholder="dispo bas derniers 31 jours" value="1000" >
+<input type=number id="dispomax" placeholder="dispo haut derniers 31 jours" value="2000" >
 </div> <!-- Fin preferences valeurstest -->
 
 </div>
@@ -229,12 +229,17 @@ Confirmer le mot de passe<br>
 <h3>Indicateurs 3 gains</h3>
 </div> <!-- Fin preferences valeursdd -->
 
+<div class="preferences changeavatar">
+<h3>Avatar <img id="fichieravatarpoubelle" src="consignel-app/avatarannule.png" alt="avatar par défaut" class="enligne">
+<input type="file" name="file" id="inputfichieravatar" accept="image/png, image/jpeg"/> </h3>
+</div> <!-- Fin changement d'avatar  -->
+
 <div class="preferences dureeoffre">
-<br><h3>Durée des offres <span class="duree"><input id="dureeexpire" type="number" min="1" max="364" size="3" value="30"> jours</span></h3>
+<br><h3>Durée des offres <span class="duree"><input id="dureeexpire" type="number" min="1" max="364" value="30"> jours</span></h3>
 </div> <!-- Fin preferences dureeoffre -->
 
 <div class="preferences limitefluxconsignel">
-<br><h3>Limite de dépense de ↺onsignél <span class="duree"><input id="fluxconsignel" type="number" min="2" max="7" size="3" value="4"> jours de consommation</span></h3>
+<br><h3>Limite de dépense de ↺onsignél <span class="duree"><input id="fluxconsignel" type="number" min="2" max="7" value="4"> jours de consommation</span></h3>
 </div> <!-- Fin preferences dureeoffre -->
 
 <div id="preferences" class="actif">
@@ -279,6 +284,8 @@ Fichiers personnels <input id="localstoragemoi" type="checkbox" value="non"> <sp
 
 </details>
 </div> <!-- Fin div fichierspersonnels  -->
+
+
 
 <p class="separateur">&nbsp;</p>
 <h3 id="developpementetsuivi">Développement et suivi</h3>
@@ -368,13 +375,12 @@ Fichiers personnels <input id="localstoragemoi" type="checkbox" value="non"> <sp
 <h4>mes transactions</h4><div id="mstockmestransactions" class="mstockdansdiv">...</div> 
 <h4>demandeaqui</h4><div id="mstockdemandeaqui" class="mstockdansdiv">...</div> 
 </details>
-</details>
+
 <details><summary>Stockage transaction</summary>
 <h4>monoffre</h4><div id="monoffre" class="mstockdansdiv">...</div> 
 <h4>mademande</h4><div id="mademande" class="mstockdansdiv">...</div> 
 <h4>mesact</h4><div id="mesact" class="mstockdansdiv">...</div> 
 <h4>matransaction</h4><div id="matransaction" class="mstockdansdiv">...</div> 
-<h4>mestransactions</h4><div id="mstockmestransactions" class="mstockdansdiv">...</div> 
 <h4>demande une proposition</h4><div id="mstockdemandeuneproposition" class="mstockdansdiv">...</div> 
 <h4>annule une proposition</h4><div id="mstockannuleuneproposition" class="mstockdansdiv">...</div> 
 </details>

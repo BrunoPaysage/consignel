@@ -31,7 +31,7 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
     while (!feof($fichierencours) && !$existe) { // cherche dans les lignes
       $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
       if (preg_match('/\b' . preg_quote($donnee2) . '\b/u', $ligne)) { 
-        list($var1, $var2, $var3, $var4, $var5) = explode(",", $ligne);
+        list($var1, $var2, $var3, $var4, $var5, $var6) = explode(",", $ligne);
         // $var1 code utilisateur, $var2 code mot de passe, $var3 pseudo utilisateur, $var4 image ou avatar, $var5 localité consignel
         if ($var1==$donnee2){ // trouvé comme identifiant
           $existe = TRUE; // Valeur trouvée arrêt du while
@@ -44,14 +44,46 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
   };
   if($existe==TRUE){ // L'identifiant a été trouvé
     $nombrealeatoire = mt_rand(1,9999); // prépare le numéro de session
+
+/*
     $avatar = substr($var4,1,6);
       if($avatar=="avatar"){ // image ou avatar prendre l'avatar
         $baseavatars = constante("baseavatars");
         $cheminfichierimage = $baseavatars.substr($var4,1);
+//        $cheminfichierimage = tracelechemin($donnee2,$base,substr($var4,1));
+//        if(File_exists($cheminfichierimage)){$cheminfichierimage=$cheminfichierimage;}else{$cheminfichierimage="toto est absent";};
       }else{ // image ou avatar prendre l'image
-        $cheminfichierimage = tracelechemin($donnee2,$base,substr($var4,1));
-        // insérer une fonction qui change le chemin et le nom de fichier de l'avatar personnel
+        // fichier de l'avatar personnel dans la base des avatars et compatibilité avec version précéedente
+        $baseavatarperso=constante("baseavatarperso");
+        $testfichierimage = tracelechemin($var6,$baseavatarperso,substr($var4,1,-1));
+        if(File_exists($testfichierimage)){
+          $cheminfichierimage = "".tracelechemin($var6,$base,substr($var4,1)); }
+        else{
+          // ancienne base
+          $cheminfichierimage = tracelechemin($donnee2,$base,substr($var4,1));
+        };
       }; // fin de image ou avatar
+
+*/      
+      $baseavatars = constante("baseavatars");
+      $baseavatarperso=constante("baseavatarperso");
+      $cheminsansfichier = tracelechemin($var6,$baseavatarperso,"");     
+      
+      if(!is_dir($cheminsansfichier)) {
+        // le répertoire perso n'existe pas prendre l'avatar type
+        $cheminfichierimage = $baseavatars.substr($var4,1);
+//        $cheminfichierimage = $baseavatars."avatar02.png ";
+      }else{
+        // le répertoire existe
+        $lesfichiers = scandir($cheminsansfichier);
+        $avatar=$lesfichiers[count($lesfichiers)-1]." ";
+        if(substr($avatar,0,1)!="."){
+          $cheminfichierimage = $cheminsansfichier.$avatar; // fichier avatar
+        }else{
+          $cheminfichierimage = $baseavatars.substr($var4,1);
+        };
+      };   
+        
     // hache le hache d'utilisateur avec le numéro de session idem motdepasse et clef
     $nomsession = codelenom($var1*$nombrealeatoire); 
     $codesession = codelenom($var2*$nombrealeatoire); 
@@ -115,8 +147,10 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       $lademande = ($donnee3/$var4);
       if($lademande==6986){ $quoi = fichierperso($var3,"quoi"); echo cryptepourtransfert($quoi); }; // fin de "quoi"
       if($lademande==16887){ $resume = fichierperso($var3,"resume"); echo cryptepourtransfert($resume); }; // fin de "resume"
+      if($lademande==39629){  $monavatar = noteavatar($var3,$donnee4/$var4); echo cryptepourtransfert($monavatar);  };// fin de "monavatar"
       if($lademande==59570){ $demandeaqui = fichierperso($var3,"demandeaqui"); echo cryptepourtransfert($demandeaqui); }; // fin de "demandeaqui"
       if($lademande==61612){ $nouveaucompte=inscription($var3,$donnee5); echo cryptepourtransfert($nouveaucompte); }; // fin de "inscription"
+      if($lademande==71900){  $monavatar = retireavatar($var3,$donnee4/$var4); echo cryptepourtransfert($monavatar);  };// fin de "retireavatar"
       if($lademande==86012){ $mesvaleursref = fichierperso($var3,"mesvaleursref"); echo cryptepourtransfert($mesvaleursref); }; // fin de "mesvaleursref"
       if($lademande==87558){ $noteproposition = notetransaction($var3,"mestransactions",$donnee5); echo cryptepourtransfert($noteproposition); }; // fin de "maproposition"
       if($lademande==116020){ $mestransactions = fichierperso($var3,"mestransactions"); echo cryptepourtransfert($mestransactions); }; // fin de "mestransactions"
@@ -1149,24 +1183,57 @@ function listevaleurs($cheminfichier, $valeursaajouter){
 
 // supprime les références aux sessions obsoletes
 function nettoyagerefsessions(){
-  $today = getdate();  $heureutilise = $today[hours]*60+$today[minutes];
-$heureobsolete = $heureutilise-20; // sessions obsolete 20 minutes
-$baseutilisateurs = constante("baseutilisateurs");
-$cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel0");
-if (file_exists($cheminfichier)) { // vérification fichier sessions obsoletes existe
-$fichierencours = fopen($cheminfichier, 'r+'); // ouverture en lecture ecriture autorisée pointeur au début
-while (!feof($fichierencours) ) { // cherche dans les lignes
-$ligne = fgets($fichierencours, 1024); // ligne par ligne
-$lignedenclair = decryptelestockage($ligne);
-list($var1, $var2, $var3, $var4, $var5) = explode(",", $lignedenclair); // $var5 heure session
-if (($var5 < $heureobsolete) || ($var5 > $heureutilise)){ // trouvé date obsolete
-  file_put_contents($cheminfichier, str_replace($ligne, "", file_get_contents($cheminfichier)));
-}; // fin du trouvé obsolete
-}; // Fin de cherche dans les lignes
-fclose($fichierencours); // fermeture du fichier
-}else{
-die("fichier inconnu Fichier non trouvé pas de fichier session "); // Fichier non trouvé pas de fichier session
+  $today = getdate();  
+  $heureutilise = $today[hours]*60+$today[minutes];
+  $heureobsolete = $heureutilise-20; // sessions obsolete 20 minutes
+  $baseutilisateurs = constante("baseutilisateurs");
+  $cheminfichier = tracelechemin("",$baseutilisateurs,".baseconsignel0");
+  if (file_exists($cheminfichier)) { // vérification fichier sessions obsoletes existe
+    $fichierencours = fopen($cheminfichier, 'r+'); // ouverture en lecture ecriture autorisée pointeur au début
+    while (!feof($fichierencours) ) { // cherche dans les lignes
+      $ligne = fgets($fichierencours, 1024); // ligne par ligne
+      $lignedenclair = decryptelestockage($ligne);
+      list($var1, $var2, $var3, $var4, $var5) = explode(",", $lignedenclair); // $var5 heure session
+      if (($var5 < $heureobsolete) || ($var5 > $heureutilise)){ // trouvé date obsolete
+        file_put_contents($cheminfichier, str_replace($ligne, "", file_get_contents($cheminfichier)));
+      }; // fin du trouvé obsolete
+    }; // Fin de cherche dans les lignes
+  fclose($fichierencours); // fermeture du fichier
+  }else{
+    die("fichier inconnu Fichier non trouvé pas de fichier session "); // Fichier non trouvé pas de fichier session
+  };
 };
+
+// note un nouvel avatar
+function noteavatar($var3,$nopseudo){
+  if(isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > 0) {
+    $httpContent = fopen('php://input', 'r');
+    $data = stream_get_contents($httpContent);
+    fclose($httpContent);
+    
+    $data=antitaghtml($data);
+    $data2=json_decode($data, true);
+    if(json_last_error_msg() != "No error"){ return "ERAV - Erreur reception avatar"; };
+    list($typedata, $data2) = explode(';', $data2["avatar"]);
+    list($typedata, $extension) = explode('/', $typedata);
+    // vérification extension
+    $data2 = substr($data2, strpos($data2, ',') + 1);
+    $type = strtolower($extension); // jpg, png, gif
+    if (!in_array($type, [ 'jpg', 'jpeg', 'png' ])) { return "ERAV - Fichier image non autorisé. Uniquement jpg et png";  }
+    // vérification fichier en base64
+    $data2 = base64_decode($data2);
+    if ($data === false) {  return "ERAV - Transfert d'image non autorisé. Uniquement base64";   }
+    $poids=strlen ( $data2);
+    if($poids>40000){return "ERAV - Fichier image non autorisé. Trop gros"; };
+    $baseavatarperso=constante("baseavatarperso");
+
+//    $cheminsansfichier = tracelechemin($var3,$baseavatarperso,$var3);    
+    $cheminsansfichier = tracelechemin($nopseudo,$baseavatarperso,$nopseudo,"ouvre");    
+    array_map('unlink', glob($cheminsansfichier.'avatar.*'));
+    $cheminavatarperso=$cheminsansfichier."avatar.".$extension;
+    file_put_contents($cheminavatarperso, $data2);
+    return "AVAM - ".substr($cheminavatarperso,1);
+  }else{return "ERAV - Désolé pas d'avatar sur serveur";};
 };
 
 // note la proposition de transaction
@@ -1519,6 +1586,18 @@ function resumecompte($var3){
   return $resumeducompte;
 };
 
+// retire avatar personnel et remplace par avatar par défaut
+function retireavatar($var3,$nopseudo){
+    $baseavatarperso=constante("baseavatarperso");
+    $cheminsansfichier = tracelechemin($nopseudo,$baseavatarperso,"","ouvre");    
+    array_map('unlink', glob($cheminsansfichier.$nopseudo.'avatar.*'));
+retiredir($cheminsansfichier);
+    $baseavatars = constante("baseavatars");
+    $nomavatars = constante("avatar");
+    $cheminavatar = $baseavatars.$nomavatars;
+    return "ANAV - ".substr($cheminavatar,1);
+};
+
 // retire de la liste
 function retiredelaliste($var3,$nomfichier,$item){
   $contenufichier = "".fichierperso2($var3,$nomfichier);
@@ -1530,6 +1609,19 @@ function retiredelaliste($var3,$nomfichier,$item){
   $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");
   ajouteaufichier($cheminfichierinclu, $contenufichier,"debut");
   return $contenufichier;
+};
+
+// retire le chemin vide
+function retiredir($lechemin=""){
+  $chemin=$lechemin;
+  rmdir ($chemin);
+  $chemin=substr($chemin, 0, -1);
+  rmdir ($chemin);
+  $chemin=substr($chemin, 0, -1);
+  rmdir ($chemin);
+  $chemin=substr($chemin, 0, -1);
+  rmdir ($chemin);
+
 };
 
 // retire un item de la liste des opportunitées
@@ -1896,6 +1988,7 @@ function constante($nom){
   if($nom == "baseutilisateurs"){ return "../consignel-base/0"; };
   if($nom == "basehistorique"){ return "../consignel-base/2/"; };
   if($nom == "baseavatars"){ return "../consignel-app/"; }; 
+  if($nom == "baseavatarperso"){ return "../consignel-base/"; }; // pour utilisation depuis le php
   if($nom == "avatar"){ return "avatar01.png"; };
   if($nom == "baselocalite"){ return "../localite/"; }; 
   if($nom == "localite"){ return "Marieville"; }; 
