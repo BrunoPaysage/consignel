@@ -44,42 +44,34 @@ if(($donnee1==$donnee2) and ($donnee3==1)){
   };
   if($existe==TRUE){ // L'identifiant a été trouvé
     $nombrealeatoire = mt_rand(1,9999); // prépare le numéro de session
-
-/*
-    $avatar = substr($var4,1,6);
-      if($avatar=="avatar"){ // image ou avatar prendre l'avatar
-        $baseavatars = constante("baseavatars");
-        $cheminfichierimage = $baseavatars.substr($var4,1);
-//        $cheminfichierimage = tracelechemin($donnee2,$base,substr($var4,1));
-//        if(File_exists($cheminfichierimage)){$cheminfichierimage=$cheminfichierimage;}else{$cheminfichierimage="toto est absent";};
-      }else{ // image ou avatar prendre l'image
-        // fichier de l'avatar personnel dans la base des avatars et compatibilité avec version précéedente
-        $baseavatarperso=constante("baseavatarperso");
-        $testfichierimage = tracelechemin($var6,$baseavatarperso,substr($var4,1,-1));
-        if(File_exists($testfichierimage)){
-          $cheminfichierimage = "".tracelechemin($var6,$base,substr($var4,1)); }
-        else{
-          // ancienne base
-          $cheminfichierimage = tracelechemin($donnee2,$base,substr($var4,1));
-        };
-      }; // fin de image ou avatar
-
-*/      
+   
       $baseavatars = constante("baseavatars");
       $baseavatarperso=constante("baseavatarperso");
       $cheminsansfichier = tracelechemin($var6,$baseavatarperso,"");     
       
       if(!is_dir($cheminsansfichier)) {
         // le répertoire perso n'existe pas prendre l'avatar type
-        $cheminfichierimage = $baseavatars.substr($var4,1);
-//        $cheminfichierimage = $baseavatars."avatar02.png ";
+        if(substr($var4,1,6)=="avatar"){
+          // si le fichier est par défaut est de tye avatar...png
+          $cheminfichierimage = $baseavatars.substr($var4,1);
+        }else{
+          // sinon le fichier par défaut est un nom de fichier
+          $cheminfichierimage = tracelechemin($donnee2,$base,substr($var4,1));
+        }; // fin du si avatar ou lien fichier defaut
       }else{
         // le répertoire existe
         $lesfichiers = scandir($cheminsansfichier);
         $avatar=$lesfichiers[count($lesfichiers)-1]." ";
         if(substr($avatar,0,1)!="."){
-          $cheminfichierimage = $cheminsansfichier.$avatar; // fichier avatar
+          // fichier avatar dans image perso
+          if(substr($avatar,-4)!=".txt"){
+            $cheminfichierimage = substr($cheminsansfichier.$avatar,0,-1);
+            $cheminfichierimage = file_get_contents($cheminfichierimage)."|"; 
+          }else{
+            $cheminfichierimage = $cheminsansfichier.$avatar; 
+          };
         }else{
+          // pas de fichier avatar dans image perso
           $cheminfichierimage = $baseavatars.substr($var4,1);
         };
       };   
@@ -150,7 +142,7 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       if($lademande==39629){  $monavatar = noteavatar($var3,$donnee4/$var4); echo cryptepourtransfert($monavatar);  };// fin de "monavatar"
       if($lademande==59570){ $demandeaqui = fichierperso($var3,"demandeaqui"); echo cryptepourtransfert($demandeaqui); }; // fin de "demandeaqui"
       if($lademande==61612){ $nouveaucompte=inscription($var3,$donnee5); echo cryptepourtransfert($nouveaucompte); }; // fin de "inscription"
-      if($lademande==71900){  $monavatar = retireavatar($var3,$donnee4/$var4); echo cryptepourtransfert($monavatar);  };// fin de "retireavatar"
+      if($lademande==71900){  $monavatar = retireavatar($var3,$donnee4/$var4,$donnee5); echo cryptepourtransfert($monavatar);  };// fin de "retireavatar"
       if($lademande==86012){ $mesvaleursref = fichierperso($var3,"mesvaleursref"); echo cryptepourtransfert($mesvaleursref); }; // fin de "mesvaleursref"
       if($lademande==87558){ $noteproposition = notetransaction($var3,"mestransactions",$donnee5); echo cryptepourtransfert($noteproposition); }; // fin de "maproposition"
       if($lademande==116020){ $mestransactions = fichierperso($var3,"mestransactions"); echo cryptepourtransfert($mestransactions); }; // fin de "mestransactions"
@@ -1064,7 +1056,7 @@ function inputvalide($entree){
 function inscription($var3,$contenufichier){
   $identifiantlocal = $var3; 
   $chaineinscription = substr($contenufichier,2,strlen($contenufichier)-4); 
-   $avatar = constante("avatar"); $localite = constante("localite");
+  $avatar = constante("avatar"); $localite = constante("localite");
   list($nompublic, $numpublic, $numprive, $numsecret) = explode(",", $chaineinscription);
   $etatutilisateur = testeutilisateurunique($numprive,$nompublic);
   // $nompublic garde les majuscules
@@ -1587,14 +1579,21 @@ function resumecompte($var3){
 };
 
 // retire avatar personnel et remplace par avatar par défaut
-function retireavatar($var3,$nopseudo){
+function retireavatar($var3,$nopseudo,$fichieravatar){
     $baseavatarperso=constante("baseavatarperso");
+//    return "TEST - ||".$fichieravatar."||";
     $cheminsansfichier = tracelechemin($nopseudo,$baseavatarperso,"","ouvre");    
     array_map('unlink', glob($cheminsansfichier.$nopseudo.'avatar.*'));
-retiredir($cheminsansfichier);
     $baseavatars = constante("baseavatars");
-    $nomavatars = constante("avatar");
-    $cheminavatar = $baseavatars.$nomavatars;
+    if($fichieravatar=="\"avatarannule.png\""){
+      retiredir($cheminsansfichier);
+      $nomavatars = constante("avatar");
+      $cheminavatar = $baseavatars.$nomavatars;
+    }else{
+      $nomavatars = substr($fichieravatar,1,-1);
+      $cheminavatar = $baseavatars.$nomavatars;
+      file_put_contents($cheminsansfichier.$nopseudo."avatar.txt", $cheminavatar);
+    };
     return "ANAV - ".substr($cheminavatar,1);
 };
 

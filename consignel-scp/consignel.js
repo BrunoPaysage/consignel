@@ -776,7 +776,7 @@ function dureerestante(dateetra,dureetra,d){
 }; /* fin de dureerestante */
 
 /* Change l'avatar avec réduction de fichier et envoi vers le serveur */
-function changeavatar (file) {
+function changeavatar (file,defaut) {
     if(typeof file ==="object"){
       var reader = new FileReader();
       reader.onloadend = function(evt) {  
@@ -784,7 +784,8 @@ function changeavatar (file) {
       };
       reader.readAsDataURL(file);
     }else{
-      demandefichier("","retireavatar","","","");
+      defaut=defaut.substring(defaut.lastIndexOf("/")+1);
+      demandefichier("","retireavatar","",defaut,"");
     };
 };
 
@@ -1167,7 +1168,7 @@ $("#demandecompensationconfirmedetails").click(function() { changeClass(demandem
 /* ajout des onclick preferences */
 $(".testindicateurdd input").change(function() { changesuivi(); });
 
-$("#fichieravatarpoubelle").click(function() { changeavatar("annuleavatar"); });
+$("#fichieravatarpoubelle img").click(function() { changeavatar("annuleavatar",$(this).attr("src")); });
 $("#inputfichieravatar").change(function(evt) { 
   var file = evt.target.files[0];
   changeavatar(file); });
@@ -1367,6 +1368,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var5 = encryptepourtransfert(var5);
     var5="&var5="+var5
   };  
+  if(demandefich=="retireavatar"){
+    var5 = encryptepourtransfert("\""+quelfichierlocal+"\""); /* nom de l'avatar type */
+    var5="&var5="+var5;
+  };
 
   demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
 
@@ -2319,6 +2324,7 @@ function sansespace(chaine){
 };
 
 /* function suivitransfertliste(transfert,origine,destination){$('.informations').html(transfert+" provient de "+origine+" arrive dans "+destination)}; */
+
 function suivisortable(suivisortable1,suivisortable2,suivisortable3){ 
   $("#suiviappli").prepend("suivisortable(suivisortable1,suivisortable2,"+suivisortable3+") <br>");
   /* (suivisortable1+" - "+suivisortable2+" - "+suivisortable3); // passage d'un div à l'autre */
