@@ -617,7 +617,7 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     if($statut == "PACT"){ $demandeurchaine = $demandeurchaine; };
     if($statut == "PEXP"){ $demandeurchaine = $var38; };
     if($statut == "AEXP"){ $demandeurchaine = $var35; };
-    if($statut == "TREF"){ $demandeurchaine = $var35; $numrefuseur =  preg_replace( "/\D/", "", $demandeurchaine);};
+    if($statut == "TREF"){ $demandeurchaine = $var35; $numrefuseur =  preg_replace( "/\D/", "", $demandeurchaine); };
    
     if($compensation[0] == "impact négatif"){ $consigne = -$compensation[1] ; };
     // rembourser le proposeur des dépenses engagées
@@ -628,18 +628,51 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     ajouteaufichier($cheminfichier.$nomfichiersuivi, $transactionsuivi); 
     // ajout fichier ann(exp)xxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
     ajouteaufichier($cheminfichier.$nomfichierann, $transactionsuivi); 
-    // ajout au fichier xxxxx-mesproposition.json dans la base du proposeur
+    // ajout au fichier xxxxx-mestransactions.json dans la base du proposeur
     $base=constante("base");
-    if($var38="\DA↺\"\n"){$base=$base."/DA↺/";}; // note les refus si le répertoire existe
-    $nouveautraann = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,$demandeur);
-    $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); 
-    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraann.",\n");
+    $basedac=constante("basedac");
+    if($var38=="\"DA↺\"\n"){
+      $cheminsansfichier = substr(tracelechemin("",$basedac,""),0,-1); // DA↺
+      // $nomproposeur = "DA↺";
+      $nomrefuseur = lepseudode($numrefuseur);
+      // ajoute refus dans -mestransactions.json du DA↺
+      $nouveautraref = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,substr($nomrefuseur,1,-1),"DA↺");
+      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraref.",\n");
+      // ajoute refus dans -mestransactions.json du refuseur
+      $norefuseur=leiddupseudo($numrefuseur);
+      $chemindestinataire=tracelechemin($norefuseur,$base,$norefuseur);
+      $nomrefuseur = lepseudode($norefuseur);
+      ajouteaufichier($chemindestinataire."-mestransactions.json", $nouveautraref.",\n");
+    }else{
+      $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); // proposeur vérifier avec expiration
+      $nomproposeur = lepseudode($demandeur);
+      // ajoute l'annulation ou l'expiration dans -mestransactions.json du proposeur
+      if($statut == "TREF"){
+        $norefuseur=leiddupseudo($numrefuseur);
+        $chemindestinataire = tracelechemin($norefuseur,$base,$norefuseur);
+        $nomdestinataire = lepseudode($norefuseur);
+        $nomproposeur=substr($nomproposeur,1,-1);
+      }else{
+        $nomproposeur=substr($nomproposeur,1,-1);
+        $nomdestinataire = $nomproposeur;
+      };
+      $nouveautraref = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,$nomdestinataire,$nomproposeur);
+      if($statut == "TREF"){ajouteaufichier($chemindestinataire."-mestransactions.json", $nouveautraref.",\n");};
+      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraref.",\n");
+    };
+    
+//    return "TEST - "."cheminsansfichier: |||".$cheminsansfichier."||| chemindestinataire: ||".$chemindestinataire."||    | nomproposeur: |".$nomproposeur."|"."||    | nomrefuseur: |".$nomrefuseur."|"."||    | nomdestinataire: |".$nomdestinataire."|";
+
+    
+    
+    
     // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraann);
     $idtraprecedente = $dernieresidtra[0];
     $anciennete = $dernieresidtra[4];
     $nojourancien = $dernieresidtra[8];
     $nojour = $dernieresidtra[9];
+        
     // fichier de chainage des transaction bloc à écrire
     
     // Calcul nouveau solde proposeur $soldeconsigneldisponibleproposeur déjà fait $nouveausolde pas de paiement à faire déjà calculé dans impact
@@ -653,11 +686,12 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
      remplacefichier($cheminsansfichier."-resume.json", $nouveauresumeann);
     // Mise à jour du fichier -suiviresume.json dans la base du proposeur
     ajouteaufichier($cheminsansfichier."-suiviresume.json",$idtraann.",".$nouveauresumeann."\n");
-    
-    // Retrait de la liste des opportunités de l'accepteur si l'accepteur est identifié
+
+    //  si l'accepteur est identifié Retrait de la liste des opportunités de l'accepteur
      if($demandeurchaine != "0"){
       $nodemandeur =  leiddupseudo(substr($demandeurchaine,1,strlen($demandeurchaine)-2));
       $listeopportunite = retiredelaliste($nodemandeur,"mesopportunites",$nomfichiertra);
+      
       // à écrire si refus lors d'une opération d'inscription renvoi d'un message donnant la procédure de fermeture du compte
       $inscritutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001644192\"")); if(substr($inscritutilisateur,0,4)=="_act"){ 
         $toto= supprimeutilisateur($nodemandeur,$numrefuseur);
@@ -965,11 +999,13 @@ function fichierperso($var3,$nomfichier){
   $base=constante("base");
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");
   $contenufichier ="";
+  $findeligne="<br>";
+  if($nomfichier=="mestransactions"){$findeligne=" ";};
   if (file_exists($cheminfichier)) { // vérification si le fichier existe
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
     while (!feof($fichierencours) ) { // cherche dans les lignes
       $laligne = decryptelestockage(fgets($fichierencours,1024));
-      $contenufichier = $contenufichier.$laligne."<br>"; // ligne par ligne
+      $contenufichier = $contenufichier.$laligne.$findeligne; // ligne par ligne
     }; // Fin de cherche dans les lignes
     fclose($fichierencours); // fermeture du fichier
   }else{
@@ -1581,7 +1617,6 @@ function resumecompte($var3){
 // retire avatar personnel et remplace par avatar par défaut
 function retireavatar($var3,$nopseudo,$fichieravatar){
     $baseavatarperso=constante("baseavatarperso");
-//    return "TEST - ||".$fichieravatar."||";
     $cheminsansfichier = tracelechemin($nopseudo,$baseavatarperso,"","ouvre");    
     array_map('unlink', glob($cheminsansfichier.$nopseudo.'avatar.*'));
     $baseavatars = constante("baseavatars");
@@ -1857,7 +1892,7 @@ function tracelechemin($numerofichier,$sousrep,$nomfichier,$defriche="") {
 };
 
 // renvoie la proposition acceptée ou annulée
-function transactionaccann($prefixe,$idtra,$contenufichiertra,$dateaccepte,$noaccepteur){
+function transactionaccann($prefixe,$idtra,$contenufichiertra,$dateaccepte,$noaccepteur,$nomproposeur=""){
   $notra = $prefixe.substr($idtra,3);
   $acclocal = $contenufichiertra;
   $cherchenotra = "/(".$idtra.")/"; 
@@ -1865,6 +1900,7 @@ function transactionaccann($prefixe,$idtra,$contenufichiertra,$dateaccepte,$noac
   $acclocalenphp = json_decode($acclocal,true);
   $acclocalenphp[$notra][2] = $dateaccepte;
   $acclocalenphp[$notra][3] = $noaccepteur;
+  if($nomproposeur!=""){$acclocalenphp[$notra][] = $nomproposeur;};
   $acclocal = json_encode($acclocalenphp);
   return $acclocal;
 };
@@ -1984,6 +2020,7 @@ function constante($nom){
   if($nom == "coefsalaireindecent"){ return 20; }; //  revenuindecent = dureeactiv * minimumviable * coefsalaireindecent;
   if($nom == "maxcompte"){ return 54600; }; //  = salairehmoyen * 52semaines * 35h;
   if($nom == "base"){ return "../consignel-base/"; }; // pour utilisation depuis le php
+  if($nom == "basedac"){ return "../consignel-base/1/"; }; // pour utilisation depuis le php
   if($nom == "baseutilisateurs"){ return "../consignel-base/0"; };
   if($nom == "basehistorique"){ return "../consignel-base/2/"; };
   if($nom == "baseavatars"){ return "../consignel-app/"; }; 

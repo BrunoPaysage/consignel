@@ -1179,19 +1179,21 @@ $("#localstoragepublic").change(function() { autoriselocalstorage(); });
 $("#localstoragemoi").change(function() { autoriselocalstorage(); });
 $("#fichierspourtouspoubelle").click(function() { videlocalstorage(["cherchequoimini","cherchefaire","cherchequoi","chercheparqui","cherchepourqui","valeursref"]); videlediv(".stockedansdiv"); videautocomplete(); chargevaleursrefmini(); });
 $("#fichierspourtouscharge").click(function() { chargetout(["cherchequoimini","cherchefaire","cherchequoi","chercheparqui","cherchepourqui","valeursref"]); });
-$("#chargecherchequoimini").click(function() { charge("cherchequoimini"); });
+$("#chargecherchequoimini").click(function() { charge("cherchequoimini"); charge("valeursref"); });
 $("#chargecherchefaire").click(function() { charge("cherchefaire"); });
 $("#chargecherchequoi").click(function() { charge("cherchequoi"); });
 $("#chargecherchepourqui").click(function() { charge("cherchepourqui"); });
 $("#chargechercheparqui").click(function() { charge("chercheparqui"); });
-$("#chargevaleursref").click(function() { charge("valeursref"); });
+$("#chargevaleursref").click(function() { charge("valeursref"); charge("cherchequoimini");  });
 
 $("#fichierspersonnelspoubelle").click(function() { videlocalstorageperso(["resume","quoi","mesvaleursref","mestransactions","demandeuneproposition","mesopportunites","demandeaqui"]); videlediv(".mstockdansdiv"); videautocomplete(); chargevaleursrefmini(); });
 $("#fichierspersonnelschargemoi").click(function() { chargemoitout(["resume","quoi","mesvaleursref","mestransactions","demandeuneproposition","mesopportunites","demandeaqui"]); });
 $("#chargemoiresume").click(function() { chargemoi("resume"); });
-$("#chargemoiquoi").click(function() { chargemoi("quoi"); });
-$("#chargemoimesvaleursref").click(function() { chargemoi("mesvaleursref"); });
+$("#chargemoiquoi").click(function() { chargemoi("quoi"); chargemoi("mesvaleursref"); });
+$("#chargemoimesvaleursref").click(function() {  chargemoi("quoi"); chargemoi("mesvaleursref"); });
 $("#chargemoimestransactions").click(function() { chargemoi("mestransactions"); });
+$("#sauvecsvmestransactions").click(function() { enregistre("mestransactions","csv"); });
+$("#sauvejsonmestransactions").click(function() { enregistre("mestransactions","json"); });
 $("#chargemoidemandeuneproposition").click(function() { chargemoi("demandeuneproposition"); });
 $("#chargemoimesopportunites").click(function() { chargemoi("mesopportunites"); });
 $("#chargemoidemandeaqui").click(function() { chargemoi("demandeaqui"); });
@@ -1615,6 +1617,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break;
         default :
         /* Fichier demandé au serveur et chargé */
+// if(retourdansdiv=="#mstockmestransactions"){alert(responseTxt);};
         $(retourdansdiv).html(encryptepourdiv(responseTxt));
         $("#acceptetransactionstatut").html("");           menudetailproposition("attente");
         $(dansspansuivi).html("<i class='eval4'> - "+demandefich+" chargé depuis le serveur" + " -</i>"); 
@@ -1662,6 +1665,17 @@ function diffjour(datefichier){
   var d2 = new Date(); // date actuelle 
   var WNbJours = d2.getTime() - d1.getTime();
   return Math.ceil(WNbJours/86400000)-1; // 1000*60*60*24 
+};
+
+/* permet d'enregistrer un fichier sur l'ordi de l'utilisateur */
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
 };
 
 /* efface l'entête utilisateur inconnu */
@@ -1790,11 +1804,29 @@ var contenuencode="encode pour transfert "+clairlocal;
 return contenuencode;
 };
 
+/* Prépare le fichier texte avant de download */
+function enregistre(action,format){
+  var divdonnees="";
+  if(action=="mestransactions"){
+    divdonnees="#mstockmestransactions" ;
+    if(format=="json"){
+      var contenu="{ "+decryptediv($(divdonnees).text())+" }";
+//    alert(contenu);
+      download("mestransactions.json", contenu);
+    };
+    if(format=="csv"){
+      var contenu=decryptediv($(divdonnees).text());
+//    alert(contenu);
+      download("mestransactions.txt", contenu);
+    };
+  };
+};
+
+/* transfert de l'avatar au serveur et action en retour */
 function envoiavatar (data) {
   var limage=JSON.stringify({ avatar: data });
   limage=encryptepourtransfert(limage);
   var demande=demandefichier("","monavatar","","","")
-//  var lurl='processjson2.php'+demande;
   var serveurphp=constante("php");
   $("#inputfichieravatar").removeClass("eval0");
   var lurl= serveurphp+demande;
@@ -1804,7 +1836,6 @@ function envoiavatar (data) {
       type: 'POST',
       error: function (jqXHR, exception) { alert("Il faut se connecter avec les deux mots secrets pour changer votre image"); },
       success: function(responseTxt, statusTxt, xhr) {
-//        if(statusTxt == "success") {
           $("#suiviappli").prepend("fichier monavatar arrivé depuis le serveur<br>");
           responseTxt = decryptetransfert(responseTxt);
           var testretour = responseTxt.substring(0,4);
@@ -1823,8 +1854,7 @@ function envoiavatar (data) {
             default :
             break;
         }; /* Fin du switch */
-//        };
-      } // Un éventuel callback
+      } // fin action après succès envoi au serveur
     });
   };
 
