@@ -96,43 +96,52 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
     // contenu de la proposition
     var inputdemande = nettoieinputtra($("#confirmationinputcode").val()) ;
     var numproposetra = inputdemande.substring(14);
+
+    if(inputdemande.substring(0,8)<"20200801"){
+      var nodebut=1+nomproposition.indexOf(":");
+      var debut=nomproposition.substring(0,nodebut)+" { \"sommaire\": ";
+      var fin=nomproposition.substring(nodebut)+" }";
+      nomproposition=debut+fin;
+    }; // reformulation du jason pour accepter l'ancienne manière d'écrire la proposition
+ 
     var numtra = "tra"+inputdemande
     try {var objson = JSON.parse(nomproposition); }
     catch (err){return;}; // proposition mal écrite ou inexistante
     // $("#demandeconfirme").append( numtra+"<br>"); // nom de la transaction
     // $("#demandeconfirme").append( objson[numtra][0]+"<br>"); // numéro de l'offre
-    var numoff = "off"+objson[numtra][2]+"_"+objson[numtra][0]; // id de l'offre
-    var dateetra = objson[numtra][2].substring(0,8); // date de la transaction
-    var dureetra = objson[numtra][4]; // duree de la transaction
+    
+    var numoff = "off"+objson[numtra]["sommaire"][2]+"_"+objson[numtra]["sommaire"][0]; // id de l'offre
+    var dateetra = objson[numtra]["sommaire"][2].substring(0,8); // date de la transaction
+    var dureetra = objson[numtra]["sommaire"][4]; // duree de la transaction
     var ecartjours = diffjour(dateetra); // nombre de jours depuis la proposition
     $("#offrenbjours sub").html((dureetra-ecartjours)+" j");
     // $("#demandeconfirme").append( objson[numoff][0]+"<br>"); // liste des act offerts
     // $("#demandeconfirme").append( objson[numoff]+"<br>"); // valeurs de l'offre
     var ou="#demandemontantsconfirme"; 
     if(dequi=="matransaction"){ou="#offremontantsconfirme";};
-    afficheproposition(ou,numoff,objson[numoff],numproposetra);
-    var tableauoff = objson[numoff][0].split("act");
+    afficheproposition(ou,numoff,objson[numtra][numoff],numproposetra);
+    var tableauoff = objson[numtra][numoff][0].split("act");
     // $("#demandeconfirme").append( tableauoff.length+"<br>"); // nombre d'actes offerts (+1)
     var i; var nomact;
     for (i = 1; i < tableauoff.length; i++) { 
-      nomact = "off"+objson[numtra][2]+"_"+"act"+tableauoff[i];
+      nomact = "off"+objson[numtra]["sommaire"][2]+"_"+"act"+tableauoff[i];
       // $("#demandeconfirme").append( nomact+"<br>"); // nom de l'act dans le json
       var ou="#demandeconfirme"; if(dequi=="matransaction"){ou="#offreconfirme";};
-      afficheproposition(ou,tableauoff[i],objson[nomact]);
+      afficheproposition(ou,tableauoff[i],objson[numtra][nomact]);
     };
-    var numdem = "dem"+objson[numtra][2]+"_"+objson[numtra][1];
+    var numdem = "dem"+objson[numtra]["sommaire"][2]+"_"+objson[numtra]["sommaire"][1];
     // $("#demandeconfirme").append( objson[numdem][0]+"<br>"); // liste des actes demandés
     // $("#demandeconfirme").append( objson[numdem]+"<br>"); // valeurs de la demande
     var ou="#offremontantsconfirme"; if(dequi=="matransaction"){ou="#demandemontantsconfirme";};
-    afficheproposition(ou,numdem,objson[numdem]);
-    var tableaudem = objson[numdem][0].split("act");
+    afficheproposition(ou,numdem,objson[numtra][numdem]);
+    var tableaudem = objson[numtra][numdem][0].split("act");
     // $("#demandeconfirme").append( tableaudem.length+"<br>"); // nombre d'actes demandés (+1)
     var i;
     for (i = 1; i < tableaudem.length; i++) { 
-      nomact = "dem"+objson[numtra][2]+"_"+"act"+tableaudem[i];
+      nomact = "dem"+objson[numtra]["sommaire"][2]+"_"+"act"+tableaudem[i];
       // $("#demandeconfirme").append( nomact+"<br>");
       var ou="#offreconfirme"; if(dequi=="matransaction"){ou="#demandeconfirme";};
-      afficheproposition(ou,tableaudem[i],objson[nomact]);
+      afficheproposition(ou,tableaudem[i],objson[numtra][nomact]);
     };
     
   };
@@ -141,6 +150,7 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
 /* affiche les items de la proposition */
 function afficheproposition(ou,id,valeurs,numproposetra){
   $("#suiviappli").prepend("afficheproposition(ou,id,variables) <br>");
+//  alert("affiche "+ou+"  "+id+"  "+valeurs+"  "+numproposetra);
   var oulocal=ou; var idlocal =id; var variableslocales = valeurs;
   var numid = idlocal.substring(17);
   var dateid =  idlocal.substring(3,16);
@@ -831,7 +841,6 @@ function choixactivite(itemchoisi){
     };
   }else{ 
     /* existe dans les références */
-    var dansdiv="offrechoisi";
     choisi=choisisansunite(choisi,tabref[1],tabref[2]);
     if (justeunite==1){choisi="..."}; 
     ajoutediv(dansdiv,"act",codechoisi,choisi,1,tabref[2],tabref[3],tabref[4],tabref[5],tabref[6],tabref[7],tabref[8],tabref[9],tabref[10]) ;
@@ -977,7 +986,10 @@ function codetransaction(){
   var codelatransaction=codelenom(latransaction+chaineretour);
   $("#suiviappli").prepend("codetransaction("+latransaction+" --> "+codelatransaction+") <br>");
   $("#idtransaction .codetransaction").html(codelatransaction);
-  var matransaction="\"tra"+ladate+"_"+codelatransaction+"\" : "+latransaction+",<br>"+loffre+",<br>"+lademande+"";
+
+
+// ajout de { "sommaire":
+  var matransaction="\"tra"+ladate+"_"+codelatransaction+"\" : { \"sommaire\": "+latransaction+",<br>"+loffre+",<br>"+lademande+"";
   $("#matransaction").html(matransaction);
 };
 
@@ -1355,7 +1367,9 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     if ($("#matransaction").text()=="..."){
       /* pas de transaction à transférer */
     }else{
-      var5="{ "+$("#matransaction").text()+","+$("#mesact").text() +" } ";
+      
+      // ajout de la fin } 
+      var5="{ "+$("#matransaction").text()+","+$("#mesact").text() +" } } ";
       var5 = encryptepourtransfert(var5);
       var5="&var5="+var5
     };
@@ -1472,7 +1486,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "DTAR":
         $("#acceptetransactionstatut").html("Demander si disponible");
         menudetailproposition("passerdemande");
-        affichedetailproposition(latransaction,propositiondequi);                  break; 
+        affichedetailproposition(latransaction,propositiondequi); break; 
         case "DTAO":
         $("#acceptetransactionstatut").html("Transaction disponible");
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);

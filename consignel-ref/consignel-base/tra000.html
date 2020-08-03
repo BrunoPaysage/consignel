@@ -14,19 +14,20 @@ La combinaison de la date et du codage du contenu permet d'identifier de façon 
 </div>
 <div class="structure">
 <p>La structure est un fichier json. Le stockage est crypté et décrypté pour son utilisation par le script php</p>
-<p>La proposition contient au minimum 5 éléments avec un identifiant (clé) et un tableau (valeur) :</br>
+<p>La proposition contient au minimum 5 éléments avec un identifiant de la transaction (clé) et un tableau (valeur) :</br>
 <ul><li>transaction,</li><li>groupe offre,</li><li>groupe demande,</li><li>les offres du groupe offre,</li><li>les demandes du groupe demande</li></ul>
 <p>Le nombre d'offres dans les groupes est variable mais au minimum 1 élément.<br>
 Le fichier comporte une seule chaine sans retour à la ligne dans le json.</p>
 <p>
-{ "identifianttransaction" : ["codeidentifiantgroupeoffre","codeidentifiantgroupedemande","datetransaction","codeaccepteur","duréevalide"],"identifiantgroupeoffre" : ["listedesoffres",quantité,"unité",↺,$,mlc,*E,durée,*S] ,"identifiantgroupedemande" : ["listedesdemandes",quantité,"unité",↺,$,mlc,*E,durée,*S] ,"identifiantoffre" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,1,1],"identifiantdemande" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,0,0] }
+{ "identifianttransaction" : { "sommaire" :["codeidentifiantgroupeoffre","codeidentifiantgroupedemande","datetransaction","codeaccepteur","duréevalide"],"identifiantgroupeoffre" : ["listedesoffres",quantité,"unité",↺,$,mlc,*E,durée,*S] ,"identifiantgroupedemande" : ["listedesdemandes",quantité,"unité",↺,$,mlc,*E,durée,*S] ,"identifiantoffre" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,1,1],"identifiantdemande" : ["description",quantité,"unité",↺,$,mlc,*E,durée,*S,0,0] } }
 </p>
 </div>
 <div class="contenu">
 <p>Transaction<br>
-"identifianttransaction" : ["codeidentifiantgroupeoffre","codeidentifiantgroupedemande","datetransaction","codeaccepteur","duréevalide"],</p>
+"identifianttransaction" :</p>
 <ul>
-<li>"identifianttransaction" : "tra00000000_0000_0000000" nom de la transaction identique au nom de fichier sans l'extension<ul>
+<li>"identifianttransaction" : "tra00000000_0000_0000000" nom de la transaction identique au nom de fichier sans l'extension</li>
+<li>"sommaire" :  ["codeidentifiantgroupeoffre","codeidentifiantgroupedemande","datetransaction","codeaccepteur","duréevalide"],</li>
 <li>"codeidentifiantgroupeoffre" : "0000000" code permettant de former l'identifiant du groupeoffre avec la date et l'heure de la transaction</li>
 <li>"codeidentifiantgroupedemande" : "0000000" code permettant de former l'identifiant du groupedemande avec la date et l'heure de la transaction</li>
 <li>"datetransaction" : "00000000_0000" date et heure de la même manière que dans l'identifiant de transaction et du nom de fichier</li>

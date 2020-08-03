@@ -435,7 +435,6 @@ function acceptetransaction($var3,$notransaction){
       if(substr($noteproposition,0,4)=="PEAA"){
         return "PTDD - ".substr($noteproposition,7)."||".$idnouveautra;
       }else{
-//        return "TEST - ".$noteproposition."||".$idnouveautra;
         return $noteproposition;
       };
        // fin du si enregistrée ou pas
@@ -661,11 +660,6 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
       ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraref.",\n");
     };
     
-//    return "TEST - "."cheminsansfichier: |||".$cheminsansfichier."||| chemindestinataire: ||".$chemindestinataire."||    | nomproposeur: |".$nomproposeur."|"."||    | nomrefuseur: |".$nomrefuseur."|"."||    | nomdestinataire: |".$nomdestinataire."|";
-
-    
-    
-    
     // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraann);
     $idtraprecedente = $dernieresidtra[0];
@@ -766,6 +760,7 @@ function antitaglettre($entree){
 function cherchetransaction($var3,$notransaction){
   $demandeur = $var3;
   $statuttransaction = transactionstatut($demandeur, $notransaction);
+
 //  $debut = substr($statuttransaction,0,7);
 
 // debut == "ADAC - "  Proposition déjà acceptée par vous 
@@ -1011,6 +1006,7 @@ function fichierperso($var3,$nomfichier){
   }else{
     $contenufichier = "NULL - ".$nomfichierlocal;
   };
+  if($nomfichier=="mestransactions"){$contenufichier=substr($contenufichier,0,-5) ;};
   return $contenufichier;
 };
 
@@ -1278,10 +1274,9 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $jsonenphp = json_decode($chainejson,true);
   if(json_last_error_msg() != "No error"){ return "DTNC - erreur reception proposition"; };
   // Demande au DA↺ non autorisée
-  if($jsonenphp[$idtra][3]==182097){ return "DTRD - Proposition non enregistré. Le DA↺ ne peut pas être destinataire d'une proposition"; };
+  if($jsonenphp[$idtra]["sommaire"][3]==182097){ return "DTRD - Proposition non enregistré. Le DA↺ ne peut pas être destinataire d'une proposition"; };
   // Demande à soi même non autorisée
-  //$destinataireautorise=testdestinatairedepot($jsonenphp[$idtra][3],$var3);
-  if("nonautorise"==testdestinatairedepot($jsonenphp[$idtra][3],$var3)){
+  if("nonautorise"==testdestinatairedepot($jsonenphp[$idtra]["sommaire"][3],$var3)){
     return "DTRA - Proposition non enregistré. Le destinataire ne peut pas être soi-même";
   };
   $paiement = paiement($jsonenphp,$idtra);
@@ -1309,7 +1304,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
     }; // Fin de while cherche dans les lignes
     fclose($fichierencours); // fermeture du fichier
   }else{
-  // le fichier n'existe pas $notetra = "oui"; par défaut
+  // le fichier de transactions pour l'heure en cours n'existe pas on peut continuer
   };
   // vérifications complémentaires
   $resumecpt = resumecompte($var3); 
@@ -1317,15 +1312,15 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $soldeconsigneldisponible = $derniercompte[0];
   $soldeconsignelparjour = $derniercompte[2];
   if($soldeconsignelparjour =="INF"){$soldeconsignelparjour = 10;}; // à faire remplacer par variable inscription
-  // $soldedollardisponible = ; $soldemlcdisponible = ; à faire
-  $idoff = "off".$jsonenphp[$idtra][2]."_".$jsonenphp[$idtra][0]; // identification de l'offre
-  $consigneloffre = $jsonenphp[$idoff][3]; 
+
+// $soldedollardisponible = ; $soldemlcdisponible = ; à faire
+  $idoff = "off".$jsonenphp[$idtra]["sommaire"][2]."_".$jsonenphp[$idtra]["sommaire"][0]; // identification de l'offre
+  $consigneloffre = $jsonenphp[$idtra][$idoff][3]; 
   if($consigneloffre > 0){$consigneloffre=0;}; // Le plus ne sera versé que si la proposition est acceptée. Le moins est déduit immédiatement. Il sera remboursé si la proposition est annulée.
   
   // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
   
-  $iddem = "dem".$jsonenphp[$idtra][2]."_".$jsonenphp[$idtra][1]; // identification de la demande
-
+  $iddem = "dem".$jsonenphp[$idtra]["sommaire"][2]."_".$jsonenphp[$idtra]["sommaire"][1]; // identification de la demande
  
   // détection de demande d'inscription ou de vérification d'utilisateur unique
   $debutverifutilisateur = strpos($chainejson, "_act0001760145\""); 
@@ -1337,14 +1332,14 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   // demande d'inscription d'utilisateur unique 
   if( ($verifutilisateuroffdem == "off" ) && ( $inscritutilisateuroffdem == "dem" ) && !$debutconfirmutilisateur ){
     // identification du destinataire de l'offre 
-    if($jsonenphp[$idtra][3]=="0"){
+    if($jsonenphp[$idtra]["sommaire"][3]=="0"){
       return "DIMF - Demande d'inscription il manque A qui (nom public du nouvel utilisateur)";
       $destinataire = "0";  
     }else{
-      $destinataire = leiddupseudo($jsonenphp[$idtra][3]); 
+      $destinataire = leiddupseudo($jsonenphp[$idtra]["sommaire"][3]); 
       if($destinataire=="inconnu"){
         if($verifutilisateuroffdem=="off"){
-          $numutilisateur= $jsonenphp[$idtra][3]; 
+          $numutilisateur= $jsonenphp[$idtra]["sommaire"][3]; 
           // vérification si le proposeur est autorisé à faire l'inscription en fonction de la toile de confiance avec numéro demandeur et date annéejour
           $nojour = date_format(date_create(substr($idtra,3,8)),"z");
           if (strlen($nojour) == 3){ $ladate = substr($dateaccepte,0,4).$nojour; }else{
@@ -1386,10 +1381,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   if( $debutconfirmutilisateur && ( !$debutverifutilisateur )  ){
     return "DIMF - Demande mal formulée pour la confirmation d'inscription";
   };
-  
- 
-  
-  $consigneldemande = $jsonenphp[$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
+  $consigneldemande = $jsonenphp[$idtra][$iddem][3]; // $dollaroffre = $jsonenphp[$idoff][4]; $mlcoffre = $jsonenphp[$idoff][5];
     $nbjoursenreserve=$soldeconsigneldisponible/$soldeconsignelparjour;
     $nbjoursselonreserve=7;
     if($nbjoursenreserve>30){$nbjoursselonreserve+=7;};
@@ -1406,18 +1398,19 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $cheminfichier = ouvrelechemin($idtra); 
   $nomfichier = $idtra.".json";
   ajouteaufichier($cheminfichier.$nomfichier, $transactionindex);
+  
   // fichier des de suivi des transactions dans l'heure courante  dans consignelbase2
-  $transactionsuivi = "\"".$idtra."\",\"".implode("\",\"", $jsonenphp[$idtra])."\",\"".$consigneldemande."\",\"".$var3."\"\n";
+  $transactionsuivi = "\"".$idtra."\",\"".implode("\",\"", $jsonenphp[$idtra]["sommaire"])."\",\"".$consigneldemande."\",\"".$var3."\"\n";
   $nomfichier = substr($idtra,0,14)."-suivi.json";
   ajouteaufichier($cheminfichier.$nomfichier, $transactionsuivi);
   // fichier des transactions dans le compte de l'utilisateur
 //  $transaction = preg_replace( "/(],\")|(] ,\")/", "],\n\"", $transaction);
 //  $transaction = preg_replace( "/^({ )/", "", $transaction);
 //  $transaction = preg_replace( "/(] })/", "],\n", $transaction);
-  $transaction = $transaction.",\n";
+  $transaction2 = substr($transaction,1,-1).",\n";
   $base=constante("base");
-  $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");  
-  ajouteaufichier($cheminfichier,$transaction);
+  $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");  // -mestransactions.json
+  ajouteaufichier($cheminfichier,$transaction2);
   // fichier de l'ordre des transaction
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume2dates.json");  
   $dernieresidtra = ajouteaufichier2dates($cheminfichier,$idtra);
@@ -1425,7 +1418,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
   $anciennete = $dernieresidtra[4];
   $nojourancien = $dernieresidtra[8];
   $nojour = $dernieresidtra[9];
-  
+ 
   // fichier de chainage des transaction bloc à écrire
   
   // met à jour le solde de consignel
@@ -1470,9 +1463,9 @@ function ouvrelechemin($nomtransaction){
 // teste si la proposition de transaction comporte un achat ou vente de monnaie
 function paiement($propositionenjson,$nompropostion){
   $paiement = ["test",0,0,0,0,0,0];
-  $nooffretra = $propositionenjson[$nompropostion][0];
-  $nodemandetra = $propositionenjson[$nompropostion][1];
-  $nodatetra = $propositionenjson[$nompropostion][2];
+  $nooffretra = $propositionenjson[$nompropostion]["sommaire"][0];
+  $nodemandetra = $propositionenjson[$nompropostion]["sommaire"][1];
+  $nodatetra = $propositionenjson[$nompropostion]["sommaire"][2];
 
   $offtra = "off".$nodatetra."_".$nooffretra;
   $listeactsoff = $propositionenjson[$offtra][0];
