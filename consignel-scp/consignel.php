@@ -208,6 +208,9 @@ function acceptetransaction($var3,$notransaction){
     // récupération du contenu de la transaction
     if (file_exists($cheminfichier.$nomfichiertra)) {
       $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
+      $datetra=substr($idtra,3,8);
+      if($datetra<"20200801"){ $contenufichiertra=transactionformat202008($contenufichiertra); };
+      
     }else{
       return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
     };
@@ -248,8 +251,7 @@ function acceptetransaction($var3,$notransaction){
     $dateaccepte = date("Ymd_Hi");
     if($var38=="\"DA↺\"\n"){
     $noproposeur = "\"DA↺\"\n";
-    $var38nombre= "DA↺";
-    $var38chaine = $var35;
+//    $var38nombre= preg_replace( "/\D/", "", $var35);
     }else{
     $noproposeur = preg_replace( "/\D/", "", $var38);
     $var38nombre= preg_replace( "/\D/", "", $var38);
@@ -264,9 +266,11 @@ function acceptetransaction($var3,$notransaction){
     
     // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
     $base=constante("base");
-    $pseudoaccepteur=lepseudode($var38nombre, "noid");    
-    $pseudoaccepteurlettre=antitaglettre($pseudoaccepteur);    
-    $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteur);
+    $pseudoaccepteur=lepseudode($var3, "noid");    
+    $pseudoaccepteurlettre=antitaglettre($pseudoaccepteur); 
+    $pseudoproposeur=antitaglettre(lepseudode($var38nombre, "noid"));
+    if($var38=="\"DA↺\"\n"){$pseudoproposeur="DA↺";};
+    $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteurlettre,$pseudoproposeur);
     $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc.",\n");
     // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
@@ -394,6 +398,8 @@ function acceptetransaction($var3,$notransaction){
       // transformation en proposition
       if (file_exists($cheminfichier.$nomfichiertra)) {
         $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
+        $datetra=substr($idtra,3,8); 
+        if($datetra<"20200801"){ $contenufichiertra=transactionformat202008($contenufichiertra); };
       }else{
         return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
       };
@@ -1109,26 +1115,31 @@ function inscription($var3,$contenufichier){
 };
 
 // inverse l'offre et la demande d'une proposition
-function inversetransaction($idtra,$contenufichiertra,$dateaccepte,$noproposeur){
+function inversetransaction($idtra,$contenufichiertra,$dateaccepte,$destinataire,$proposeur){
   $idtra2 = substr($idtra,3,14);
-  $nooffre = "off".$idtra2; $cherchenooffre = "/(".$nooffre.")/"; 
-  $nodemande = "dem".$idtra2; $cherchenodemande = "/(".$nodemande.")/"; 
-  $nointerim = "ttt".$idtra2; $chercheinterim = "/(".$nointerim.")/"; 
-  $acclocal = preg_replace( $cherchenooffre, $nointerim , $contenufichiertra);
-  $acclocal = preg_replace( $cherchenodemande, $nooffre , $acclocal);
-  $acclocal = preg_replace( $chercheinterim, $nodemande , $acclocal);
+  $acclocal = $contenufichiertra;
+//  $nooffre = "off".$idtra2; $cherchenooffre = "/(".$nooffre.")/"; 
+//  $nodemande = "dem".$idtra2; $cherchenodemande = "/(".$nodemande.")/"; 
+//  $nointerim = "ttt".$idtra2; $chercheinterim = "/(".$nointerim.")/"; 
+//  $acclocal = preg_replace( $cherchenooffre, $nointerim , $contenufichiertra);
+//  $acclocal = preg_replace( $cherchenodemande, $nooffre , $acclocal);
+//  $acclocal = preg_replace( $chercheinterim, $nodemande , $acclocal);
   $notra = "acc".$idtra2; 
   $cherchenotra = "/(tra".$idtra2.")/"; 
   $acclocal = preg_replace( $cherchenotra, $notra , $acclocal);
+//  $datetra=substr($idtra,3,8);
+//  if($datetra<"20200801"){ $acclocal=transactionformat202008($acclocal); };
+
   $acclocalenphp = json_decode($acclocal,true);
   $notra = "acc".substr($idtra,3);
-  $nooffretra = $acclocalenphp[$notra][0];
-  $nodemandetra = $acclocalenphp[$notra][1];
-  $acclocalenphp[$notra][0] = $nodemandetra;
-  $acclocalenphp[$notra][1] = $nooffretra;
-  $acclocalenphp[$notra][2] = $dateaccepte;
-  if(substr($noproposeur,0,1)=="\""){$noproposeur=substr($noproposeur,1);$noproposeur=substr($noproposeur,0,-1);};
-  $acclocalenphp[$notra][3] = $noproposeur;
+//  $nooffretra = $acclocalenphp[$notra]["sommaire"][0];
+//  $nodemandetra = $acclocalenphp[$notra]["sommaire"][1];
+//  $acclocalenphp[$notra]["sommaire"][0] = $nodemandetra;
+//  $acclocalenphp[$notra]["sommaire"][1] = $nooffretra;
+  $acclocalenphp[$notra]["sommaire"][2] = $dateaccepte;
+  if(substr($destinataire,0,1)=="\""){$destinataire=substr($destinataire,1);$destinataire=substr($destinataire,0,-1);};
+  $acclocalenphp[$notra]["sommaire"][3] = $destinataire;
+  $acclocalenphp[$notra]["sommaire"][5] = $proposeur;
   $acclocal = json_encode($acclocalenphp);
   return $acclocal;
 };
@@ -1280,6 +1291,7 @@ function notetransaction($var3,$nomfichier,$contenufichier){
     return "DTRA - Proposition non enregistré. Le destinataire ne peut pas être soi-même";
   };
   $paiement = paiement($jsonenphp,$idtra);
+
   if ($paiement[0] == "speculation"){ return "DTIN - erreur speculation"; };
   $consigneloffrepaiement = 0; // -$paiement[1]; propositions de paiements en consignel du proposeur à déduire au moment de la proposition déjà compté par le da↺
   $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
@@ -1466,9 +1478,8 @@ function paiement($propositionenjson,$nompropostion){
   $nooffretra = $propositionenjson[$nompropostion]["sommaire"][0];
   $nodemandetra = $propositionenjson[$nompropostion]["sommaire"][1];
   $nodatetra = $propositionenjson[$nompropostion]["sommaire"][2];
-
   $offtra = "off".$nodatetra."_".$nooffretra;
-  $listeactsoff = $propositionenjson[$offtra][0];
+  $listeactsoff = $propositionenjson[$nompropostion][$offtra][0];
   $tableaulisteactsoff = explode("act", $listeactsoff);
   $nombreactes = count($tableaulisteactsoff);
   $monnaiedansoffre = 0;
@@ -1480,7 +1491,7 @@ function paiement($propositionenjson,$nompropostion){
     if ($typetroc != "simpletroc"){
       $monnaiedansoffre = 1; 
       $idact = "off".$nodatetra."_act".$tableaulisteactsoff[$i] ;
-      $idactquantite = $propositionenjson[$idact][1];
+      $idactquantite = $propositionenjson[$nompropostion][$idact][1];
 //      print_r($idact." ".$idactquantite."<br>");
       if($typetroc == "↺"){$paiement[1] += $idactquantite;};
       if($typetroc == "mlc"){$paiement[2] += $idactquantite;};
@@ -1490,7 +1501,7 @@ function paiement($propositionenjson,$nompropostion){
   if ($monnaiedansoffre == 0){ $paiement[0]= "nonspeculation"; };
 
   $demtra = "dem".$nodatetra."_".$nodemandetra;
-  $listeactsdem = $propositionenjson[$demtra][0];
+  $listeactsdem = $propositionenjson[$nompropostion][$demtra][0];
   $tableaulisteactsdem = explode("act", $listeactsdem);
   $nombreactes = count($tableaulisteactsdem);
   $monnaiedansdemande = 0;
@@ -1502,7 +1513,7 @@ function paiement($propositionenjson,$nompropostion){
     if ($typetroc != "simpletroc"){
       $monnaiedansdemande = 1; 
       $idact = "dem".$nodatetra."_act".$tableaulisteactsdem[$i] ;
-      $idactquantite = $propositionenjson[$idact][1];
+      $idactquantite = $propositionenjson[$nompropostion][$idact][1];
 //      print_r($idact." ".$idactquantite."<br>");
       if($typetroc=="↺"){$paiement[4] += $idactquantite;};
       if($typetroc=="mlc"){$paiement[5] += $idactquantite;};
@@ -1529,13 +1540,13 @@ function passedemande($idtra,$contenufichiertra,$dateaccepte,$noproposeur){
   $noinitial=substr($idtra,16);
   $notra="tra".$dateaccepte.$noinitial;
   $contenuenphp = json_decode($contenu,true);
-  $nooffretra = $contenuenphp[$notra][0];
-  $nodemandetra = $contenuenphp[$notra][1];
-  $contenuenphp[$notra][0] = $nodemandetra;
-  $contenuenphp[$notra][1] = $nooffretra;
-  $contenuenphp[$notra][2] = $dateaccepte;
-  $contenuenphp[$notra][3] = $noproposeur;
-  $contenuenphp[$notra][4] = "30";
+  $nooffretra = $contenuenphp[$notra]["sommaire"][0];
+  $nodemandetra = $contenuenphp[$notra]["sommaire"][1];
+  $contenuenphp[$notra]["sommaire"][0] = $nodemandetra;
+  $contenuenphp[$notra]["sommaire"][1] = $nooffretra;
+  $contenuenphp[$notra]["sommaire"][2] = $dateaccepte;
+  $contenuenphp[$notra]["sommaire"][3] = $noproposeur;
+  $contenuenphp[$notra]["sommaire"][4] = "30";
   $contenu = json_encode($contenuenphp);
   $cherche2pt = "/(:)/";  $contenu = preg_replace( $cherche2pt, " :" , $contenu);
   return $contenu;
@@ -1695,13 +1706,13 @@ function revenuinconditionnel($var3){
     $lademande="\"dem".$ladate."_".$codedemande."\" : [\"act000537234\",1,\"u\",0,0,0,0,0,0,0,0]";
     $demandeaqui=$var3;
     $dureeexpire=31;
-    $latransaction= "[\"".$codeoffre."\",\"".$codedemande."\",\"".$ladate."\",\"".$demandeaqui."\",\"".$dureeexpire."\"]";
+    $latransaction= "{ \"sommaire\":[\"".$codeoffre."\",\"".$codedemande."\",\"".$ladate."\",\"".$demandeaqui."\",\"".$dureeexpire."\",\"DA↺\"]";
     $chaineretour = "revenuinconditionnel";
     $codelatransaction=codelenom($latransaction.$chaineretour);
     $matransaction="\"tra".$ladate."_".$codelatransaction."\" : ".$latransaction.",".$loffre.$lademande."";
     $transactionjson="{ ".$matransaction.",".$mesact." } ";  
     $cheminfichier = ouvrelechemin("tra".$ladate."_".$codelatransaction."");
-    ajouteaufichier($cheminfichier."tra".$ladate."_".$codelatransaction.".json", "".$transactionjson."\n");
+    ajouteaufichier($cheminfichier."tra".$ladate."_".$codelatransaction.".json", "".$transactionjson." }\n");
     // note la transaction dans le suivi
     $transactionjson = "\"tra".$ladate."_".$codelatransaction."\",\"".$codeoffre."\",\"".$codedemande."\",\"".$ladate."\",\"".$var3."\",\"31\",\"0\",\"DA↺\"";
     ajouteaufichier($cheminfichier."tra".substr($ladate,0,11)."-suivi.json", "".$transactionjson."\n");
@@ -1884,16 +1895,28 @@ function tracelechemin($numerofichier,$sousrep,$nomfichier,$defriche="") {
   return $ouvrechemin.$nomfichier;
 };
 
+// renvoie la proposition d'avant le 20200801 de transaction avec le format d'après
+function transactionformat202008($chainejson){
+  $pos = strpos($chainejson, "[");
+  $debut=substr($chainejson,0,$pos-1);
+  $fin=substr($chainejson,$pos);
+  return $debut." { \"sommaire\":".$fin." }";
+};
+
 // renvoie la proposition acceptée ou annulée
 function transactionaccann($prefixe,$idtra,$contenufichiertra,$dateaccepte,$noaccepteur,$nomproposeur=""){
   $notra = $prefixe.substr($idtra,3);
+  $datetra=substr($idtra,3,8);
   $acclocal = $contenufichiertra;
   $cherchenotra = "/(".$idtra.")/"; 
   $acclocal = preg_replace( $cherchenotra, $notra , $acclocal);
+  if($datetra<"20200801"){ $acclocal=transactionformat202008($acclocal); };
   $acclocalenphp = json_decode($acclocal,true);
-  $acclocalenphp[$notra][2] = $dateaccepte;
-  $acclocalenphp[$notra][3] = $noaccepteur;
-  if($nomproposeur!=""){$acclocalenphp[$notra][] = $nomproposeur;};
+  $acclocalenphp[$notra]["sommaire"][2] = $dateaccepte;
+  $acclocalenphp[$notra]["sommaire"][3] = $noaccepteur;
+  if(!$acclocalenphp[$notra]["sommaire"][5]){
+    if($nomproposeur!=""){$acclocalenphp[$notra]["sommaire"][] = $nomproposeur;};
+  };
   $acclocal = json_encode($acclocalenphp);
   return $acclocal;
 };

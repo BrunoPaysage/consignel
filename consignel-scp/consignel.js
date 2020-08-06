@@ -1561,7 +1561,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
           menudetailproposition("passerdemandefermee"); 
         }else{
           responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
-          alert("Proposition non conforme. Relancer la page et reformulez la proposition");                    
+          if($("#offrechoisi").is(":visible")){ alert("Proposition non conforme. Relancer la page et reformulez la proposition"); };                  
+          if($("#offreconfirme").is(":visible")){ alert("Le code QR est à montrer au proposeur initial"); };                  
         };
         break; 
         
