@@ -1825,7 +1825,7 @@ function enregistre(action,format){
   if(action=="mestransactions"){
     divdonnees="#mstockmestransactions" ;
     if(format=="json"){
-      var contenu="{ "+decryptediv($(divdonnees).text())+" }";
+      var contenu=""+decryptediv($(divdonnees).text())+"";
 //    alert(contenu);
       download("mestransactions.json", contenu);
     };
