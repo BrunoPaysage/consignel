@@ -910,7 +910,7 @@ function consignelsuivi($propositionenjson,$nompropostion){
 // Contenu d'une transaction latransaction = contenutra( "cheminfichier"."traxxxx.json" )
 function contenutra( $chemincomplet ){
   $fichierencours = fopen($chemincomplet, 'r');
-  $contenutra = decryptelestockage(fgets($fichierencours, 1024));
+  $contenutra = decryptelestockage(fgets($fichierencours, 2048));
   return $contenutra;
 };
 
@@ -1014,9 +1014,9 @@ function fichierperso($var3,$nomfichier){
     $sommaire="";
     $laligneprecedente = "";
     while (!feof($fichierencours) ) { // cherche dans les lignes
-      $laligne = decryptelestockage(fgets($fichierencours,1024));
+      $laligne = decryptelestockage(fgets($fichierencours,2048));
       if($nomfichier=="mestransactions"){
-        $laligne = preg_replace( "/( )/", "", $laligne);
+//        $laligne = preg_replace( "/( )/", "", $laligne);
         $pos1=strpos($laligne,"{");
         $pos2=strpos($laligne,"\"");
         $pos3=strpos($laligne,":");
@@ -1073,7 +1073,44 @@ function fichierperso($var3,$nomfichier){
   };
   if($nomfichier=="mestransactions"){        
     $pos6=strrpos($contenufichier,",");
-    $contenufichier="{\n".substr($contenufichier,0,$pos6)."\n}\n" ;
+    $contenufichier=substr($contenufichier,0,$pos6)."\n}" ;
+    $contenufichier = preg_replace( "/( \")/", "\"", $contenufichier);
+    $contenufichier = preg_replace( "/(\n )/", "\n", $contenufichier);
+    $contenufichier = preg_replace( "/( :)/", ":", $contenufichier);
+    $contenufichier = preg_replace( "/( \[)/", "[", $contenufichier);
+    $contenufichier = preg_replace( "/( \,)/", ",", $contenufichier);
+    $contenufichier = preg_replace( "/( })/", "}", $contenufichier);
+    $contenufichier = preg_replace( "/( {)/", "{", $contenufichier);
+    // ajoute suiviresume
+      $cheminfichier2 = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");
+  $contenufichier2 ="\n\"suiviresume\": {\n";
+  if (file_exists($cheminfichier2)) { // vérification si le fichier existe
+    $fichierencours2 = fopen($cheminfichier2, 'r'); // ouverture en lecture
+    $laligneprec="";
+    while (!feof($fichierencours2) ) { // cherche dans les lignes
+        $laligne = decryptelestockage(fgets($fichierencours2,2048));
+        $derniercar=substr($laligne, -1);
+        if($derniercar="\n"){$laligne = substr($laligne,0,-1);};
+        if($laligne!=""){
+$tableaulaligne = explode(",", $laligne);
+$laligne = "".$tableaulaligne[0].",".$tableaulaligne[1].",".$tableaulaligne[2].",".$tableaulaligne[3].",".$tableaulaligne[4];
+        if($laligne!=$laligneprec){
+            $pos6=strpos($laligne,",");
+            $reftra="\"".substr($laligne,0,$pos6)."\"";
+            $contenufichier2 = $contenufichier2.$reftra.":[".$reftra.",".substr($laligne,$pos6+1)."],\n"; // ligne par ligne
+        };
+        };
+        $laligneprec=$laligne;
+    }; // Fin de cherche dans les lignes
+    fclose($fichierencours2); // fermeture du fichier
+    $pos6=strrpos($contenufichier2,",");
+    $contenufichier2=substr($contenufichier2,0,$pos6)."\n}\n" ;
+
+  }else{
+    $contenufichier2 = "NULL - pas de fichier suiviresume.json";
+  };
+
+    $contenufichier="{\n \"lestra\":{\n".$contenufichier.",".$contenufichier2."}\n" ;
   };
   return $contenufichier;
 };
@@ -1769,7 +1806,7 @@ function revenuinconditionnel($var3){
     $mesact=  $mesactoff.",".$mesactdem;
     $codeoffre=codelenom($mesactoff);    
     $codedemande=codelenom($mesactdem);
-    $loffre="\"off".$ladate."_".$codeoffre."\" : [\"act0002220560\",1,\"u\",0,0,0,0,0,0,0,0],";
+    $loffre="\"off".$ladate."_".$codeoffre."\" : [\"act0002220560\",1,\"u\",".$revenuinconditionnel.",0,0,0,0,0,0,0],";
     $lademande="\"dem".$ladate."_".$codedemande."\" : [\"act000537234\",1,\"u\",0,0,0,0,0,0,0,0]";
     $demandeaqui=$var3;
     $dureeexpire=31;

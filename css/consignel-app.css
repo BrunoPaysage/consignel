@@ -189,7 +189,7 @@ td.eval0, td.eval1, td.eval2, td.eval3, td.eval4, td.eval5, td.eval6 { padding: 
 .test { border: solid 2px #aaa;}
 
 h2 { color: #00b; text-shadow: #99f 0px 3px 3px ;}
-h2:first-letter { font-size: 1.69em; }
+h2:first-letter, h1:first-letter { font-size: 1.69em; }
 h3 { color:#335;}
 p.soustitre { margin-top: -0.25em; margin-bottom: 0.5em; font-size: 0.83em ;}
 p { text-align: justify ;}

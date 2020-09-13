@@ -1824,16 +1824,19 @@ function enregistre(action,format){
   var divdonnees="";
   if(action=="mestransactions"){
     divdonnees="#mstockmestransactions" ;
-    if(format=="json"){
-      var contenu=""+decryptediv($(divdonnees).text())+"";
-//    alert(contenu);
-      download("mestransactions.json", contenu);
-    };
-    if(format=="csv"){
+    var contenu=""+decryptediv($(divdonnees).text())+"";
+    if(contenu=="..."){
+      chargemoi("mestransactions"); alert("Vérifiez que le fichier est chargé (en vert) pour pouvoir le charger sur votre ordinateur"); 
+    }else{
       var contenu=decryptediv($(divdonnees).text());
-//    alert(contenu);
-      download("mestransactions.txt", contenu);
+      if(format=="json"){ download("mestransactions.json", contenu); };
+      if(format=="csv"){
+        contenu=mestransactionsencsv(contenu);
+        download("mestransactions.txt", contenu);
+      };
+      
     };
+
   };
 };
 
@@ -2048,6 +2051,88 @@ if(menutra == "pasmatransactionfermee"){$("#confirmationacceptetransaction .pasm
 if(menutra == "passerdemande"){$("#confirmationacceptetransaction .passerdemande ").show(); $("#confirmationacceptetransaction .passerdemande button").show(); };
 
 if(menutra == "attente"){$('#confirmationacceptetransaction').attr("class","attente");};
+};
+
+/* transforme le fichier json en fichier csv */
+function mestransactionsencsv(contenu){
+  var csv="";
+  try {var contenujson2 = JSON.parse(contenu);}
+    catch (err){ alert("Le fichier pour csv est mal chargé"); };
+
+  var contenujson3=contenujson2["suiviresume"];
+  var contenujson2=contenujson2["lestra"];
+  var lestra=[];
+  var latransaction="";
+  var proprio=$(".appentete .nomutilisateur").text();
+  for (latransaction in contenujson2) {
+    var letruc="";
+    //    csv=csv+"\""+latransaction+"\","+contenujson2[latransaction]["sommaire"]+"\n";
+    //    csv=csv+"\""+latransaction+"\",";
+    for (letruc in contenujson2[latransaction]) {
+      //if(letruc.indexOf("_act")!=-1){
+        //csv=csv+"\""+latransaction+"\",\""+letruc+"\","+contenujson2[latransaction][letruc][0]+"\n";
+      //};
+      var numtra=latransaction.substring(3);
+      var typetra=latransaction.substring(0,3);
+      //csv=csv+"\""+numtra+"\",\""+typetra+"\",\""+letruc+"\","+contenujson2[latransaction][letruc][0]+"\n";
+      if(letruc=="sommaire"){
+        // caractéristiques des transactions
+        lestra[numtra]=[];
+        lestra[numtra]["datepropose"]=numtra.substring(0,13);
+        lestra[numtra]["dateaccepte"]="";
+        lestra[numtra]["dateannule"]="";
+        lestra[numtra]["accepteur"]=contenujson2[latransaction][letruc][3];        
+        lestra[numtra]["valid"]=contenujson2[latransaction][letruc][4]; 
+        if(!contenujson2[latransaction][letruc][5]){
+          lestra[numtra]["proposeur"]=proprio;
+        }else{
+          lestra[numtra]["proposeur"]=contenujson2[latransaction][letruc][5];
+        };
+        if(typetra=="tra"){
+          lestra[numtra]["statut"]="proposé";
+        };       
+        if(typetra=="ann"){
+          lestra[numtra]["statut"]="annulé";
+          lestra[numtra]["dateannule"]=contenujson2[latransaction][letruc][2];
+          if(lestra[numtra]["accepteur"]=="null"){lestra[numtra]["accepteur"]=proprio;};
+        };       
+        if(typetra=="acc"){
+          lestra[numtra]["statut"]="accepté";
+          lestra[numtra]["dateaccepte"]=contenujson2[latransaction][letruc][2];
+          if(lestra[numtra]["accepteur"]=="null"){lestra[numtra]["accepteur"]=proprio;lestra[numtra]["proposeur"]="inconnu";};
+        };       
+        if(typetra=="exp"){lestra[numtra]["statut"]="expiré";};       
+        if(typetra=="off"){lestra[numtra]["statut"]="inconnu";lestra[numtra]["proposeur"]=proprio;lestra[numtra]["accepteur"]="";};       
+      }else{
+        if(letruc.indexOf("_act")!=-1){
+          // détail des offres et demandes
+        }else{
+          // offres et demandes groupées
+      var typetra2=letruc.substring(0,3);
+          var montantconsig=contenujson2[latransaction][letruc][3];
+          if (!lestra[numtra]){}else{
+            if (typetra2=="off"){ lestra[numtra]["consignel"]=montantconsig; };
+            if (typetra2=="dem"){ lestra[numtra]["consignelext"]=montantconsig; };
+          };       
+         };
+      };
+    }; // fin de letruc 
+   }; // fin de latransaction
+   
+  for (latransaction in contenujson3) {
+    numtra=latransaction.substring(3);
+    //alert("||"+numtra+"||"+contenujson3[latransaction][3]+"||");
+    var soldeconsig=contenujson3[latransaction][1];
+    if (!lestra[numtra]){}else{lestra[numtra]["soldeconsignel"]=soldeconsig;};
+    
+  };
+  csv=csv+"\"ref\",\"consignel\",\"consignelext\",\"soldeconsignel\",\"statut\",\"datepropose\",\"dateaccepte\",\"dateannule\",\"proposeur\",\"accepteur\"\n";
+  
+   for (numtra in lestra) {
+     csv=csv+"\""+numtra+"\","+lestra[numtra]["consignel"]+","+lestra[numtra]["consignelext"]+","+lestra[numtra]["soldeconsignel"]+",\""+lestra[numtra]["statut"]+"\",\""+lestra[numtra]["datepropose"]+"\",\""+lestra[numtra]["dateaccepte"]+"\",\""+lestra[numtra]["dateannule"]+"\",\""+lestra[numtra]["proposeur"]+"\",\""+lestra[numtra]["accepteur"]+"\"\n";
+   };
+   
+  return  csv;
 };
 
 /* Fait la mise à jour des totaux des différentes valeurs */
