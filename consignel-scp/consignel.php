@@ -103,6 +103,7 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
   if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
     $existe = FALSE; // Testeur de boucle
     $nettoyage = FALSE; // Testeur de session expiré
+    if(rand(0, 49)==0){$nettoyage = TRUE;}; // Nettoyage de fichiers forcé une fois sur +-50 accès valides
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
     while (!feof($fichierencours) && !$existe) { // cherche dans les lignes
       $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
