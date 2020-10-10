@@ -103,7 +103,7 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
   if (file_exists($cheminfichier)) { // vérification de l'utilisateur le fichier existe
     $existe = FALSE; // Testeur de boucle
     $nettoyage = FALSE; // Testeur de session expiré
-    if(rand(0, 49)==0){$nettoyage = TRUE;}; // Nettoyage de fichiers forcé une fois sur +-50 accès valides
+    if(rand(0, 49)==0){$nettoyage = TRUE;}; // Nettoyage de fichiers forcém une fois sur +-50 accès valides
     $fichierencours = fopen($cheminfichier, 'r'); // ouverture en lecture
     while (!feof($fichierencours) && !$existe) { // cherche dans les lignes
       $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
@@ -141,6 +141,8 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       if($lademande==6986){ $quoi = fichierperso($var3,"quoi"); echo cryptepourtransfert($quoi); }; // fin de "quoi"
       if($lademande==16887){ $resume = fichierperso($var3,"resume"); echo cryptepourtransfert($resume); }; // fin de "resume"
       if($lademande==39629){  $monavatar = noteavatar($var3,$donnee4/$var4); echo cryptepourtransfert($monavatar);  };// fin de "monavatar"
+      if($lademande==50625){ $serveurmoi = serveurmoi($var3,$donnee4); echo cryptepourtransfert($serveurmoi); 
+      }; // fin de "serveurmoi"
       if($lademande==59570){ $demandeaqui = fichierperso($var3,"demandeaqui"); echo cryptepourtransfert($demandeaqui); }; // fin de "demandeaqui"
       if($lademande==61612){ $nouveaucompte=inscription($var3,$donnee5); echo cryptepourtransfert($nouveaucompte); }; // fin de "inscription"
       if($lademande==71900){  $monavatar = retireavatar($var3,$donnee4/$var4,$donnee5); echo cryptepourtransfert($monavatar);  };// fin de "retireavatar"
@@ -298,7 +300,8 @@ function acceptetransaction($var3,$notransaction){
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-gain365jours.json");
     $revenujournalier = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldemande + $consigneldemandepaiement, $anciennete);
     // Mise à jour du fichier -resume.json dans la base de l'accepteur
-    $nouveauresumeacc = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
+    $dureeserveur=dureeserveur($noaccepteur);
+    $nouveauresumeacc = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1].",".$dureeserveur;
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-resume.json");
     remplacefichier($cheminfichier, $nouveauresumeacc);
     // Mise à jour du fichier -suiviresume.json dans la base de l'accepteur
@@ -378,7 +381,8 @@ function acceptetransaction($var3,$notransaction){
       $pseudoaccepteur=lepseudode($noaccepteur, "noid");
       $listeaccepteurs = accepteurs($cheminfichier, $pseudoaccepteur, $ladate);
       // Mise à jour du fichier -resume.json dans la base du proposeur
-      $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1];
+        $dureeserveur=dureeserveur($noproposeur);
+      $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1].",".$dureeserveur;
       $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-resume.json");
       remplacefichier($cheminfichier, $nouveauresumeaccproposeur);
       // Mise à jour du fichier -suiviresume.json dans la base du proposeur
@@ -690,7 +694,8 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     // Mise à jour du fichier  gain365jours dans la base du proposeur
     $revenujournalier = gain365jours($cheminsansfichier."-gain365jours.json", $nojourancien, $nojour, $consigne, $anciennete);
     // Mise à jour du fichier -resume.json dans la base du proposeur
-    $nouveauresumeann = "".$nouveausolde.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
+    $dureeserveur=dureeserveur($demandeur);
+    $nouveauresumeann = "".$nouveausolde.",".$minimax[0].",".$revenujournalier.",".$minimax[1].",".$dureeserveur;
     remplacefichier($cheminsansfichier."-resume.json", $nouveauresumeann);
     // Mise à jour du fichier -suiviresume.json dans la base du proposeur
     ajouteaufichier($cheminsansfichier."-suiviresume.json",$idtraann.",".$nouveauresumeann."\n");
@@ -1545,7 +1550,8 @@ if( $debutconfirmutilisateur && ( !$debutverifutilisateur )  ){
   // vérifier le gain 365jours
   
   // met à jour le résumé de compte
-  $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
+    $dureeserveur=dureeserveur($identifiantlocal);
+  $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1].",".$dureeserveur;
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");  
   remplacefichier($cheminfichier, $nouveauresume);
   // ajout à la liste des opportunités du proposeur
@@ -1704,6 +1710,18 @@ function remplacefichier($cheminfichierinclu, $chainefichier){
   $chainefichiercrypte = $chainefichier;
   fwrite($fichierencours, $chainefichiercrypte);
   fclose($fichierencours);
+};
+
+// Renvoi la durée autorisée de stockage des fichiers personnels
+function dureeserveur($noidentifiant, $duree){
+/*
+    $resumecpt = resumecompte($noidentifiant); 
+    $derniercompte = explode( ',', $resumecpt );
+    $nbjours = $derniercompte[4];
+    if(!$nbjours){$nbjours = 0;}; 
+
+    return $nbjours;
+*/
 };
 
 // Renvoi le résumé du compte
@@ -2128,6 +2146,30 @@ function transactionstatut($demandeur, $notransaction){
     }; // fin du while
   }; // PEXP - PACT - DTAO - TNDI
   return "TRIN - Transaction inconnue";
+};
+
+// vide les données personnelles de l'utilisateur serveurmoi($var3,$donnee4)
+function serveurmoi($var3,$donnee4){
+    if($donnee4==""){ return "TEST - Il faut inscrire un nombre de jours "." ||".$donnee4."||";};
+
+    $contenufichier = "".fichierperso2($var3,"mestransactions");
+    $aujourdhui = date("Ymd");
+    $precdate = mktime(0, 0, 0, date("m"), date("d")-$donnee4,   date("Y"));  
+    $precdate = getdate($precdate);  
+    if($precdate["mon"]<10){$precdate["mon"]="0".$precdate["mon"];};
+    if($precdate["mon"]<10){$precdate["mday"]="0".$precdate["mday"];};
+    $premdate=$precdate["year"].$precdate["mon"].$precdate["mday"];
+    
+  //  return "TEST - serveurmoi ".$var3." ||".$donnee4."||".$aujourdhui."||".$premdate;
+
+
+/*  $debutdate=strpos($contenufichier,$donnee4);
+  $avant=substr($contenufichier,1,$debutdate);
+  $apres=substr($contenufichier,$debutdate);
+  $debutnom=substr(strrchr($avant, "\""),1,-1);
+  $finnom=substr($contenufichier,$debutdate,strpos($apres, "\""));
+  $mesopportunite = retiredelaliste($var3,"mesopportunites",$debutnom.$finnom);
+*/    
 };
 
 // définition des constantes selon la localité pour les calculs
