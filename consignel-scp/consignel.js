@@ -16,8 +16,10 @@ function acceptetransaction(accepteouinon){
   if(acceptation == "modifie"){ actualiselaproposition("pasmaproposition"); }; /* fin du modifie */
  /*  if(acceptation == "oublieopportunite"){ chargemoi("oublieopportunite"); }; supprimé acces direct au lieu de passer par cette fonction */
 
+
 // alert("en cours d'écriture");
   if(acceptation == "demande"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
+
 
   if(acceptation == "annuledemande"){ alert("Ce numéro de demande est celui du proposeur initial. Utilisez le numéro de votre demande pour faire l'annulation"); }; /* fin du annule demande */
 };
@@ -1185,10 +1187,6 @@ $("#inputfichieravatar").change(function(evt) {
 
 $("#dureeexpire").change(function() { validdureeexpire(); });
 $("#fluxconsignel").change(function() { validfluxconsignel(); });
-
-$("#caseserveurmoi").change(function() { serveurmoi("caseserveurmoi"); });
-$("#nbjourserveur").change(function() { serveurmoi("nbjourserveur"); });
-
 $("#localstoragepublic").change(function() { autoriselocalstorage(); });
 $("#localstoragemoi").change(function() { autoriselocalstorage(); });
 $("#fichierspourtouspoubelle").click(function() { videlocalstorage(["cherchequoimini","cherchefaire","cherchequoi","chercheparqui","cherchepourqui","valeursref"]); videlediv(".stockedansdiv"); videautocomplete(); chargevaleursrefmini(); });
@@ -1229,19 +1227,6 @@ $("#xx").click(function() { xx(xx); });
  */
 
 }; /* fin de debuter */
-
-/* suprime les autorisations de stockage */
-function decochestockage(){
-  if($("#caseserveurmoi").prop("checked")==true){
-    $("#caseserveurmoi").prop('checked', false); $(".serveurmoi").html('non autorisé'); $("#nbjourserveur").val(0);
-  }
-  if($("#localstoragepublic").prop("checked")==true){
-    $("#localstoragepublic").val("non"); $("#localstoragepublic").prop('checked', false); $(".localstoragepublic").html('non autorisé'); videfichierspourtous();
-  }
-  if($("#caseserveurmoi").prop("checked")==true){
-    $("#localstoragemoi").val("non"); $("#localstoragemoi").prop('checked', false); $(".localstoragemoi").html('non autorisé'); videfichierspersonnels();
-  }
-};
 
 /* decrypte les fichiers locaux */
 function decryptediv(contenucrypte){
@@ -1374,10 +1359,6 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
   };
   if(demandefich=="retireavatar"){
     var4 = codelenom($(".appentete .nomutilisateur").text())*tableauretour[1]; /* chiffre l'autentification d'avatar */
-    var4="&var4="+var4;
-  };
-  if(demandefich=="serveurmoi"){
-    var4 = $("#nbjourserveur").val(); /* nombre de jours à conserver */
     var4="&var4="+var4;
   };
   
@@ -1638,13 +1619,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         alert("Travail en cours sur le php "+responseTxt); break; 
         case "TEST":
         responseTxt = responseTxt.substring(4);
-        alert("Problème php "+responseTxt); 
-
-
- $(".stockageserveur").append("<p> "+responseTxt+" </p>");
-
-
-        break; 
+        alert("Problème php "+responseTxt); break; 
         case "OPPV":
         $("#acceptetransactionstatut").html("Inscrivez le code de transaction");
         menudetailproposition(""); 
@@ -1730,7 +1705,6 @@ function effacelentete(){
   supprimeautorisationqr();
   effaceutilisation(); miseajourdesvaleurs();
   utilisateurinconnu();
-  decochestockage(); 
   verifiepreflocalstorage();
   cachetout(); $(".inscription").show(); $(".secret").hide();
   $('#formulaireacces')[0].reset();
@@ -2481,46 +2455,6 @@ function sansespace(chaine){
 
 /* function suivitransfertliste(transfert,origine,destination){$('.informations').html(transfert+" provient de "+origine+" arrive dans "+destination)}; */
 
-
-/* vide les fichier personnels du serveur */
-function serveurmoi(nomdonnees){
-  if(nomdonnees=="caseserveurmoi"){
-    var serveurmoioui = $("#caseserveurmoi").prop("checked");
-    if(serveurmoioui==true){
-      // autorisé sur le serveur
-      $(".serveurmoi").html("autorisé");
-      $(".nbjourserveur").show();
-    };
-    if(serveurmoioui==false){
-      // non autorisé sur le serveur
-      $(".serveurmoi").html("non autorisé");
-      $("#nbjourserveur").val(0);
-      $(".nbjourserveur").hide();
-    };
-  };
-  
-  if(nomdonnees=="nbjourserveur"){
-    // change le nombre de jours de stockage sur le serveur
-    demandefichier("","serveurmoi","","","");
-  };
-  
-  if(nomdonnees=="initialise"){
-    // initialise le nombre de jours côté client en fonction du retour du serveur
-    var retourserveur=$(".retourserveur").text().split(",");
-    var dureeserveur=Number(retourserveur[7]);
-      $(".nbjourserveur").show();
-    if(dureeserveur>0){
-      $("#caseserveurmoi").click();
-      $("#nbjourserveur").val(dureeserveur);
-    }else{
-      $("#caseserveurmoi").prop("checked",false);
-      $("#nbjourserveur").val(0);
-      $(".nbjourserveur").hide();
-    }; 
-  };
-
-};
-
 function suivisortable(suivisortable1,suivisortable2,suivisortable3){ 
   $("#suiviappli").prepend("suivisortable(suivisortable1,suivisortable2,"+suivisortable3+") <br>");
   /* (suivisortable1+" - "+suivisortable2+" - "+suivisortable3); // passage d'un div à l'autre */
@@ -2786,7 +2720,6 @@ if(tableauretour[0] == " "){
     /* début de si utilisateur connu et mot de passe connu */
     tableauretour[0]="u"+nomcode4; 
     $(".retourserveur").html(tableauretour[0]+$(".retourserveur").text()); /* identifiant local u+code(utilisateur+pass) */
-    serveurmoi("initialise");
     verifiepreflocalstorage();
     chargemoi("mesopportunites");
     activeutilisation(tableauretour);
