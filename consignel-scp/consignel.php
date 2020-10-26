@@ -141,6 +141,8 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       if($lademande==6986){ $quoi = fichierperso($var3,"quoi"); echo cryptepourtransfert($quoi); }; // fin de "quoi"
       if($lademande==16887){ $resume = fichierperso($var3,"resume"); echo cryptepourtransfert($resume); }; // fin de "resume"
       if($lademande==39629){  $monavatar = noteavatar($var3,$donnee4/$var4); echo cryptepourtransfert($monavatar);  };// fin de "monavatar"
+      if($lademande==50625){ $mesprefserveur = serveurmoi($var3,$donnee4,"mesprefserveur"); echo cryptepourtransfert($mesprefserveur); 
+      }; // fin de "serveurmoi"
       if($lademande==59570){ $demandeaqui = fichierperso($var3,"demandeaqui"); echo cryptepourtransfert($demandeaqui); }; // fin de "demandeaqui"
       if($lademande==61612){ $nouveaucompte=inscription($var3,$donnee5); echo cryptepourtransfert($nouveaucompte); }; // fin de "inscription"
       if($lademande==71900){  $monavatar = retireavatar($var3,$donnee4/$var4,$donnee5); echo cryptepourtransfert($monavatar);  };// fin de "retireavatar"
@@ -173,55 +175,54 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
 
 // accepte la proposition de transaction
 function acceptetransaction($var3,$notransaction){
-  $noaccepteur = $var3; 
-  $demandeur = $var3;
-  $statuttransaction = transactionstatut($demandeur, $notransaction);
-  $debut = substr($statuttransaction,0,4);
-  $idtra = "tra".$notransaction; 
-  $nomfichiertra = "tra".$notransaction.".json"; 
-  $idtraacc = "acc".$notransaction; 
-  $nomfichieracc = "acc".$notransaction.".json"; 
-  $nomfichierann = "ann".$notransaction.".json"; 
-  $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
-  // vérification préliminaires
-  $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
-  $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
-  $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
-  while (!feof($fichierencours) && !$ligneexiste) { // cherche dans les lignes
-    $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
-    list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
-    if ($var31 == "\"".$idtra."\""){
-     $ligneexiste = TRUE;
-    }; // Fin de transaction trouvée
-  }; // Fin de while cherche dans les lignes
-  fclose($fichierencours); // fermeture du fichier
-
-  // DTAO acceptation d'une proposition non encore accpatée
-  //DTAR voir dans le else utiliser une proposition déjà acceptée mais ouverte à tous
-  if($debut=="DTAO"){
-    // vérifications complémentaires avant d'enregistrer la transaction
-    $resumecpt = resumecompte($var3); 
-    $derniercompte = explode( ',', $resumecpt );
-    $soldeconsigneldisponible = $derniercompte[0];
-    $soldeconsignelparjour = $derniercompte[2];
-    if($soldeconsignelparjour =="INF"){$soldeconsignelparjour = 10;}; // à faire remplacer par variable inscription
+    $noaccepteur = $var3; 
+    $demandeur = $var3;
+    $statuttransaction = transactionstatut($demandeur, $notransaction);
+    $debut = substr($statuttransaction,0,4);
+    $idtra = "tra".$notransaction; 
+    $nomfichiertra = "tra".$notransaction.".json"; 
+    $idtraacc = "acc".$notransaction; 
+    $nomfichieracc = "acc".$notransaction.".json"; 
+    $nomfichierann = "ann".$notransaction.".json"; 
+    $nomfichiersuivi = substr($idtra,0,14)."-suivi.json";
+    // vérification préliminaires
+    $cheminfichier = ouvrelechemin($idtra); // chemin dans base2 par date
+    $ligneexiste = FALSE; // Testeur de boucle ligne existe dans le fichier
+    $fichierencours = fopen($cheminfichier.$nomfichiersuivi, 'r'); // ouverture en lecture
+    while (!feof($fichierencours) && !$ligneexiste) { // cherche dans les lignes
+        $ligne = decryptelestockage(fgets($fichierencours, 1024)); // ligne par ligne
+        list($var31, $var32, $var33, $var34, $var35, $var36, $var37, $var38) = explode(",", $ligne);
+        if ($var31 == "\"".$idtra."\""){
+            $ligneexiste = TRUE;
+        }; // Fin de transaction trouvée
+    }; // Fin de while cherche dans les lignes
+    fclose($fichierencours); // fermeture du fichier
+    
+    // DTAO acceptation d'une proposition non encore accpatée
+    //DTAR voir dans le else utiliser une proposition déjà acceptée mais ouverte à tous
+    if($debut=="DTAO"){
+        // vérifications complémentaires avant d'enregistrer la transaction
+        $resumecpt = resumecompte($var3); 
+        $derniercompte = explode( ',', $resumecpt );
+        $soldeconsigneldisponible = $derniercompte[0];
+        $soldeconsignelparjour = $derniercompte[2];
+        if($soldeconsignelparjour =="INF"){$soldeconsignelparjour = 10;}; // à faire remplacer par variable inscription
     
     // récupération du contenu de la transaction
     if (file_exists($cheminfichier.$nomfichiertra)) {
-      $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
-      $datetra=substr($idtra,3,8);
-      if($datetra<"20200801"){ $contenufichiertra=transactionformat202008($contenufichiertra); };
-      
+        $contenufichiertra = decryptelestockage(file_get_contents($cheminfichier.$nomfichiertra));
+        $datetra=substr($idtra,3,8);
+        if($datetra<"20200801"){ $contenufichiertra=transactionformat202008($contenufichiertra); };        
     }else{
-      return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
+        return "TRIN - Transaction inconnue erreur accès fichier transaction " ;
     };
 
-    // Confirmation d'inscription d'utilisateur unique
+// Confirmation d'inscription d'utilisateur unique
 //    $verifutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001760145\"")); if(substr($verifutilisateur,0,4)=="_act"){$verifutilisateur="oui";}else{$verifutilisateur="non";};
 //    $confirmutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001759799\"")); if(substr($confirmutilisateur,0,4)=="_act"){$confirmutilisateur="oui";}else{$confirmutilisateur="non";};
 //    if(($confirmutilisateur=="oui")&&($verifutilisateur=="oui")){ 
 //       return "TEST - Vérification à écrire";
-      // ajout des dates de vérification à écrire
+//       ajout des dates de vérification à écrire
 //    };
     
     $jsonenphp = json_decode($contenufichiertra,true);
@@ -251,12 +252,12 @@ function acceptetransaction($var3,$notransaction){
     // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
     $dateaccepte = date("Ymd_Hi");
     if($var38=="\"DA↺\"\n"){
-      $noproposeur = "\"DA↺\"\n";
-//    $var38nombre= preg_replace( "/\D/", "", $var35);
+        $noproposeur = "\"DA↺\"\n";
+//      $var38nombre= preg_replace( "/\D/", "", $var35);
     }else{
-      $noproposeur = preg_replace( "/\D/", "", $var38);
-      $var38nombre= preg_replace( "/\D/", "", $var38);
-      $var38chaine = "\"".preg_replace( "/\D/", "", $var38)."\"";
+        $noproposeur = preg_replace( "/\D/", "", $var38);
+        $var38nombre= preg_replace( "/\D/", "", $var38);
+        $var38chaine = "\"".preg_replace( "/\D/", "", $var38)."\"";
     };
     
     $transactionsuivi = "\"".$idtraacc."\",".$var33.",".$var32.",\"".$dateaccepte."\",\"".$noaccepteur."\",".$var36.",".$var37.",".$var38;
@@ -265,16 +266,23 @@ function acceptetransaction($var3,$notransaction){
     // ajout fichier accxxxxxxxx_xxxx_xxxxxxx.json dans la base des transactions
     ajouteaufichier($cheminfichier.$nomfichieracc, $transactionsuivi);
     
-    // ajout au fichier xxxxx-mesproposition.json dans la base de l'accepteur
+    // références pour base et pseudo
     $base=constante("base");
     $pseudoaccepteur=lepseudode($var3, "noid");    
     $pseudoaccepteurlettre=antitaglettre($pseudoaccepteur); 
     $pseudoproposeur=antitaglettre(lepseudode($var38nombre, "noid"));
     if($var38=="\"DA↺\"\n"){$pseudoproposeur="DA↺";};
-    $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteurlettre,$pseudoproposeur);
-    $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
-    $nouveautraacc2 = substr($nouveautraacc,1,-1).",\n";
-    ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc2);
+ 
+    // ajout au fichier xxxxx-mestransactions.json dans la base de l'accepteur
+    $nbjoursaccepteur=nbjoursserveur($noaccepteur);
+    nettoyagetransactions($noaccepteur,$nbjoursaccepteur);
+    if($nbjoursaccepteur>0){
+        $nouveautraacc = inversetransaction($idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteurlettre,$pseudoproposeur);
+        $cheminsansfichier = tracelechemin($noaccepteur,$base,$noaccepteur); 
+        $nouveautraacc2 = substr($nouveautraacc,1,-1).",\n";
+        ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraacc2);
+    };
+    
     // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
     $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
     $idtraprecedente = $dernieresidtra[0];
@@ -298,12 +306,18 @@ function acceptetransaction($var3,$notransaction){
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-gain365jours.json");
     $revenujournalier = gain365jours($cheminfichier, $nojourancien, $nojour, $consigneldemande + $consigneldemandepaiement, $anciennete);
     // Mise à jour du fichier -resume.json dans la base de l'accepteur
-    $nouveauresumeacc = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
+    $dureepersoserveur=nbjoursserveur($noaccepteur);
+    $nouveauresumeacc = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1].",".$dureepersoserveur;
     $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-resume.json");
     remplacefichier($cheminfichier, $nouveauresumeacc);
+    
     // Mise à jour du fichier -suiviresume.json dans la base de l'accepteur
-    $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
-    ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc.",\n");
+//    $nbjoursaccepteur=nbjoursserveur($noaccepteur);
+//    nettoyagetransactions($noaccepteur,$nbjoursaccepteur);
+    if($nbjoursaccepteur>0){
+        $cheminfichier = tracelechemin($noaccepteur,$base,$noaccepteur."-suiviresume.json");  
+        ajouteaufichier($cheminfichier,$idtraacc.",".$nouveauresumeacc.",\n");
+    };
     
     // mise à jour du fichier mesopportunites dans la base de l'accepteur et du proposeur
 //    $listeopportunite = retiredelaliste($noaccepteur,"mesopportunites",$nomfichiertra);
@@ -314,10 +328,19 @@ function acceptetransaction($var3,$notransaction){
 
     // mise à jour du fichier demandeaqui dans la base de l'accepteur et du proposeur
     $lepseudoproposeur = lepseudode($noproposeur);
-    $listedemandeaqui = ajoutealaliste($noaccepteur,"demandeaqui",$lepseudoproposeur);
     $lepseudoaccepteur = lepseudode($noaccepteur);
-    $listedemandeaqui = ajoutealaliste($noproposeur,"demandeaqui",$lepseudoaccepteur);
+
+//    $nbjoursaccepteur=nbjoursserveur($noaccepteur);
+//    nettoyagetransactions($noaccepteur,$nbjoursaccepteur);
+    if($nbjoursaccepteur>0){
+        $listedemandeaqui = ajoutealaliste($noaccepteur,"demandeaqui",$lepseudoproposeur);
+    };
     
+    $nbjoursproposeur=nbjoursserveur($noproposeur);
+    nettoyagetransactions($noaccepteur,$nbjoursproposeur);
+    if($nbjoursproposeur>0){
+        $listedemandeaqui = ajoutealaliste($noproposeur,"demandeaqui",$lepseudoaccepteur);
+    };
     
     if($var38<>"\"DA↺\"\n"){
       
@@ -329,18 +352,22 @@ function acceptetransaction($var3,$notransaction){
       
       // Mise à jour des valeurs moyennes dans la base générale de référence des produits et services à faire
 
-      // Mise à jour des fichiers xxxxx-quoi.json et xxxxx-mesvaleursref.json dans la base du proposeur
       
-      $cheminvaleurs=tracelechemin($noproposeur,$base,$noproposeur."-mesvaleursref.json",$defriche="ouvre");
-      $ladescriptioncourte=ajoutealaliste($noproposeur,"quoi",$lesactivites[1]);
-      $listevaleursref=listevaleurs($cheminvaleurs,$lesactivites[0]);
-      
-      // ajout au fichier xxxxx-mestransactions.json dans la base du proposeur
-      $pseudoaccepteur=lepseudode($noaccepteur, "noid");
-      $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteur);
-      $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
-      $nouveauproacc2 = substr($nouveauproacc,1,-1).",\n";
-      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveauproacc2);
+        $nbjoursproposeur=nbjoursserveur($noproposeur);
+        nettoyagetransactions($noproposeur,$nbjoursproposeur);
+        if($nbjoursproposeur>0){
+            // Mise à jour du fichier xxxxx-mesvaleursref.json dans la base du proposeur
+            $cheminvaleurs=tracelechemin($noproposeur,$base,$noproposeur."-mesvaleursref.json",$defriche="ouvre");
+            // Ajout du fichier xxxxx-quoi.json dans la base du proposeur
+            $ladescriptioncourte=ajoutealaliste($noproposeur,"quoi",$lesactivites[1]);
+            $listevaleursref=listevaleurs($cheminvaleurs,$lesactivites[0]);
+            // Ajout au fichier xxxxx-mestransactions.json dans la base du proposeur
+            $pseudoaccepteur=lepseudode($noaccepteur, "noid");
+            $nouveauproacc = transactionaccann("acc",$idtra,$contenufichiertra,$dateaccepte,$pseudoaccepteur);
+            $cheminsansfichier = tracelechemin($noproposeur,$base,$noproposeur); 
+            $nouveauproacc2 = substr($nouveauproacc,1,-1).",\n";
+            ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveauproacc2);
+        };
       // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
       $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
       $idtraprecedenteproposeur = $dernieresidtra[0];
@@ -375,10 +402,10 @@ function acceptetransaction($var3,$notransaction){
           if (strlen($nojour) == 1){ $ladate = substr($dateaccepte,0,4)."00".$nojour; };
         };
       };
-      $pseudoaccepteur=lepseudode($noaccepteur, "noid");
-      $listeaccepteurs = accepteurs($cheminfichier, $pseudoaccepteur, $ladate);
+      $listeaccepteurs = accepteurs($cheminfichier, $noaccepteur, $ladate);
       // Mise à jour du fichier -resume.json dans la base du proposeur
-      $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1];
+//        $dureepersoserveur=nbjoursserveur($noproposeur);
+        $nouveauresumeaccproposeur = "".$nouveausoldeconsignelproposeur.",".$minimaxproposeur[0].",".$revenujournalierproposeur.",".$minimaxproposeur[1].",".$dureepersoserveur;
       $cheminfichier = tracelechemin($noproposeur,$base,$noproposeur."-resume.json");
       remplacefichier($cheminfichier, $nouveauresumeaccproposeur);
       // Mise à jour du fichier -suiviresume.json dans la base du proposeur
@@ -630,8 +657,8 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
   if($statut == "AEXP"){ $demandeurchaine = $var35; };
   if($statut == "TREF"){ $demandeurchaine = $var35; $numrefuseur =  preg_replace( "/\D/", "", $demandeurchaine); };
   
-  if($compensation[0] == "impact négatif"){ $consigne = -$compensation[1] ; };
-    // rembourser le proposeur des dépenses engagées
+  if($compensation[1] < 0 ){ $consigne = -$compensation[1] ; };
+    // rembourser le proposeur des dépenses engagées au moment de la proposition
   $nouveausolde = $soldeconsigneldisponible + $consigne;
   
     // ajout au fichier traxxxxxxxx_xx-suivi.json dans la base des transactions
@@ -643,18 +670,26 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
   $base=constante("base");
   $basedac=constante("basedac");
   if($var38=="\"DA↺\"\n"){
-      $cheminsansfichier = substr(tracelechemin("",$basedac,""),0,-1); // DA↺
-      // $nomproposeur = "DA↺";
-      $nomrefuseur = lepseudode($numrefuseur);
-      // ajoute refus dans -mestransactions.json du DA↺
-      $nouveautraref = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,substr($nomrefuseur,1,-1),"DA↺");
-      $nouveautraref2 = substr($nouveautraref,1,-1).",\n";
-      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraref2);
+    $cheminsansfichier = substr(tracelechemin("",$basedac,""),0,-1); // DA↺
+    // $nomproposeur = "DA↺";
+    $nomrefuseur = lepseudode($numrefuseur);
+    // ajoute refus dans -mestransactions.json du DA↺
+    $nbjoursdac=nbjoursserveur("");
+    nettoyagetransactions("",$nbjoursdac);
+    if($nbjoursdac>0){
+        $nouveautraref = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,substr($nomrefuseur,1,-1),"DA↺");
+        $nouveautraref2 = substr($nouveautraref,1,-1).",\n";
+        ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraref2);
+    };
       // ajoute refus dans -mestransactions.json du refuseur
       $norefuseur=leiddupseudo($numrefuseur);
-      $chemindestinataire=tracelechemin($norefuseur,$base,$norefuseur);
       $nomrefuseur = lepseudode($norefuseur);
-      ajouteaufichier($chemindestinataire."-mestransactions.json", $nouveautraref2);
+        $nbjoursrefuseur=nbjoursserveur($norefuseur);
+        nettoyagetransactions($norefuseur,$nbjoursrefuseur);
+        if($nbjoursrefuseur>0){
+            $chemindestinataire=tracelechemin($norefuseur,$base,$norefuseur);
+            ajouteaufichier($chemindestinataire."-mestransactions.json", $nouveautraref2);
+        };
     }else{
       $cheminsansfichier = tracelechemin($demandeur,$base,$demandeur); // proposeur vérifier avec expiration
       $nomproposeur = lepseudode($demandeur);
@@ -670,8 +705,18 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
       };
       $nouveautraref = transactionaccann($annexp,$idtra,$contenufichiertra,$dateaccepte,$nomdestinataire,$nomproposeur);
       $nouveautraref2 = substr($nouveautraref,1,-1).",\n";
-      if($statut == "TREF"){ajouteaufichier($chemindestinataire."-mestransactions.json", $nouveautraref2);};
-      ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraref2);
+      if($statut == "TREF"){
+        $nbjoursrefuseur=nbjoursserveur($norefuseur);
+        nettoyagetransactions($norefuseur,$nbjoursrefuseur);
+        if($nbjoursrefuseur>0){
+            ajouteaufichier($chemindestinataire."-mestransactions.json", $nouveautraref2);
+        };
+      };
+        $nbjoursdemandeur=nbjoursserveur($nodemandeur);
+        nettoyagetransactions($nodemandeur,$nbjoursdemandeur);
+        if($nbjoursdemandeur>0){
+          ajouteaufichier($cheminsansfichier."-mestransactions.json", $nouveautraref2);
+        };
     };
     
     // mise à jour fichier xxxxx-resume2dates.json dans la base du proposeur
@@ -690,7 +735,8 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
     // Mise à jour du fichier  gain365jours dans la base du proposeur
     $revenujournalier = gain365jours($cheminsansfichier."-gain365jours.json", $nojourancien, $nojour, $consigne, $anciennete);
     // Mise à jour du fichier -resume.json dans la base du proposeur
-    $nouveauresumeann = "".$nouveausolde.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
+    $dureepersoserveur=nbjoursserveur($identifiantlocal);
+    $nouveauresumeann = "".$nouveausolde.",".$minimax[0].",".$revenujournalier.",".$minimax[1].",".$dureepersoserveur;
     remplacefichier($cheminsansfichier."-resume.json", $nouveauresumeann);
     // Mise à jour du fichier -suiviresume.json dans la base du proposeur
     ajouteaufichier($cheminsansfichier."-suiviresume.json",$idtraann.",".$nouveauresumeann."\n");
@@ -893,18 +939,17 @@ function confianceinscription($numdemandeur, $jour ){
 // renvoi des valeurs de compensation d'impact
 function consignelsuivi($propositionenjson,$nompropostion){
   $consignelsuivi = ["test",0,0];
-  $nooffretra = $propositionenjson[$nompropostion][0];
-  $nodemandetra = $propositionenjson[$nompropostion][1];
-  $nodatetra = $propositionenjson[$nompropostion][2];
+  $nooffretra = $propositionenjson[$nompropostion]["sommaire"][0];
+  $nodemandetra = $propositionenjson[$nompropostion]["sommaire"][1];
+  $nodatetra = $propositionenjson[$nompropostion]["sommaire"][2];
   $offtra = "off".$nodatetra."_".$nooffretra;
-  $consignelsuivi[1] =  $propositionenjson[$offtra][3]*$propositionenjson[$offtra][1];
+  $consignelsuivi[1] =  $propositionenjson[$nompropostion][$offtra][3]*$propositionenjson[$nompropostion][$offtra][1];
   $demtra = "dem".$nodatetra."_".$nodemandetra;
-  $consignelsuivi[2] = $propositionenjson[$demtra][3]*$propositionenjson[$demtra][1];
+  $consignelsuivi[2] = $propositionenjson[$nompropostion][$demtra][3]*$propositionenjson[$nompropostion][$demtra][1];
   $impact = $consignelsuivi[1] + $consignelsuivi[2];
   if ($impact == 0){ $consignelsuivi[0]= "zéro impact"; };
   if ($impact < 0){ $consignelsuivi[0]= "impact négatif"; };
   if ($impact > 0){ $consignelsuivi[0]= "impact positif"; };
-
   return $consignelsuivi;
 };
 
@@ -1340,6 +1385,97 @@ function nettoyagerefsessions(){
   };
 };
 
+// supprime les références aux sessions obsoletes
+function nettoyagetransactions($var3,$nbjours){
+  $baseutilisateurs = constante("base");
+  $cheminfichier = tracelechemin($var3,$baseutilisateurs,$var3."-mestransactions.json");
+  if (file_exists($cheminfichier)) { // vérification fichier sessions obsoletes existe
+      if($nbjours=="0"){
+        $deniertiret=strrpos($cheminfichier, "-mestransactions.json");
+        $cheminfichier2= tracelechemin($var3,$baseutilisateurs,$var3."-demandeaqui.json");
+//        $cheminfichier3= tracelechemin($var3,$baseutilisateurs,$var3."-mesopportunites.json");
+        $cheminfichier4= tracelechemin($var3,$baseutilisateurs,$var3."-mesvaleursref.json");
+        $cheminfichier5= tracelechemin($var3,$baseutilisateurs,$var3."-quoi.json");
+        $cheminfichier6= tracelechemin($var3,$baseutilisateurs,$var3."-suiviresume.json");
+        unlink($cheminfichier);
+        unlink($cheminfichier2);
+//        unlink($cheminfichier3);
+        unlink($cheminfichier4);
+        unlink($cheminfichier5);
+        unlink($cheminfichier6);
+       }else{
+        $today = getdate(); $aujourdhui = date("Ymd");
+        $debut =  getdate(mktime(0, 0, 0, date("m")  , date("d")-$nbjours-1, date("Y")));
+        if($debut["mon"]<10){$debut["mon"]="0".$debut["mon"];};
+        if($debut["mday"]<10){$debut["mday"]="0".$debut["mday"];};
+        $debutdate = $debut["year"].$debut["mon"].$debut["mday"];
+        $fichierencours = fopen($cheminfichier, 'r+'); // ouverture en lecture ecriture autorisée pointeur au début
+        $ligne = fgets($fichierencours, 2048); // ligne par ligne
+        $lignedenclair = decryptelestockage($ligne);
+        $fin=strpos($lignedenclair, "_");
+        $dateligne = substr($lignedenclair,$fin-8,8);
+        // le nombre de jours est différent de 0 tester le premier enregistrement pour sortie rapide
+        if($debutdate < $dateligne){
+          // le premier enregistrement est encore valide abandonner
+          fclose($fichierencours);     //  return "TEST - travail déjà fait ".$debutdate." ".$dateligne;
+        }else{
+          // le premier enregistrement est obsolete nettoyer le fichier
+          $lefichier ="";
+          while (!feof($fichierencours) ) { // cherche dans les lignes
+            $ligne = fgets($fichierencours, 2048); // ligne par ligne
+            $lignedenclair = decryptelestockage($ligne);
+            $fin=strpos($lignedenclair, "_");
+            $dateligne = substr($lignedenclair,$fin-8,8);
+            if ($dateligne > $debutdate){ $lefichier =$lefichier.$ligne; }; // fin du trouvé pas obsolete
+          }; // Fin de cherche dans les lignes
+          fclose($fichierencours); // fermeture du fichier
+          $nouveaufichier = fopen($cheminfichier, "w");
+          fwrite($nouveaufichier, $lefichier);        
+//          return "TEST - fichier nettoyé".$passe." ".$debutdate;
+        };
+      };// fin de si plusieurs jours
+  }else{
+    // Fichier non trouvé pas de fichier mestransactions
+//            return $var3."TEST - pas de fichier";
+  };
+
+// nettoyage de suiviresume
+  $cheminfichier = tracelechemin($var3,$baseutilisateurs,$var3."-suiviresume.json");
+  if (file_exists($cheminfichier)) { // vérification fichier sessions obsoletes existe
+      if($nbjours=="0"){
+        //déjà fait avec le nettoyage de mestransactions
+       }else{
+        $fichierencours = fopen($cheminfichier, 'r+'); // ouverture en lecture ecriture autorisée pointeur au début
+        $ligne = fgets($fichierencours, 1024); // ligne par ligne
+        $lignedenclair = decryptelestockage($ligne);
+        $fin=strpos($lignedenclair, "_");
+        $dateligne = substr($lignedenclair,$fin-8,8);
+        // le nombre de jours est différent de 0 tester le premier enregistrement pour sortie rapide
+        if($debutdate < $dateligne){
+          // le premier enregistrement est encore valide abandonner
+          fclose($fichierencours);     //  return "TEST - travail déjà fait ".$debutdate." ".$dateligne;
+        }else{
+          // le premier enregistrement est obsolete nettoyer le fichier
+          $lefichier ="";
+          while (!feof($fichierencours) ) { // cherche dans les lignes
+            $ligne = fgets($fichierencours, 2048); // ligne par ligne
+            $lignedenclair = decryptelestockage($ligne);
+            $fin=strpos($lignedenclair, "_");
+            $dateligne = substr($lignedenclair,$fin-8,8);
+            if ($dateligne > $debutdate){ $lefichier =$lefichier.$ligne; }; // fin du trouvé pas obsolete
+          }; // Fin de cherche dans les lignes
+          fclose($fichierencours); // fermeture du fichier
+          $nouveaufichier = fopen($cheminfichier, "w");
+          fwrite($nouveaufichier, $lefichier);        
+//          return "TEST - fichier nettoyé".$passe." ".$debutdate;
+        };
+      };// fin de si plusieurs jours
+  }else{
+    // Fichier non trouvé pas de fichier suiviresume
+//            return $var3."TEST - pas de fichier";
+  }; // fin de nettoyage suiviresume
+};
+
 // note un nouvel avatar
 function noteavatar($var3,$nopseudo){
   if(isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > 0) {
@@ -1370,6 +1506,14 @@ function noteavatar($var3,$nopseudo){
     file_put_contents($cheminavatarperso, $data2);
     return "AVAM - ".substr($cheminavatarperso,1);
   }else{return "ERAV - Désolé pas d'avatar sur serveur";};
+};
+
+// renvoi nbjoursserveur autorisé par l'utilisateut
+function nbjoursserveur($var3){
+    $resumecpt=resumecompte($var3);
+    $derniercompte = explode( ",", "".$resumecpt );
+    $dureepersoserveur =$derniercompte[4];
+    return $derniercompte[4];
 };
 
 // note la proposition de transaction
@@ -1522,8 +1666,13 @@ if( $debutconfirmutilisateur && ( !$debutverifutilisateur )  ){
 //  $transaction = preg_replace( "/(] })/", "],\n", $transaction);
   $transaction2 = substr($transaction,1,-1).",\n";
   $base=constante("base");
-  $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");  // -mestransactions.json
-  ajouteaufichier($cheminfichier,$transaction2);
+  // ajoute au fichier -mestransactions du proposeur
+    $nbjoursdemandeur=nbjoursserveur($identifiantlocal);
+    nettoyagetransactions($identifiantlocal,$nbjoursdemandeur);
+    if($nbjoursdemandeur>0){
+        $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-".$nomfichierlocal.".json");  // -mestransactions.json
+        ajouteaufichier($cheminfichier,$transaction2);
+    };
   // fichier de l'ordre des transaction
   $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume2dates.json");  
   $dernieresidtra = ajouteaufichier2dates($cheminfichier,$idtra);
@@ -1545,19 +1694,25 @@ if( $debutconfirmutilisateur && ( !$debutverifutilisateur )  ){
   // vérifier le gain 365jours
   
   // met à jour le résumé de compte
-  $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1];
-  $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");  
+    $dureepersoserveur=nbjoursserveur($identifiantlocal);
+    $nouveauresume = "".$nouveausoldeconsignel.",".$minimax[0].",".$revenujournalier.",".$minimax[1].",".$dureepersoserveur;
+    $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-resume.json");  
   remplacefichier($cheminfichier, $nouveauresume);
-  // ajout à la liste des opportunités du proposeur
-  
-  $listeopportunite = ajoutealaliste($identifiantlocal,"mesopportunites","\"".$idtra.".json\"");
 
-  // met à jour l'archivage des résumés de compte consignel
-  $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
-  ajouteaufichier($cheminfichier,$idtra.",".$nouveauresume."\n");
-  // ajout de la proposition dans les opportunités si c'est un utilisateur identifié
-  $destinataire = leiddupseudo($jsonenphp[$idtra][3]); 
-  if($destinataire != 0){ $laliste = ajoutealaliste($destinataire,"mesopportunites","\"".$idtra.".json\"" ); };
+    if($nbjoursdemandeur>0){
+      // si le proposeur l'autorise
+      // ajout à la liste des opportunités du proposeur
+      $listeopportunite = ajoutealaliste($identifiantlocal,"mesopportunites","\"".$idtra.".json\"");
+
+      // met à jour l'archivage des résumés de compte consignel
+      $cheminfichier = tracelechemin($identifiantlocal,$base,$identifiantlocal."-suiviresume.json");  
+      ajouteaufichier($cheminfichier,$idtra.",".$nouveauresume."\n");
+    };
+    
+       // ajout de la proposition dans les opportunités si c'est un utilisateur identifié
+      $destinataire = leiddupseudo($jsonenphp[$idtra][3]); 
+      if($destinataire != 0){ $laliste = ajoutealaliste($destinataire,"mesopportunites","\"".$idtra.".json\"" ); };
+ 
   // envoi le retour à l'utilisateur - La proposition est en attente d'acceptation
   return "PEAA - ".$nouveauresume;
 };
@@ -1829,6 +1984,28 @@ function revenuinconditionnel($var3){
 
     return $nbjourrevenuinconditionnel;
   }; // fin du choix de mise à jour du revenu inconditionnel
+};
+
+// Préférences de stockage des fichiers de l'utilisateur sur le serveur
+function serveurmoi($var3,$donnee4,$test=""){
+    $resumecpt = resumecompte($var3); 
+    $derniercompte = explode( ",", "".$resumecpt );
+    $nbjours =$derniercompte[4];
+    if($donnee4==""){
+        if(!$nbjours){ $derniercompte[4]=0; $resumecpt=implode(",", $derniercompte); }; 
+    }else{
+        $derniercompte[4]=$donnee4;
+        $resumecpt=implode(",", $derniercompte);
+        $base = constante("base");
+        $cheminfichier = tracelechemin($var3,$base,$var3."-resume.json");
+        remplacefichier($cheminfichier, $resumecpt);
+    }; 
+    if($test==""){
+        return $nbjours;
+//        return $derniercompte[4];
+    }else{
+        return "RPRF - ".$resumecpt;
+    };
 };
 
 // mise en réserve des valeurs dans un tableau de 31 jours retourne [mini,max]

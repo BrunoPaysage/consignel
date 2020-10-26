@@ -1,0 +1,27 @@
+	<h3>Test de la préférence de stokage des fichiers personnels sur le serveur</h3> 
+	<p class="cheminref"><a href="../index.html">Références</a>/<a href="../consignel-test.html">consignel-tests</a>/ consignel-test-dureeserveur.html</p>
+	<p class="utilisation">Teste la garde et l'effacement des fichiers personnels sur le serveur. Par défaut la durée de garde est de 0 jours, mais l'utilisateur peut fixer une durée dans ses préférences. Cette durée en nombre de jours fait partie de son résumé de compte</p>
+	<p class="identification"></p>
+	<p class="structure"></p>
+	<div class="contenu">
+		<p>Tests à effectuer</p>
+		<details open>
+			<summary></summary>
+			<ol>
+				<li>Garder en copie les fichiers personnels sur deux comptes pour pouvoir les remplacer après chaque test</li>
+				<li>Au chargement de l'app le stockage sur le serveur n'est pas autorisé. Donner une durée et recharger pour vérifier</li>
+				<li>Après validation de l'utilisateur, ses prefs affichent la durée autorisée.</li>
+				<li>Changer la durée et faire une proposition pour la confirmer. vérifier le contenu des fichiers personnels</li>
+				<li>Changer la durée et faire une acceptation pour la confirmer. vérifier le contenu des fichiers personnels</li>
+				<li><details>
+					<summary>Tests complémentaires</summary>
+					<ul>
+						<li>Vérifier les dates selon le nombre de jours de stockage</li>
+						<li>Une durée à 0 élimine les fichiers, y compris les contacts et préférences de valeurs</li>
+						<li>Une durée supérieure à 0 élimine des dates. Les fichiers de contacts et de préférences de valeurs sont gardés.</li>
+					</ul>
+				</details>
+			</li></ol>
+		</details>
+
+	</div>

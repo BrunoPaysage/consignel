@@ -848,7 +848,6 @@ function choixactivite(itemchoisi){
   /* dansqui,prefixe,codeitemchoisi,itemchoisi,quantite,unite,consignel,argent,mlc,environnement,duree,social,foisparan,dureedevie */
 };
 
-
 /* fonction supprime la référence à l'unité dans le nom */
 function choisisansunite(lenomchoisi,laquantite,lunite){
   $("#suiviappli").prepend("choisisansunite("+lenomchoisi+","+laquantite+","+lunite+") <br>");
@@ -1125,20 +1124,26 @@ $("#rechercheokinputactivite").click(function() { okinputactivite(); });
 $('#offrechoisi').on('click', function (e) {
     if (e.target == this) {
       inverseoffredemande("offre");
+      focusinput("#inputactivite","eval2");
+/*
       $("#inputactivite").wrap("<span class=\"eval2\"></span>");
       $("#inputactivite").parent().animate({backgroundColor: "#fff"},250).queue(function() {
       $("#inputactivite").unwrap();$("#inputactivite").focus();
       $(this).dequeue(); });
+      */
     }
 });
 
 $('#demandechoisi').on('click', function (e) {
     if (e.target == this) {
       inverseoffredemande("demande");
+      focusinput("#inputactivite","eval4");
+/*
       $("#inputactivite").wrap("<span class=\"eval4\"></span>");
       $("#inputactivite").parent().animate({backgroundColor: "#fff"},250).queue(function() {
       $("#inputactivite").unwrap();$("#inputactivite").focus();
       $(this).dequeue(); });
+      */
     }
 });
 
@@ -1185,6 +1190,9 @@ $("#inputfichieravatar").change(function(evt) {
   var file = evt.target.files[0];
   changeavatar(file); });
 
+$("#caseserveurmoi").change(function() { serveurmoi("caseserveurmoi"); });
+$("#nbjourserveur").change(function() { serveurmoi("nbjourserveur"); });
+
 $("#dureeexpire").change(function() { validdureeexpire(); });
 $("#fluxconsignel").change(function() { validfluxconsignel(); });
 $("#localstoragepublic").change(function() { autoriselocalstorage(); });
@@ -1227,6 +1235,16 @@ $("#xx").click(function() { xx(xx); });
  */
 
 }; /* fin de debuter */
+
+/* suprime les autorisations de stockage */
+function decochestockage(){
+  $("#caseserveurmoi").prop('checked', false); 
+  $(".serveurmoi").html('non autorisé'); $("#nbjourserveur").val(0); $(".nbjourserveurretour").html(''); 
+
+  $("#localstoragepublic").val("non"); $("#localstoragepublic").prop('checked', false); $(".localstoragepublic").html('non autorisé'); videfichierspourtous();
+
+  $("#localstoragemoi").val("non"); $("#localstoragemoi").prop('checked', false); $(".localstoragemoi").html('non autorisé'); videfichierspersonnels();
+};
 
 /* decrypte les fichiers locaux */
 function decryptediv(contenucrypte){
@@ -1361,7 +1379,11 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var4 = codelenom($(".appentete .nomutilisateur").text())*tableauretour[1]; /* chiffre l'autentification d'avatar */
     var4="&var4="+var4;
   };
-  
+  if(demandefich=="serveurmoi"){
+    var4 = $("#nbjourserveur").val(); /* nombre de jours à conserver */
+    var4="&var4="+var4;
+  };
+    
   var var5="";
   if(demandefich=="maproposition"){
     if ($("#matransaction").text()=="..."){
@@ -1614,6 +1636,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         $("#acceptetransactionstatut").html("J'ai annulé ma proposition");
         menudetailproposition("matransactionfermee"); affichedetailproposition(contenuretour,"matransaction"); $("#acceptetransactionoublier2").show();  
         break; 
+        case "RPRF":
+        retourprefserveur(contenuretour); break; 
         case "0000":
         responseTxt = responseTxt.substring(4);
         alert("Travail en cours sur le php "+responseTxt); break; 
@@ -1704,9 +1728,10 @@ function effacelentete(){
   videlediv(".stockedansdiv"); videlediv(".mstockdansdiv"); videautocomplete(); 
   supprimeautorisationqr();
   effaceutilisation(); miseajourdesvaleurs();
+  decochestockage();
   utilisateurinconnu();
   verifiepreflocalstorage();
-  cachetout(); $(".inscription").show(); $(".secret").hide();
+  cachetout(); $(".inscription").show(); $(".secret").hide();  
   $('#formulaireacces')[0].reset();
   $("#formulaireaccesutilisateur").focus(); 
 };
@@ -1875,6 +1900,15 @@ function envoiavatar (data) {
       } // fin action après succès envoi au serveur
     });
   };
+
+/* met le focus sur un input */
+function focusinput(idinput,couleurcss){
+  var enveloppe="<span class=\""+couleurcss+"\"></span>"
+  $(idinput).wrap(enveloppe);
+  $(idinput).parent().animate({backgroundColor: "#fff"},250).queue(function() {
+  $(idinput).unwrap();$(idinput).focus();
+  $(this).dequeue(); });
+};
 
 /* donne de la couleur selon le montant sur le div englobant */
 function humeur(refspan,montant){
@@ -2415,6 +2449,22 @@ function refdevaleur(codeitem){
   };
 };
 
+/* affiche le résultat du changement de préférence de stockage des fichiers personnels sur le serveur */
+function retourprefserveur(resumetemp){
+  var tableauretour=resumetemp.split(",");
+  var precedent=$(".nbjourserveurretour").html();
+  var envoi=$("#nbjourserveur").val();
+  var retour=tableauretour[4];
+  if(envoi==retour){
+    if(envoi>0){ $(".nbjourserveurretour").html("<br>Les fichiers personnels plus vieux que "+retour+" jours sont effacés à chaque nouvelle transaction"); };
+    if(envoi==0){ $(".nbjourserveurretour").html("<br>Pas de fichiers personnels sur le serveur"); $("#caseserveurmoi").prop("checked",false);};
+  }else{
+    if(envoi==""){    
+      $(".nbjourserveurretour").html("<br>En attente d'une nouvelle durée !");
+      focusinput("#nbjourserveur","eval1");};
+  };
+};
+
 function resizeImage (data, file) {
     var fileType = file.type;
     var maxWidth = 180;
@@ -2454,6 +2504,47 @@ function sansespace(chaine){
 };
 
 /* function suivitransfertliste(transfert,origine,destination){$('.informations').html(transfert+" provient de "+origine+" arrive dans "+destination)}; */
+
+/* vide les fichier personnels du serveur */
+function serveurmoi(nomdonnees){
+  if(nomdonnees=="caseserveurmoi"){
+    var serveurmoioui = $("#caseserveurmoi").prop("checked");
+    if(serveurmoioui==true){
+      // autorisé sur le serveur
+      $(".serveurmoi").html("autorisé");
+      $("#nbjourserveur").val("...");
+      $(".nbjourserveur").show();
+    };
+    if(serveurmoioui==false){
+      // non autorisé sur le serveur
+      $(".serveurmoi").html("non autorisé");
+      $("#nbjourserveur").val(0);
+      $(".nbjourserveur").show();
+    };
+    demandefichier("","serveurmoi","","","");
+  };
+  
+  if(nomdonnees=="nbjourserveur"){
+    // change le nombre de jours de stockage sur le serveur
+    $("#caseserveurmoi").prop("checked",true); $(".serveurmoi").html("autorisé");
+    demandefichier("","serveurmoi","","","");
+  };
+  
+  if(nomdonnees=="initialise"){
+    // initialise le nombre de jours côté client en fonction du retour du serveur
+    var retourserveur=$(".retourserveur").text().split(",");
+    var dureeserveur=Number(retourserveur[7]);
+      $(".nbjourserveur").show();
+    if(dureeserveur>0){
+      $("#caseserveurmoi").click();
+      $("#nbjourserveur").val(dureeserveur);
+    }else{
+      $("#caseserveurmoi").prop("checked",false);
+      $("#nbjourserveur").val(0);
+      $(".nbjourserveur").hide();
+    }; 
+  };
+};
 
 function suivisortable(suivisortable1,suivisortable2,suivisortable3){ 
   $("#suiviappli").prepend("suivisortable(suivisortable1,suivisortable2,"+suivisortable3+") <br>");
@@ -2720,6 +2811,7 @@ if(tableauretour[0] == " "){
     /* début de si utilisateur connu et mot de passe connu */
     tableauretour[0]="u"+nomcode4; 
     $(".retourserveur").html(tableauretour[0]+$(".retourserveur").text()); /* identifiant local u+code(utilisateur+pass) */
+    serveurmoi("initialise");
     verifiepreflocalstorage();
     chargemoi("mesopportunites");
     activeutilisation(tableauretour);
