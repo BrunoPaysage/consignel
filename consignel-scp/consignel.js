@@ -1733,7 +1733,7 @@ function effacelentete(){
   verifiepreflocalstorage();
   cachetout(); $(".inscription").show(); $(".secret").hide();  
   $('#formulaireacces')[0].reset();
-  $("#formulaireaccesutilisateur").focus(); 
+  $("#formulaireaccesutilisateur").show().focus(); 
 };
 
 /* nettoyage interface */

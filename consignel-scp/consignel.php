@@ -1508,7 +1508,7 @@ function noteavatar($var3,$nopseudo){
   }else{return "ERAV - Désolé pas d'avatar sur serveur";};
 };
 
-// renvoi nbjoursserveur autorisé par l'utilisateut
+// renvoi nbjoursserveur autorisé par l'utilisateur
 function nbjoursserveur($var3){
     $resumecpt=resumecompte($var3);
     $derniercompte = explode( ",", "".$resumecpt );
