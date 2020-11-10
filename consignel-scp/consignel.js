@@ -313,7 +313,7 @@ function autorisationqr(){
   changeClass(validqr,'qr2','qr');
   if($('#validqr').attr("class")=="qr2"){ /* transaction autorisée */
     var utilisateur = codequiutilise();
-    if(utilisateur=="u0"){$('#validqr').attr("class","qr1"); identification();};
+    if(utilisateur=="u0"){$('#validqr').attr("class","qr1"); identification(); };
     chargemoi('maproposition');
   }else{ /* transaction non autorisée */
     
@@ -1498,7 +1498,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case " , 0":
         alert("session trop longue");
         supprimeautorisationqr(); $('#validqr').attr("class","qr1");
-        $(".appentete .alerte").html("retour fichier, 0 , session trop longue");
+        $(".appentete .alerte").html("... Session trop longue ...");
         $('#preferences').attr("class","attente"); identification();
         break;
         case "DTMR":
@@ -1784,7 +1784,7 @@ function enattendantlemotdepasse(tableauretour){
   /* reçoit le tableau des variables retournées par le serveur tableauretour = $(".retourserveur").html().split(","); */
   tableauretour[3] = tableauretour[3].substring(1,(tableauretour[3].length)-1) ;
   tableauretour[4] = tableauretour[4].substring(1,(tableauretour[4].length)-1) ;
-  $('.secret').show(); $("#formulaireaccespass").focus(); /* rendre visible le input du mot de passe et focus dessus */
+  $('.secret').show(); $("#formulaireaccespass").show().focus(); /* rendre visible le input du mot de passe et focus dessus */
   $('.appentete .localisation .lieu').html(tableauretour[4]); /* localisation consignel dans entête application */
   $('.appentete .utilisateur .nomutilisateur').html(tableauretour[2]);/* pseudo d'utilisateur dans entête application */
   $('.appentete .localisation img.utilisateur').attr('src', tableauretour[3]); /* photo ou avatar dans entête application */
@@ -1939,7 +1939,7 @@ function identification(){
   $(".inscription").show(); $(".detection").hide(); $(".secret").hide(); $(".validation").show();
   utilisateurinconnu();
   videinput("#formulaireaccesutilisateur"); videinput("#formulaireaccespass"); videinput("#inscr2nom"); videinput("#inscr2nom2"); videinput("#inscr3secret"); videinput("#inscr3secret2"); 
-  $("#formulaireaccesutilisateur").focus();
+  $("#formulaireaccesutilisateur").show().focus();
 };
 
 // redimensionner une image en conservant les proportions
@@ -2536,7 +2536,7 @@ function serveurmoi(nomdonnees){
     var dureeserveur=Number(retourserveur[7]);
       $(".nbjourserveur").show();
     if(dureeserveur>0){
-      $("#caseserveurmoi").click();
+      $("#caseserveurmoi").prop("checked",true); $(".serveurmoi").html("autorisé");
       $("#nbjourserveur").val(dureeserveur);
     }else{
       $("#caseserveurmoi").prop("checked",false);
@@ -2760,72 +2760,72 @@ function valideutilisateur(nomutilisateur){
   var nomutil3= nettoieinput($("#formulaireaccespass").val());
   var tableauretour= $(".retourserveur").html().split(",");
   if(tableauretour.length==1 || nomutil3=="" || tableauretour[1]==0){
-// si le serveur n'a pas encore renvoyé de code de session //chiffre les trois champs input
- // met l'indicateur à 0
-if(nomutil){ var nomcode = codelenom(nomutil)}; //chiffre le nom d'utilisateur 
-if(nomutil2){ var nomcode2 = codelenom(nomutil2)}; //chiffre le nom d'utilisateur sinon chiffre undefined
-if(nomutil3){ var nomcode3 = codelenom(nomutil3)}; //chiffre le mot de passe sinon chiffre undefined
-}else{
-// le code de session existe ("codedesession "+tableauretour[1]); 
-var nomcode = codelenom((codelenom(nomutil2)*tableauretour[1])+""); //chiffre le nom d'utilisateur avec le code session
-var nomcode2 = codelenom(codelenom(nomutil3)*tableauretour[1]+""); //chiffre le mot de passe avec le code session
-var nomcode3 = codelenom("0"); //chiffre la demande de fichier avec le code de session
-var nomcode4 = codelenom(nomutil2+nomutil3); //chiffre le code d'acces local
-};
-var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
-var retourdansdiv = ".retourserveur";
-$.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
-  /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
-  if(statusTxt == "success") {
-    /* le chargement est fait par le .load dans le div .retourserveur et dans la variable reponseTxt */
-    if (responseTxt.indexOf("?php")==1) {
-      $('.alerte').html("<br><i class='eval2'>Vérification d'utilisateur indisponible sur le serveur</i><br>"); 
-      /* suite à écrire pour utiliser en local sans vérification serveur de l'utilisateur */
-      return;
-    }else{
-    responseTxt = decryptetransfert(responseTxt);
-    $(retourdansdiv).html(responseTxt);
-    }; 
-// séparation des variables renvoyées dans le div .retourserveur par le serveur
-try { var tableauretour = $(".retourserveur").html().split(","); }
-  catch(err) {$(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};
-/* Utilisateur inconnu sur le serveur echo (" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu") */
-
-if(!tableauretour[2]){ $(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};/* Utilisateur DA↺ mot réservé undefined */
-
-tableauretour[2] = tableauretour[2].substring(1,(tableauretour[2].length)-1) ;
-
-// peut contenir le pseudo, inconnu ou 1 si l'utilisateur est identifié par le serveur 
-if(tableauretour[2] =="Inconnu"){
-  effacelentete();/* reste sur la page d'inscription à faire accès au test par le menu */
-
-if(tableauretour[0] == " "){
-  tableauretour[0]="u0"; $(".retourserveur").prepend(tableauretour[0]); /* ajout identifiant local utilisateur inconnu si ce n'est pas encore fait mauvaise identification d'utilisateur*/
+    // si le serveur n'a pas encore renvoyé de code de session //chiffre les trois champs input
+    // met l'indicateur à 0
+  if(nomutil){ var nomcode = codelenom(nomutil)}; //chiffre le nom d'utilisateur 
+  if(nomutil2){ var nomcode2 = codelenom(nomutil2)}; //chiffre le nom d'utilisateur sinon chiffre undefined
+  if(nomutil3){ var nomcode3 = codelenom(nomutil3)}; //chiffre le mot de passe sinon chiffre undefined
+  }else{
+    // le code de session existe ("codedesession "+tableauretour[1]); 
+    var nomcode = codelenom((codelenom(nomutil2)*tableauretour[1])+""); //chiffre le nom d'utilisateur avec le code session
+    var nomcode2 = codelenom(codelenom(nomutil3)*tableauretour[1]+""); //chiffre le mot de passe avec le code session
+    var nomcode3 = codelenom("0"); //chiffre la demande de fichier avec le code de session
+    var nomcode4 = codelenom(nomutil2+nomutil3); //chiffre le code d'acces local
   };
-//  effaceutilisation();/* efface les traces des préparations de transactions précédentes */
-  /* Chargement des valeurs locales de test */
-}else{ /* Utilisateur connu */
-  /* Utilisateur connu sur le serveur sans mot de passe echo (" ,".$nombrealeatoire.",".$var3.",".$cheminfichierimage.",".$var5.", ") */
-  /* (vide,numerosession,pseudoutilisateur,cheminimageouavatar,localiteconsignel,vide) */
-  if(($("#appentetesession").html())==tableauretour[1]){ 
-    /* début de si utilisateur connu et mot de passe connu */
-    tableauretour[0]="u"+nomcode4; 
-    $(".retourserveur").html(tableauretour[0]+$(".retourserveur").text()); /* identifiant local u+code(utilisateur+pass) */
-    serveurmoi("initialise");
-    verifiepreflocalstorage();
-    chargemoi("mesopportunites");
-    activeutilisation(tableauretour);
-  }else{ /* début de si utilisateur connu et mot de passe inconnu */
-// if(tableauretour[0] != "u0"){
-// tableauretour[0]="u0"; $(".retourserveur").prepend(tableauretour[0]); /* ajout identifiant local si ce n,est pas encore fait mauvais mot de passe */
-// };
-    enattendantlemotdepasse(tableauretour);
-  }; /* fin de si utilisateur connu et mot de passe inconnu */
-  /* garder identifiants de session à faire*/
-}; /* Fin de utilisateur connu */
-}; /* Fin de la fonction de retour succès */
-if(statusTxt == "error") { $('.alerte').html("<br><i class='eval0'> - Serveur indisponible " + xhr.status + ": " + xhr.statusText+" -</i>");};
-}); /* Fin du .load */
+  var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
+  var retourdansdiv = ".retourserveur";
+  $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
+    /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
+    if(statusTxt == "success") {
+      /* le chargement est fait par le .load dans le div .retourserveur et dans la variable reponseTxt */
+      if (responseTxt.indexOf("?php")==1) {
+        $('.alerte').html("<br><i class='eval2'>Vérification d'utilisateur indisponible sur le serveur</i><br>"); 
+        /* suite à écrire pour utiliser en local sans vérification serveur de l'utilisateur */
+        return;
+      }else{
+        responseTxt = decryptetransfert(responseTxt);
+        $(retourdansdiv).html(responseTxt);
+      }; 
+      // séparation des variables renvoyées dans le div .retourserveur par le serveur
+      try { var tableauretour = $(".retourserveur").html().split(","); }
+        catch(err) {$(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};
+      /* Utilisateur inconnu sur le serveur echo (" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu") */
+      
+      if(!tableauretour[2]){ $(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};/* Utilisateur DA↺ mot réservé undefined */
+      
+      tableauretour[2] = tableauretour[2].substring(1,(tableauretour[2].length)-1) ;
+
+      // peut contenir le pseudo, inconnu ou 1 si l'utilisateur est identifié par le serveur 
+      if(tableauretour[2] =="Inconnu"){
+        effacelentete();/* reste sur la page d'inscription à faire accès au test par le menu */
+      
+      if(tableauretour[0] == " "){
+        tableauretour[0]="u0"; $(".retourserveur").prepend(tableauretour[0]); /* ajout identifiant local utilisateur inconnu si ce n'est pas encore fait mauvaise identification d'utilisateur*/
+        };
+      //  effaceutilisation();/* efface les traces des préparations de transactions précédentes */
+        /* Chargement des valeurs locales de test */
+      }else{ /* Utilisateur connu */
+        /* Utilisateur connu sur le serveur sans mot de passe echo (" ,".$nombrealeatoire.",".$var3.",".$cheminfichierimage.",".$var5.", ") */
+        /* (vide,numerosession,pseudoutilisateur,cheminimageouavatar,localiteconsignel,vide) */
+        if(($("#appentetesession").html())==tableauretour[1]){ 
+          /* début de si utilisateur connu et mot de passe connu */
+          tableauretour[0]="u"+nomcode4; 
+          $(".retourserveur").html(tableauretour[0]+$(".retourserveur").text()); /* identifiant local u+code(utilisateur+pass) */
+          serveurmoi("initialise");
+          verifiepreflocalstorage();
+          chargemoi("mesopportunites");
+          activeutilisation(tableauretour);
+        }else{ /* début de si utilisateur connu et mot de passe inconnu */
+          // if(tableauretour[0] != "u0"){
+          // tableauretour[0]="u0"; $(".retourserveur").prepend(tableauretour[0]); /* ajout identifiant local si ce n,est pas encore fait mauvais mot de passe */
+          // };
+          enattendantlemotdepasse(tableauretour);
+        }; /* fin de si utilisateur connu et mot de passe inconnu */
+      /* garder identifiants de session à faire*/
+      }; /* Fin de utilisateur connu */
+    }; /* Fin de la fonction de retour succès */
+    if(statusTxt == "error") { $('.alerte').html("<br><i class='eval0'> - Serveur indisponible " + xhr.status + ": " + xhr.statusText+" -</i>");};
+  }); /* Fin du .load */
 }; 
 
 /* validation de la durée d'expiration */
