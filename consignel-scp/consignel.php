@@ -1909,9 +1909,12 @@ function retiredelaliste($var3,$nomfichier,$item){
   $retireregex = "/(\"".$item."\")/"; // met la chaine entre quillemets doubles
   $contenufichier = preg_replace( $retireregex, "", $contenufichier); // enlève la chaine entre guillemets
   $contenufichier = preg_replace( "/(,,)/", ",", $contenufichier); // remplace 2 virgules par une seule
+  $contenufichier = preg_replace( "/(,\n,)/", ",\n", $contenufichier); // remplace 2 virgules par une seule
   $contenufichier = preg_replace( "/(\n\n)/", "\n", $contenufichier); // remplace 2 retours chariot par un seul
   if(substr($contenufichier,0,3)=="[,\""){$contenufichier="[".substr($contenufichier,2);}; // supprime une virgule en début de tableau
+  if(substr($contenufichier,0,5)=="[\n,\n\""){$contenufichier="[\n\"".substr($contenufichier,5);}; // supprime une virgule en début de tableau
   if(substr($contenufichier,-2)==",]"){$contenufichier=substr($contenufichier,0,-2)."]";}; // supprime une virgule en fin de tableau
+  if(substr($contenufichier,-3)==",\n]"){$contenufichier=substr($contenufichier,0,-3)."\n]";}; // supprime une virgule en fin de tableau
   $base=constante("base");
   $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");
   ajouteaufichier($cheminfichierinclu, $contenufichier,"debut");
