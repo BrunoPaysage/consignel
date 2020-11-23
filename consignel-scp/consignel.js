@@ -563,6 +563,65 @@ function changelesvaleurs(numid){
 
 }; /* fin de fonction changelesvaleurs */
 
+/* retrait de contancts dans demandeaqui stockées sur le serveur */
+function changemesdemandeaqui(contact){
+//  alert("changedemandeaqui"+contact);
+  $("#changedemandeaqui").contents().unwrap();
+  $("#changecontact").remove();
+  $("#inputdemandeaqui").wrap("<div id=\"changedemandeaqui\"></div>");
+  var changecontactid="changecontact";
+  var laquantite="changepas";
+  var infobouton="";
+  if(contact.substring(0,2)=="-0" && contact[2]!=="0"){
+    laquantite="-0";
+    $("#changedemandeaqui").addClass("eval2");
+    infobouton="<span>Supprime ce contact<br></span>";
+  };
+  if(contact.substring(0,4)=="-000" && contact[4]!=="0"){
+    laquantite="-000";
+    $("#changedemandeaqui").addClass("eval1");
+    infobouton="<span>Tous les contacts ?<br></span>";
+  };
+  $("#inputdemandeaqui").after("<div id=\""+changecontactid+"\">"+infobouton+"<button class=\"retrait\">Suppr.</button> <button class=\"esc\">ESC</button><hr></div>") ;
+  $(document).on("click", "#"+changecontactid+" button", function(){
+    var nombouton=$(this).attr("class");
+    $(document).off("click", "#"+changecontactid+" button")
+    $("#changedemandeaqui").contents().unwrap();
+    $("#changecontact").remove();
+    $("#inputdemandeaqui").val(contactclair(contact));
+    if(nombouton=="retrait"){ 
+      $("#inputdemandeaqui").val("");
+      serveurmoi("retiredeaqui"+contact);
+    };
+    // if(nombouton=="esc"){};
+  });  // fin du onclick et sa fonction retour
+};
+
+/* retrait d'items dans valeursref stockées sur le serveur */
+function changemesvaleursref(numid){
+  var preciseact="#"+numid+"preciseact";
+  var changevaleurid="changevaleur"+numid;
+  $(preciseact).removeClass("cache").addClass("voit design") ;
+  $(preciseact).next("div").remove() ;
+  var laquantite=$("#"+numid+"quantiteinput").val();
+  var infobouton="";
+  if(laquantite=="-0"){infobouton="<span>Supprime cet enregistrement<br></span>";};
+  if(laquantite=="-000"){infobouton="<span>Tous les enregistrements ?<br></span>";};
+  $(preciseact).after("<div id=\""+changevaleurid+"\">"+infobouton+"<button class=\"retrait\">Suppr.</button> <button class=\"esc\">ESC</button><hr></div>") ;
+  $(document).on("click", "#"+changevaleurid+" button", function(){
+    var nombouton=$(this).attr("class");
+    var laquantite=$(this).parent("div").parent("div").children("span.quantite").text();
+    var valbouton="";
+    if(laquantite=="-0"){valbouton=$(this).parent("div").parent("div").attr("id");};
+    if(laquantite=="-000"){valbouton="act0001";};
+    $(this).parent("div").parent("div").children("span.quantite").text(1);
+    $(document).off("click", "#"+changevaleurid+" button")
+    $(this).parent("div").remove();
+    if(nombouton=="retrait"){ serveurmoi("retirevalref"+valbouton); $("#"+numid).remove();};
+    // if(nombouton=="esc"){alert(nombouton);}; // ne rien faire
+  });  // fin du onclick et sa fonction retour
+};
+
 /* fonction changelesvaleurs lorsque l'unité est changée*/
 function changemodedemo(modeutilisation){
   $("#suiviappli").prepend("changemodedemo("+modeutilisation+") <br>");
@@ -1023,6 +1082,15 @@ function confirmationchangeaide(){
   alert("confirmationchangeaide à écrire ");
 };
 
+/* contact clair enlève le -0 en début de contact */
+function contactclair(letexte){
+  var letextelocal=letexte;
+  while (letextelocal[0]=="-" || letextelocal[0]=="0" || letextelocal[0]==" ") {
+    letextelocal=letextelocal.substring(1);
+  };
+  return letextelocal;
+};
+
 /* au chargement de la page initialise l'application */
 function debuter(){
 /* masque le champs secret pour l'inscription */
@@ -1222,7 +1290,13 @@ $("#chargemoidemandeaqui").click(function() { chargemoi("demandeaqui"); });
 $("#developpementetsuivi").click(function() { changeClass(stockage,'voit','cache'); });
 
 /* ajout des onclick validation qr */
-$("#validqr").click(function() { autorisationqr(); });
+$("#validqr").click(function() {   
+  if($("#changedemandeaqui").length){ 
+    $("#changedemandeaqui button.esc").click(); 
+    miseajourdesvaleurs();
+  };
+  autorisationqr(); 
+});
 
 
 /* 
@@ -1329,6 +1403,12 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
   }else{
     var demandefich2 = ""; demandefich = nomdonnees;
   };
+  if(demandefich.substring(0,12) == "retirevalref"){ 
+    var refact = demandefich.substring(18); demandefich = "retirevalref"; 
+  };
+  if(demandefich.substring(0,12) == "retiredeaqui"){ 
+    var refaqui = demandefich.substring(14); demandefich = "retiredemandeaqui"; 
+  };
   var dansspansuivi = quelspansuivi;
   var dansspansuivi2 = quelspansuivi2;
   var nomfichierlocal = quelfichierlocal;
@@ -1383,6 +1463,10 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var4 = $("#nbjourserveur").val(); /* nombre de jours à conserver */
     var4="&var4="+var4;
   };
+  if(demandefich=="retirevalref"){
+    var4 = refact; /* reference act à supprimer */
+    var4="&var4="+var4;
+  };
     
   var var5="";
   if(demandefich=="maproposition"){
@@ -1395,6 +1479,11 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
       var5 = encryptepourtransfert(var5);
       var5="&var5="+var5
     };
+  };
+  if(demandefich=="retiredemandeaqui"){
+    var5 = refaqui; /* reference aqui à supprimer */
+    var5 = encryptepourtransfert(var5);
+    var5="&var5="+var5
   };
   if(demandefich=="inscription"){
     var nomupublic= nettoieinput($("#formulaireaccesutilisateur").val());
@@ -1656,9 +1745,9 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         break;
         default :
         /* Fichier demandé au serveur et chargé */
-// if(retourdansdiv=="#mstockmestransactions"){alert(responseTxt);};
         $(retourdansdiv).html(encryptepourdiv(responseTxt));
-        $("#acceptetransactionstatut").html("");           menudetailproposition("attente");
+        $("#acceptetransactionstatut").html("");
+        menudetailproposition("attente");
         $(dansspansuivi).html("<i class='eval4'> - "+demandefich+" chargé depuis le serveur" + " -</i>"); 
         $(dansspansuivi2).html("<i class='eval4'>&nbsp;</i>"); 
         if(responseTxt.length ==1){
@@ -1677,7 +1766,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
           $(dansspansuivi).html("<i class='eval3'> - "+demandefich+" chargé depuis le serveur et mis dans le stockage local" + " -</i>"); 
           $(dansspansuivi2).html("<i class='eval3'>&nbsp;</i>"); 
         };
-        if(demandefich=="quoi"){ changedeliste("#inputactivite", "#mstockquoi");};
+        if(demandefich=="quoi"){changedeliste("#inputactivite", "#mstockquoi");};
+        if(demandefich=="retirevalref"){ changedeliste("#inputactivite", "#mstockquoi");};
         if(demandefich=="mesopportunites"){ 
           effaceconfirmation();
           changedeliste("#confirmationinputcode", "#mstockmesopportunites");
@@ -1687,6 +1777,7 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
           };
         };
         if(demandefich=="demandeaqui"){ changedeliste("#inputdemandeaqui", "#mstockdemandeaqui"); };
+        if(demandefich=="retiredemandeaqui"){ changedeliste("#inputdemandeaqui", "#mstockdemandeaqui"); };
         break;
       }; /* Fin du switch */
     }; /* Fin de la fonction de retour succès */
@@ -2251,7 +2342,7 @@ function modifie(numdiv,spanclass) {
     if(spanclasslocal=="quantite"){miseajourvaleurs = miseajourvaleurs+" videinput('#inputactivite'); $('#inputactivite').focus();"};
   };/* fin de description de l'activité */
   /* valeurs par défaut si le input est vide */
-  if (spanclasslocal =="quantite"){ testemodifinput="if (var1=='') {var1='1';}; if (var1<0) {var1=-var1;};"; }else{ testemodifinput="if (var1=='') {var1='0';}; "; };
+  if (spanclasslocal =="quantite"){ testemodifinput="if (var1=='-0' || var1=='-000') {changemesvaleursref(\'"+numdivlocal+"\');}; if (var1=='') {var1='1';}; if (var1<0) {var1=-var1;};"; }else{ testemodifinput="if (var1=='') {var1='0';}; "; };
   if ((spanclasslocal=="quoi") || (spanclasslocal=="unite")){ testemodifinput="if (var1=='') {var1='"+var0+"';}; "; };
   var onblurinput="var1="+validinput1+"$('#"+numdivinput+"').val()"+validinput2+"; "+testemodifinput+" $('#"+numdivlocal+" ."+spanclasslocal+"').html(var1) ; $('#"+numdivinput+"').remove(); $('#"+numdivlocal+" .supprime').hide() ;"+testelesid+" "+miseajourvaleurs+" "; /* finalise la modification */
   var onkeypressrinput=" if (event.keyCode==13){"+onblurinput+"}; "; /*finalise la modification */
@@ -2369,12 +2460,6 @@ function oksoldedisponible(){
   return ok;
 };
 
-/* fonction pour retirer un item de la liste des opportunités
-function oublieopportunite(idtrainoportune){
-  chargemoi("oublieopportunite");
-};
- */
-
 /* prépare le input avec le choixfaire, le choixquoi etc */
 function proposechoix(){
   $("#suiviappli").prepend("proposechoix() <br>");
@@ -2456,7 +2541,7 @@ function retourprefserveur(resumetemp){
   var envoi=$("#nbjourserveur").val();
   var retour=tableauretour[4];
   if(envoi==retour){
-    if(envoi>0){ $(".nbjourserveurretour").html("<br>Les fichiers personnels plus vieux que "+retour+" jours sont effacés à chaque nouvelle transaction"); };
+    if(envoi>0){ $(".nbjourserveurretour").html("<br>Les fichiers personnels plus vieux que "+retour+" jours sont effacés à chaque nouvelle transaction. <br>Le bouton oublier élimine la transaction dans les opportunités. <br>-0 ou -000 dans la quantité d'un item ou devant un peuso éliminent ces références."); };
     if(envoi==0){ $(".nbjourserveurretour").html("<br>Pas de fichiers personnels sur le serveur"); $("#caseserveurmoi").prop("checked",false);};
   }else{
     if(envoi==""){    
@@ -2544,6 +2629,14 @@ function serveurmoi(nomdonnees){
       $(".nbjourserveur").hide();
     }; 
   };
+  
+  var nomdonnees2=nomdonnees.substring(0,12);
+  if(nomdonnees2=="retirevalref"){
+    demandefichier("#mstockquoi",nomdonnees,"","","");
+  };  
+  if(nomdonnees2=="retiredeaqui"){
+    demandefichier("#mstockdemandeaqui",nomdonnees,"","","");
+  };  
 };
 
 function suivisortable(suivisortable1,suivisortable2,suivisortable3){ 
@@ -2845,10 +2938,31 @@ alert("fonction validfluxconsignel à écrire");
 /* validation de la durée d'expiration */
 function validedemandeaqui(){
   $("#suiviappli").prepend("validedemandeaqui() <br>");
-var demandeaquilocale = $("#inputdemandeaqui").val();
-demandeaquilocale = nettoieinput(demandeaquilocale);
-$("#inputdemandeaqui").val(demandeaquilocale) ;
-miseajourdesvaleurs();
+  var demandeaquilocale = $("#inputdemandeaqui").val();
+  demandeaquilocale = nettoieinput(demandeaquilocale);
+  var modification=0;
+  if(demandeaquilocale.substr(0,2)=="-0"){
+    if(demandeaquilocale[2]!=="0"){
+      modification=1;
+      changemesdemandeaqui(demandeaquilocale);
+    };
+    if(demandeaquilocale.substr(0,4)=="-000"){
+      if(demandeaquilocale[4]!=="0"){
+        modification=1;
+        changemesdemandeaqui(demandeaquilocale);
+      };
+    };
+  };
+  if(modification==0){
+    demandeaquilocale = contactclair(demandeaquilocale);
+    if($('#changedemandeaqui').length){
+      $("#changedemandeaqui").contents().unwrap();
+      $("#changecontact").remove();
+    };
+  };
+
+  $("#inputdemandeaqui").val(demandeaquilocale) ;
+  miseajourdesvaleurs();
 }; 
 
 /* mise à jour préférences avec localstorage */

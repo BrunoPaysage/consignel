@@ -145,11 +145,13 @@ if(($donnee1==$donnee2) || ($donnee1==$donnee3)){
       }; // fin de "serveurmoi"
       if($lademande==59570){ $demandeaqui = fichierperso($var3,"demandeaqui"); echo cryptepourtransfert($demandeaqui); }; // fin de "demandeaqui"
       if($lademande==61612){ $nouveaucompte=inscription($var3,$donnee5); echo cryptepourtransfert($nouveaucompte); }; // fin de "inscription"
+      if($lademande==71471){  $retirevaleurref = retirevaleurref($var3,$donnee4); echo cryptepourtransfert($retirevaleurref);  };// fin de "retirevaleurref"
       if($lademande==71900){  $monavatar = retireavatar($var3,$donnee4/$var4,$donnee5); echo cryptepourtransfert($monavatar);  };// fin de "retireavatar"
       if($lademande==86012){ $mesvaleursref = fichierperso($var3,"mesvaleursref"); echo cryptepourtransfert($mesvaleursref); }; // fin de "mesvaleursref"
       if($lademande==87558){ $noteproposition = notetransaction($var3,"mestransactions",$donnee5); echo cryptepourtransfert($noteproposition); }; // fin de "maproposition"
       if($lademande==116020){ $mestransactions = fichierperso($var3,"mestransactions"); echo cryptepourtransfert($mestransactions); }; // fin de "mestransactions"
       if($lademande==118535){ $mesopportunites = fichierperso($var3,"mesopportunites"); $mesopportunites = testemesopportunites($var3,$mesopportunites) ; echo cryptepourtransfert($mesopportunites); }; // fin de "mesopportunites"
+      if($lademande==145311){  $retiredemandeaqui = retiredemandeaqui($var3,$donnee5); echo cryptepourtransfert($retiredemandeaqui);  };// fin de "retiredemandeaqui"
       if($lademande==151695){ $oublieopportunite = retireopportunite($var3,$donnee4); echo cryptepourtransfert($oublieopportunite); 
       }; // fin de "oublieopportunite"
       if($lademande==211910){ $transactionrefusee = refusetransaction($var3,$donnee4); echo cryptepourtransfert($transactionrefusee); }; // fin de "refuseuneproposition"
@@ -1901,17 +1903,33 @@ function retireavatar($var3,$nopseudo,$fichieravatar){
   return "ANAV - ".substr($cheminavatar,1);
 };
 
-// retire de la liste
+// retire de la liste d'items entre gillemets
 function retiredelaliste($var3,$nomfichier,$item){
   $contenufichier = "".fichierperso2($var3,$nomfichier);
-  $retireregex = "/(".$item.")/";
-  $contenufichier = preg_replace( $retireregex, "", $contenufichier);
-  $contenufichier = preg_replace( "/(\"\",)/", "", $contenufichier);
-  $contenufichier = preg_replace( "/(,\"\")/", "", $contenufichier);
+  $retireregex = "/(\"".$item."\")/"; // met la chaine entre quillemets doubles
+  $contenufichier = preg_replace( $retireregex, "", $contenufichier); // enlève la chaine entre guillemets
+  $contenufichier = preg_replace( "/(,,)/", ",", $contenufichier); // remplace 2 virgules par une seule
+  $contenufichier = preg_replace( "/(\n\n)/", "\n", $contenufichier); // remplace 2 retours chariot par un seul
+  if(substr($contenufichier,0,3)=="[,\""){$contenufichier="[".substr($contenufichier,2);}; // supprime une virgule en début de tableau
+  if(substr($contenufichier,-2)==",]"){$contenufichier=substr($contenufichier,0,-2)."]";}; // supprime une virgule en fin de tableau
   $base=constante("base");
   $cheminfichierinclu = tracelechemin($var3,$base,$var3."-".$nomfichier.".json");
   ajouteaufichier($cheminfichierinclu, $contenufichier,"debut");
   return $contenufichier;
+};
+
+// retire la référence de valeur dans les fichiers mesvaleursref et quoi
+function retiredemandeaqui($var3,$donnee5){
+    $debut=substr($donnee5,0,2);
+    if($debut=="00"){
+        $baseutilisateurs = constante("base");
+        $cheminfichier = tracelechemin($var3,$baseutilisateurs,$var3."-demandeaqui.json");
+        unlink($cheminfichier);
+    }else{
+        if($debut=="[]"){ return "TEST - Il faut indiquer le pseudo à effacer derrière -0"; };
+        $contact=$donnee5;
+        retiredelaliste($var3,"demandeaqui",$contact);
+    };
 };
 
 // retire le chemin vide
@@ -1941,6 +1959,29 @@ function retireopportunite($var3,$donnee4){
   $finnom=substr($contenufichier,$debutdate,strpos($apres, "\""));
   $mesopportunite = retiredelaliste($var3,"mesopportunites",$debutnom.$finnom);
   return $mesopportunite;
+};
+
+// retire la référence de valeur dans les fichiers mesvaleursref et quoi
+function retirevaleurref($var3,$donnee4){
+    if($donnee4==1){
+        $baseutilisateurs = constante("base");
+        $cheminfichier = tracelechemin($var3,$baseutilisateurs,$var3."-mesvaleursref.json");
+        unlink($cheminfichier);
+        $cheminfichier = tracelechemin($var3,$baseutilisateurs,$var3."-quoi.json");
+        unlink($cheminfichier);
+    }else{
+        $lesvaleurs=fichierperso2($var3,"mesvaleursref");
+        $lesvaleursphp = json_decode($lesvaleurs,true);
+        $item="e".$donnee4;
+        $description=$lesvaleursphp[$item][0];
+        retiredelaliste($var3,"quoi",$description);
+        unset($lesvaleursphp[$item]);
+        $lesvaleurs = cryptepourstockage(json_encode($lesvaleursphp));
+        $base=constante("base");
+        $cheminfichier=tracelechemin($var3,$base,$var3."-mesvaleursref.json");
+        file_put_contents($cheminfichier, $lesvaleurs);
+        return fichierperso2($var3,"quoi");
+    };
 };
 
 // mise à jour du compte avec le revenu inconditionnel
