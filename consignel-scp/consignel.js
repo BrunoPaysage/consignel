@@ -31,8 +31,7 @@ function activeutilisation(tableauretour){
   var tableaudemarre=tableauretour;
   cachetout(); $(".alerte").html(""); 
   $('#preferences').attr("class","actif");
-// ajouter la mise à jour des préférences après un dépassement de temps
-changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaudemarre[6]);
+  changegraphsuivi(tableaudemarre[3],tableaudemarre[4],tableaudemarre[5],tableaudemarre[6]);
   if($('.menupref .suivant').text() == ".utilisation"){ $('.utilisation').show(); $('#inputactivite').focus(); };
   if($('.menupref .suivant').text() == ".confirmation"){ 
     $('.confirmation').show(); $('#confirmationrecherche').attr("class","actif"); $('#confirmationacceptetransaction').attr("class","actif"); 
@@ -622,18 +621,18 @@ function changemesvaleursref(numid){
   });  // fin du onclick et sa fonction retour
 };
 
-/* fonction changelesvaleurs lorsque l'unité est changée*/
+/* fonction changelesvaleurs lorsque l'unité est changée
 function changemodedemo(modeutilisation){
   $("#suiviappli").prepend("changemodedemo("+modeutilisation+") <br>");
   var modeutilisationlocal = modeutilisation ;
   var modecoche = $("#modedemo").prop("checked");
   if (modecoche === true){
-  /* mode démo */
+  // mode démo 
   $(".modedemocomment").html("Utilisez les menus");
   $(".retourserveur").html("u001 ,0,0,750,75,500,1000,,");
   utilisateurinconnu(); miseajourgraphique();
   }else{
-  /* mode utilisateur identifié */
+  // mode utilisateur identifié 
   $(".modedemocomment").html(" désactivé. Il faut s'identifier");
   $(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu");
   changegraphsuivi(182.5,1,0,365);
@@ -641,6 +640,7 @@ function changemodedemo(modeutilisation){
  
   };
 }; 
+*/
 
 /* chargement des listes publiques pour les input */
 function charge(nomdonnees){
@@ -1173,7 +1173,7 @@ $("#inscr3secret2").change(function() { nettoieinput($("#inscr3secret2").val());
 
 $("#formulairearretcontinue").click(function() { arretesessionclic("continue"); });
 $("#formulairearretarrete").click(function() { arretesessionclic("arrete"); });
-$("#modedemo").change(function() { changemodedemo(); });
+// $("#modedemo").change(function() { changemodedemo(); });
 /* boutons pour les testeurs */
 $(".inscriptiontesteurs span").click(function() { var text = $( this ).text(); $("#formulaireaccesutilisateur").val(text); valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
 $(".inscriptiontesteurssecrets span").click(function() { var text = $( this ).text(); $("#formulaireaccespass").val(text); valideutilisateur(nettoieinput($("#formulaireaccespass").val())); });

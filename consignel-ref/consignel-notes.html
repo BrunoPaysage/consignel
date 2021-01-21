@@ -262,7 +262,7 @@ deny from all<br>
 <h3>Fichier d'identification des utilisateurs</h3>
 <p class="soustitre">0/.consignel3</p>
 <p>Liste chiffrée des utilisateur et données permettant de les identifier lors d'une connexion</p>
-<table class="tableau">
+<table class="tableau large">
 <thead><tr><td>chiffre utilisateur</td><td>chiffre passe</td><td>pseudonyme utilisateur<td>image publique utilisateur</td><td>Zone &#8634;onsignél</td><td>chiffre pseudonyme</td></tr></thead>
 <tbody>
 <tr><td>39382,</td><td>39382,</td><td>"pseudonyme1",<td>"consignel.png",</td><td>"Marieville,"</td><td>39382,</td></tr>
@@ -274,14 +274,14 @@ deny from all<br>
 <h3>Fichier de session des utilisateurs</h3>
 <p class="soustitre">0/.consignel0</p>
 <p>Liste chiffrée des utilisateurs et des contrôles d'accès</p>
-<table class="tableau">
+<table class="tableau large">
 <thead><tr><td>chiffre utilisateur codé avec numéro de session</td><td>chiffre secret codé  avec numéro de session</td><td>chiffre utilisateur<td>numéro de session</td><td>heure et minute de session (h*60+mn)</tr></thead>
 <tbody>
 <tr><td>14319,</td><td>14144,</td><td>39382,<td>1000,</td><td>1092</tr>
 <tr><td>7808,</td><td>7983,</td><td>39382,<td>0010,</td><td>1117</td></tr>
 </tbody>
 </table>
-<p>&nbsp;</p>
+  <p>&nbsp;</p>
 <h3>Dossier et nom de fichier des données de l'utilisateur</h3>
 <p class="soustitre">Les données sont dispersées dans plusieurs fichiers</p>
 <p>Le chiffre de l'utilisateur donne aussi le chemin d'accès au dossier de l'utilisateur par sous-dossiers contenant un maximum de 100 sous-dossiers.</p>
@@ -304,9 +304,9 @@ Un utilisateur non identifié à ses préférences dans consignelu0. Aucun fichi
 <h3>Résumé de compte</h3>
 <p class="soustitre">39382-resune.json / u39382resume</p>
 <table class="tableau">
-<thead><tr><td>disponible</td><td>un jour de consommation</td><td>minimum du compte dans les 30 derniers jours<td>maximum du compte dans les 30 derniers jours</td><td>préférence effacement nombre de jours</td></tr></thead>
+<thead><tr><td>disponible</td><td>minimum du compte dans les 30 derniers jours</td><td>un jour de consommation</td><td>maximum du compte dans les 30 derniers jours</td><td>préférence effacement nombre de jours</td></tr></thead>
 <tbody>
-<tr><td>653.25,</td><td>76.71,</td><td>0,<td>1412.1,</td><td>0</td></tr>
+<tr><td>653.25,</td><td>12,50,</td><td>29.25,</td><td>1412.15,</td><td>0</td></tr>
 </tbody>
 </table>
 <p>Le nom du fichier contient le lien<br>
@@ -314,13 +314,14 @@ Le résumé est le dernier état connu correspondant à l'indicateur du compte. 
 
 <h3>Suivi du résumé de compte</h3>
 <p class="soustitre">39382_suiviresune.json / u39382suiviresume</p>
-<table class="tableau">
-<thead><tr><td>jour</td><td>disponible</td><td>un jour de consommation</td><td>minimum du compte dans les 30 derniers jours<td>maximum du compte dans les 30 derniers jours</td></tr></thead>
+<table class="tableau large">
+<thead><tr><td>opération</td><td>disponible</td><td>un jour de consommation</td><td>minimum du compte dans les 30 derniers jours<td>maximum du compte dans les 30 derniers jours</td><td>préférence effacement nombre de jours</td></tr></thead>
 <tbody>
-<tr><td>20180623,</td><td>653.25,</td><td>76.71,</td><td>0,<td>1412.1,</td></tr>
-<tr><td>20180623,</td><td>643.25,</td><td>76.71,</td><td>0,<td>1412.1,</td></tr>
-<tr><td>20180703,</td><td>603.25,</td><td>76.71,</td><td>0,<td>1412.1,</td></tr>
-<tr><td>20180705,</td><td>583.25,</td><td>76.71,</td><td>0,<td>1412.1,</td></tr>
+
+<tr><td>acc20201104_1507_2228154,</td><td>12128.65,</td><td>12127.7,</td><td>33.25,</td><td>12128.65,</td><td>62,</td></tr>
+<tr><td>acc20201105_1522_2247985,</td><td>12129.6,</td><td>12127.7,</td><td>33.25,</td><td>12129.6,</td><td>62,</td></tr>
+<tr><td>acc20201029_1627_2233564,</td><td>12130.55,</td><td>12127.7,</td><td>33.25,</td><td>12130.55,</td><td>62,</td></tr>
+<tr><td>acc20201111_1635_2243341,</td><td>12131.5,</td><td>12127.7,</td><td>33.25,</td><td>12131.5,</td><td>62,</td></tr>
 </tbody>
 </table>
 <p>Le nom du fichier contient le lien<br>
@@ -390,8 +391,7 @@ var listeparqui = [ "ignorant", "initié", "maître", "moi", "musicien", "etc.",
 <!-- offres et demandes -->
 <h3>La liste des offres et demandes avec les valeurs moyennes</h3>
 <p class="soustitre">valeursref.json / u39382valeursref</p>
-</div>
-<table class="tableau">
+<table class="tableau large">
 <thead>
 <tr><td>code activité</td><td>élément</td><td>q</td><td>u</td><td>&#8634;</td><td>$</td><td>*E</td><td>durée</td><td>*S</td><td>fois/an</td></tr></thead>
 <tbody>
@@ -402,7 +402,6 @@ var listeparqui = [ "ignorant", "initié", "maître", "moi", "musicien", "etc.",
 <tr><td>"act40213":</td><td>["Expertise",</td><td>1,</td><td>"h",</td><td>-5.28,</td><td>120,</td><td>-0.1,</td><td>1,</td><td>1,</td><td>60]<br>}<br>}</td></tr>
 </tbody>
 </table>
-<div class="chapitre">
 <p>code activité: spécifique au &#8634;onsignel. Le code activité du &#8634;onsignel est calculé par chiffrage de la description de l'élément précédée de act. (act249642) Il ne tient pas compte des quantités et des valeurs. Le code activité d'une activité particulière (act249642p23983274) contient un deuxième code incluant la quantité, l'unité et les valeurs. Pour les correspondances avec d'autres classification, il y a des fichiers de traduction. Les catégories sont des éléments. <br>
 q: quantité<br>
 u: unité pour les quantités<br>
@@ -425,14 +424,13 @@ Fois/an: Récurrence</p>
 <p class="soustitre">tra20181124_09-suivi.json, u39382tra20181124_09-suivi.json.</p>
 <p>La liste sert à retrouver la transaction lors d'une demande de lecture avant acceptation. Elle contient le code de la transaction, les codes des offres et demandes qui la composent, le numéro du proposeur et du destinataire. Elle contient aussi la durée de validité, le montant de &#8634;onsignel à compenser et le code de la transaction proposition précédente. L'acceptation et la vérification de la transaction est dans d'autres fichiers.</p>
 <p>Un fichier par heure. Le nom de fichier contient la date et l'heure de transaction. Les fichiers de suivi sont rangés dans des répertoires selon la date 2/2018/11/24/09/</p>
-</div>
-<table class="tableau">
+
+<table class="tableau large">
 <thead><tr><td>code transaction</td><td>code offre</td><td>code demande</td><td>date</td><td>code pour qui</td><td>durée</td><td>&#8634;onsignel à compenser</td><td>code dequi</td></tr></thead>
 <tbody>
 <tr><td>[tra20181124_0913_93981,</td><td>511799,</td><td>447527,</td><td>20181124_0913,</td><td>43841,</td><td>1,</td><td>-33.5,</td><td>39382]</td></tr>
 </tbody>
 </table>
-<div class="chapitre">
 <h3>La liste des proposition de transactions base de l'utilisateur</h3>
 <p class="soustitre">39382-transactions.json, 39382_2017-transactions.json / u39382transactions, u39382transactions</p>
 
