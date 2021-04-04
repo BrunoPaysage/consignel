@@ -1094,7 +1094,7 @@ function contactclair(letexte){
 /* au chargement de la page initialise l'application */
 function debuter(){
 /* masque le champs secret pour l'inscription */
-$(".secret").hide();$(".inscription2").hide(); $(".inscription3").hide();
+$(".serveurlocalite").hide();$(".secret").hide();$(".inscription2").hide(); $(".inscription3").hide();
 $("#confirmationacceptetransaction .matransaction").hide();
 
 
@@ -1822,7 +1822,7 @@ function effacelentete(){
   decochestockage();
   utilisateurinconnu();
   verifiepreflocalstorage();
-  cachetout(); $(".inscription").show(); $(".secret").hide();  
+  cachetout(); $(".inscription").show(); $(".serveurlocalite").hide(); $(".secret").hide();  
   $('#formulaireacces')[0].reset();
   $("#formulaireaccesutilisateur").show().focus(); 
 };
@@ -1935,6 +1935,22 @@ var contenuencode="encode pour transfert "+clairlocal;
 return contenuencode;
 };
 
+/* enleve index.html à la fin d'une url */
+function enleveindex(chaineurl){
+  if(chaineurl==constante("siteweb")){ 
+    // alert("meme "+chaineurl);
+    return "";};
+  if(chaineurl){
+    var position= chaineurl.indexOf("/index.html");
+    if(position!=-1){chaineurl=chaineurl.substring(0,position)+"/";};
+    return chaineurl;
+  }else{
+    // alert("chaine url vide "+chaineurl);
+    return "";
+  };
+  // alert("passe entre les mailles");
+};
+
 /* Prépare le fichier texte avant de download */
 function enregistre(action,format){
   var divdonnees="";
@@ -2027,9 +2043,9 @@ function humeur(refspan,montant){
 function identification(){
   $("#suiviappli").prepend("identification() <br>");
   $(".utilisation").hide();
-  $(".inscription").show(); $(".detection").hide(); $(".secret").hide(); $(".validation").show();
+  $(".inscription").show(); $(".detection").hide(); $(".serveurlocalite").hide(); $(".secret").hide(); $(".validation").show();
   utilisateurinconnu();
-  videinput("#formulaireaccesutilisateur"); videinput("#formulaireaccespass"); videinput("#inscr2nom"); videinput("#inscr2nom2"); videinput("#inscr3secret"); videinput("#inscr3secret2"); 
+  videinput("#formulaireaccesutilisateur"); videinput("#formulaireaccespass"); videinput("#inscr2nom"); videinput("#inscr2nom2"); videinput("#inscr3secret"); videinput("#inscr3secret2"); videinput("#formulaireaccesserveurlocalite"); 
   $("#formulaireaccesutilisateur").show().focus();
 };
 
@@ -2851,6 +2867,7 @@ function valideutilisateur(nomutilisateur){
   var nomutil = nomutilisateur; //change selon le input utilisateur pass, vrainon etc.
   var nomutil2= nettoieinput($("#formulaireaccesutilisateur").val());
   var nomutil3= nettoieinput($("#formulaireaccespass").val());
+  var serveurutil= enleveindex(nettoieinput($("#formulaireaccesserveurlocalite").val()));
   var tableauretour= $(".retourserveur").html().split(",");
   if(tableauretour.length==1 || nomutil3=="" || tableauretour[1]==0){
     // si le serveur n'a pas encore renvoyé de code de session //chiffre les trois champs input
@@ -2867,6 +2884,13 @@ function valideutilisateur(nomutilisateur){
   };
   var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
   var retourdansdiv = ".retourserveur";
+ if(serveurutil){
+   /* Procédure pour transaciton entre localités */
+   var lienserveuraccepteur="<a href=\""+serveurutil+"\">"+serveurutil+"</a>";
+   $(".serveurlocalite span.suivi").html("<br> Transactions entre localités pas encore disponible <b>"+lienserveuraccepteur);
+ };
+ 
+ 
   $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
     /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
     if(statusTxt == "success") {
@@ -2894,6 +2918,8 @@ function valideutilisateur(nomutilisateur){
       
       if(tableauretour[0] == " "){
         tableauretour[0]="u0"; $(".retourserveur").prepend(tableauretour[0]); /* ajout identifiant local utilisateur inconnu si ce n'est pas encore fait mauvaise identification d'utilisateur*/
+        $(".serveurlocalite").show();
+        $("#formulaireaccesserveurlocalite").val(constante("siteweb"));
         };
       //  effaceutilisation();/* efface les traces des préparations de transactions précédentes */
         /* Chargement des valeurs locales de test */

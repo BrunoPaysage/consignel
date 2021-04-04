@@ -2,7 +2,7 @@
 $donnee1 = $_REQUEST['var1']; // code undefined, code utilisateur ou code utilisateur combiné session
 $donnee2 = $_REQUEST['var2']; // code undefined, code utilisateur ou code mot de passe combiné session
 $donnee3 = $_REQUEST['var3']; // code undefined, code mot de passe ou code un truc en plus
-$donnee4 = antitagnb($_REQUEST['var4']);
+$donnee4 = antitagnb($_REQUEST['var4']); // entrée nombre codé
 $donnee5 = antitaghtml($_REQUEST['var5']); // entrée de texte ou de fichier
 if(($donnee1=="undefined") || ($donnee1=="")){$donnee1=1;}else{$donnee1 = preg_replace( '/\D*/', '', $donnee1);}; // pas de imput ni de numéro de session  garde les nombres de la chaine 
 if(($donnee2=="undefined") || ($donnee2=="")){$donnee2=1;}else{$donnee2 = preg_replace( '/\D*/', '', $donnee2);}; // pas de code utilisateur ou de code session utilisateur  garde les nombres de la chaine 
