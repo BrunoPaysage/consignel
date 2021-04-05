@@ -286,6 +286,7 @@ function acceptetransaction($var3,$notransaction){
         };
         
         // mise à jour fichier xxxxx-resume2dates.json dans la base de l'accepteur
+        if($cheminsansfichier==""){$cheminsansfichier = tracelechemin(1,$base,"i");}; // derniere inscription acceptée
         $dernieresidtra = ajouteaufichier2dates($cheminsansfichier."-resume2dates.json",$idtraacc);
         $idtraprecedente = $dernieresidtra[0];
         $anciennete = $dernieresidtra[4];
@@ -745,12 +746,13 @@ function annuleproposition($var3,$notransaction,$prefixe="ann"){
         
         //  cas particulier de refus au moment de l'inscription
         if($demandeurchaine != "0"){
-            // à écrire si refus lors d'une opération d'inscription renvoi d'un message donnant la procédure de fermeture du compte
-            $inscritutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001644192\"")); if(substr($inscritutilisateur,0,4)=="_act"){ 
-                $nomdemandeur= lepseudode($nodemandeur);
+            $inscritutilisateur = substr($contenufichiertra,strpos($contenufichiertra, "_act0001644192\"")); 
+           if(substr($inscritutilisateur,0,4)=="_act"){
+                $nodemandeur= leiddupseudo($nodestinataire);
+                $nomdemandeur= $nodestinataire;
                 $toto= supprimeutilisateur($nodemandeur,$nomdemandeur);
                 $toto= supprimedossierutilisateur($nodemandeur);
-                return "NURI - ".$contenufichiertra; // Demande d'annulation du compte à confirmer
+                return "NURI - ".$contenufichiertra; // Annulation effectuée
             };
         };
         
@@ -1243,11 +1245,14 @@ function inputvalide($entree){
 function inscription($var3,$contenufichier){
   $identifiantlocal = $var3; 
   $chaineinscription = substr($contenufichier,2,strlen($contenufichier)-4); 
-  $avatar = constante("avatar"); $localite = constante("localite");
-  list($nompublic, $numpublic, $numprive, $numsecret) = explode(",", $chaineinscription);
+//  return "TEST - detail inscription: -".$chaineinscription."-";
+  $avatar = constante("avatar"); 
+  list($nompublic, $numpublic, $numprive, $numsecret, $localite) = explode(",", $chaineinscription);
+  if($localite=="\"\""){$localite = "\"".constante("localite")."\"";};
+//  return "TEST - |".$localite."|-";
   $etatutilisateur = testeutilisateurunique($numprive,$nompublic);
   // $nompublic garde les majuscules
-  $detailutilisateur =",".$numsecret.",".$nompublic.",\"".$avatar."\",\"".$localite."\",".$identifiantlocal.",";
+  $detailutilisateur =",".$numsecret.",".$nompublic.",\"".$avatar."\",".$localite.",".$identifiantlocal.",";
   if($etatutilisateur =="inconnu"){
     // change le fichier .consignel3
     ajouteutilisateur($numprive,$detailutilisateur);

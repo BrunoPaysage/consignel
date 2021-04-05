@@ -1490,7 +1490,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     var codenomupublic= codelenom(nomupublic);
     var codenomutil= codelenom(nettoieinput($("#inscr2nom2").val()));
     var codesecret= codelenom(nettoieinput($("#inscr3secret2").val()));
-    var var5 = "\""+nomupublic+"\","+codenomupublic+","+codenomutil+","+codesecret ;
+    var nonlocalite= nettoieinput($("#formulaireaccesserveurlocalite").val());
+    var var5 = "\""+nomupublic+"\","+codenomupublic+","+codenomutil+","+codesecret+"\",\""+nonlocalite+"\"" ;
     var5="{ "+ var5 +" } ";
     var5 = encryptepourtransfert(var5);
     var5="&var5="+var5
