@@ -42,6 +42,10 @@
 <details> <summary>paiement</summary> <p>Renvoie un tableau [0] "speculation" s'il y a un achat vente entre deux activités identifiées comme paiement ou don de monnaies. Renvoie "nonspeculation" dans les autres cas de [1] à [6] renvoie les quantités pour les paiement ↺, mlc, $ d'abord pour le proposeur puis pour l'accepteur</p>
 </details>
 <details> <summary>queltypetroc</summary> <p>Renvoie "simpletroc" si ce n'est pas un paiement sinon renvoie l'unité de paiement  ↺, mlc, $</p></details>
+<details> <summary>pournonlocalconfirme</summary> <p>Transfert l'acceptation d'une autre localité au proposeur par un lien url</p></details>
+<details> <summary>pournonlocalaccepte</summary> <p>Enregistre la proposition non locale et la renvoit our acceptation</p></details>
+<details> <summary>pournonlocaldemande</summary> <p>Demande la proposition pour envoi à une autre localité</p></details>
+<details> <summary>pournonlocaldemande</summary> <p>Demande la proposition pour envoi à une autre localité</p></details>
 <details> <summary>refusetransaction</summary> <p>Retire la proposition de la liste des opportunités et annule la transaction si le destinataire est identifié sinon renvoie le message Cette proposition reste ouverte à tous TREF</p></details>
 <details> <summary>remplacefichier</summary> <p>remplace le contenu du fichier</p></details>
 <details> <summary>retiredelaliste</summary> <p>Enlève un item dans un fichier de type tableau sans retour à la ligne</p></details>
@@ -58,6 +62,7 @@
 <details> <summary>testdestinatairedepot</summary> <p>Renvoie "autorise" ou "nonautorise" pour le proposeur</p></details>
 <details> <summary>tracelechemin</summary> <p>Crée et renvoie le chemin d'accès en fonction de l'identifiant</p></details>
 <details> <summary>transactionaccann</summary> <p>Renvoie le résumé de la proposition avec l'identifiant "tra" changé en "acc" ou en ann, en modifiant le moment de la transaction par le moment de l'acceptation et en mettant à jour le code de l'accepteur</p></details>
+<details> <summary>transactionetrangenum</summary> <p>Détecte si la transaction provient d'un autre serveur</p></details>
 <details> <summary>transactionformat202008</summary> <p>Reçoit la transaction dans le format avant le 1 aout 2020 et renvoit la transaction en format d'après cette date</p></details>
 <details> <summary>transactionstatut</summary> <p>Renvoie le statut de la proposition TDAC déjà acceptée par le demandeur, TDPA transaction proposée par le demandeur déjà accpetée TACC acceptée, TANN annulée, TEXP expirée, DTAO ma proposition, DTEX ma proposition expiree, DTAC acceptable par demandeur non proposeur, TNDI non disponible pour demandeur, TRIN inconnue </p></details>
 
