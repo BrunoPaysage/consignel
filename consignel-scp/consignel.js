@@ -6,7 +6,10 @@ function acceptetransaction(accepteouinon){
   $("#suiviappli").prepend("acceptetransaction("+accepteouinon+") <br>");
   var acceptation = accepteouinon;
   utilisateur = codequiutilise();
-  if(utilisateur=="u0"){ $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); };
+  if(utilisateur=="u0"){ 
+    // utilisateur non identifié procède à l'identification
+    $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); identification(); 
+  };
 /* proposition venant de moi */
   if(acceptation == "actualisemoi"){ actualiselaproposition("maproposition"); }; /* fin du actualisemoi */
   if(acceptation == "annulemoi"){ chargemoi('annuleuneproposition'); }; /* fin du annulemoi */
@@ -14,10 +17,6 @@ function acceptetransaction(accepteouinon){
   if(acceptation == "oui"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
   if(acceptation == "non"){ chargemoi('refuseuneproposition'); }; /* fin du non */
   if(acceptation == "modifie"){ actualiselaproposition("pasmaproposition"); }; /* fin du modifie */
- /*  if(acceptation == "oublieopportunite"){ chargemoi("oublieopportunite"); }; supprimé acces direct au lieu de passer par cette fonction */
-
-
-// alert("en cours d'écriture");
   if(acceptation == "demande"){ chargemoi('accepteuneproposition'); }; /* fin du oui */
 
 
@@ -89,6 +88,7 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
     $("#utilisationchoisioffre span.confirmation").html("J'ai donné");
     $("#utilisationchoisidemande span.confirmation").html(dequi+" m'a donné");
   };
+
   if (nomproposition == "demandeuneproposition"){
     $("#offreconfirme").html("demande "+$("#mstockdemandeuneproposition").text());
   }else{
@@ -102,13 +102,21 @@ function affichedetailproposition(noproposition, propositiondequi, accepte){
       var fin=nomproposition.substring(nodebut)+" }";
       nomproposition=debut+fin;
     }; // reformulation du jason pour accepter l'ancienne manière d'écrire la proposition
- 
-    var numtra = "tra"+inputdemande
+    
+    var numtra = "tra"+inputdemande // nom demandé
+
+    // détection du nom dans la proposition
+    var debutnom=nomproposition.indexOf("tra");
+    var finnom=nomproposition.indexOf('"',debutnom);
+    var nominterne=nomproposition.substring(debutnom,finnom);
+    if(nominterne!=numtra){
+      //alert(nominterne+"\n"+numtra);
+       numtra=nominterne;
+    };
+    
     try {var objson = JSON.parse(nomproposition); }
     catch (err){return;}; // proposition mal écrite ou inexistante
-    // $("#demandeconfirme").append( numtra+"<br>"); // nom de la transaction
-    // $("#demandeconfirme").append( objson[numtra][0]+"<br>"); // numéro de l'offre
-    
+     
     var numoff = "off"+objson[numtra]["sommaire"][2]+"_"+objson[numtra]["sommaire"][0]; // id de l'offre
     var dateetra = objson[numtra]["sommaire"][2].substring(0,8); // date de la transaction
     var dureetra = objson[numtra]["sommaire"][4]; // duree de la transaction
@@ -736,8 +744,12 @@ function chargemoitout(nomdonnees){
 function chargemoi(nomdonnees){
   $("#suiviappli").prepend("chargemoi("+nomdonnees+") ... ");
   $(".statut"+nomdonnees).html("...");
+  var optionnomdonnees=1;
   if (nomdonnees == "oublieopportunite"){
-    var nomdonnees2 = "oublieopportunite"; var nomdonnees = "mesopportunites";  
+    var nomdonnees2 = "oublieopportunite"; var nomdonnees = "mesopportunites";  optionnomdonnees=2;
+  };
+  if (nomdonnees == "propositionetrange"){
+    var nomdonnees2 = "propositionetrange"; var nomdonnees = "demandeuneproposition"; optionnomdonnees=2;  
   };
   var dansdiv="#mstock"+nomdonnees;
   var dansspansuivi=".fichierspersonnels .statut"+nomdonnees;
@@ -756,8 +768,11 @@ function chargemoi(nomdonnees){
       /* disponible et autorisé */
       var envoi = "non"; /* par défaut demande le fichier au lieu de l'envoyer */
       if (nomdonnees == "maproposition" ){envoi = "oui";};
+      if (nomdonnees2 == "propositionetrange" ){envoi = "oui";};
+
       if (nomdonnees == "demandeuneproposition" ){envoi = "oui";};
       if (nomdonnees == "accepteuneproposition" ){envoi = "oui";};
+      if (nomdonnees == "acceptationetrange" ){envoi = "oui";};
       if (nomdonnees == "refuseuneproposition" ){envoi = "oui";};
       if (nomdonnees == "annuleuneproposition" ){envoi = "oui";};
       if (nomdonnees == "inscription" ){envoi = "oui";};
@@ -777,11 +792,8 @@ function chargemoi(nomdonnees){
   if(!fichierlocaljson){
     /* rien dans localstorage */
     $("#suiviappli").prepend("depuis le serveur <br>");
-    if (nomdonnees2 == "oublieopportunite"){
-      demandefichier(dansdiv,nomdonnees2,dansspansuivi,nomfichierlocal,dansspansuivi2);
-    }else{
-      demandefichier(dansdiv,nomdonnees,dansspansuivi,nomfichierlocal,dansspansuivi2);     
-    };
+    if (optionnomdonnees==1){ demandefichier(dansdiv,nomdonnees,dansspansuivi,nomfichierlocal,dansspansuivi2); };
+    if (optionnomdonnees==2){ demandefichier(dansdiv,nomdonnees2,dansspansuivi,nomfichierlocal,dansspansuivi2); }
   }; /* fin du pas dans localstorage */
   if(fichierlocaljson){
     if(fichierlocaljson=="[]"){
@@ -957,10 +969,10 @@ var utilisateur = codequiutilise(); if (utilisateur == "u0 "){effacelentete();};
 cachetout(); $('.preferences').show(); $('#suiviappli').prepend('clic menu ----- preferences <br>');  
 };
 
+/* click sur la racine du site */
 function clicpageweb(){
 window.open(constante("app")+"index.html"); return false;
 };
-/* code l'activité nom et unité */
 
 /* click sur graphique suivi DD */
 function clicsuividd(elementclic){
@@ -1064,6 +1076,7 @@ function codequiutilise(){
   return quiutilise;
 }; /* fin codequiutilise */
 
+/* charge la proposition */
 function confirmationokinputcode(){
   $(".validation").hide(); 
   $("#suiviappli").prepend("confirmationokinputcode() <br>");
@@ -1074,6 +1087,13 @@ function confirmationokinputcode(){
   if (entree == "mes transactions" ){mestransaction();};
   $("#confirmationinputcode").css('color', '');
   effacedemandeproposition();
+  if(utilisateur!="u0"){
+    // utilisateur identifié
+    // alert("entree: "+entree+" | utilisateur: "+utilisateur);
+    // proposition hors localité à enregistrer   
+    chargemoi('propositionetrange')
+  };
+  // utilisateur non identifié
   chargemoi('demandeuneproposition'); 
 };
 
@@ -1097,6 +1117,10 @@ function debuter(){
 $(".serveurlocalite").hide();$(".secret").hide();$(".inscription2").hide(); $(".inscription3").hide();
 $("#confirmationacceptetransaction .matransaction").hide();
 
+/* lieu du serveur en attendant l'identification */
+//var lieuurl=valideurl(constante("siteweb"),1);
+var lieuurl=constante("nomlocalite");
+$('.appentete .localisation .lieu').text(lieuurl);
 
 /* connection des listes triables */
 $("#suiviappli").prepend("function() .sortable<br>");
@@ -1161,9 +1185,11 @@ $(".suivicompte .rond").click(function() { clicsuividd("rond"); });
 $(".suivicompte .barredisponible").click(function() { clicsuividd("suivibarre"); });
 
 /* ajout des onchange sur le html incription et arretesession*/
+$("#inscriptionserveurlocalitevoit").click(function() { $(".serveurlocalite").show();  $(".serveurlocalite input").show().focus(); });
 $("#inscription0voit").click(function() { changeType(formulaireaccesutilisateur,'text','password'); });
 $("#inscription1voit").click(function() { changeType(formulaireaccespass,'text','password'); });
 
+$("#formulaireaccesserveurlocalite").keypress(function(){ if (event.keyCode==13){ $("#formulaireaccesserveurlocalite").val(nettoieinput($("#formulaireaccesserveurlocalite").val())); $("#formulaireaccesutilisateur").focus(); }; }); 
 $("#formulaireaccesutilisateur").change(function() { valideutilisateur(nettoieinput($("#formulaireaccesutilisateur").val())); });
 $("#formulaireaccespass").change(function() { valideutilisateur(nettoieinput($("#formulaireaccespass").val())); });
 $("#inscr2nom").change(function() { nettoieinput($("#inscr2nom").val()); inscription(2); });
@@ -1320,6 +1346,13 @@ function decochestockage(){
   $("#localstoragemoi").val("non"); $("#localstoragemoi").prop('checked', false); $(".localstoragemoi").html('non autorisé'); videfichierspersonnels();
 };
 
+function decodeUnicode(str) {
+  // Going backwards: from bytestream, to percent-encoding, to original string.
+  return decodeURIComponent(atob(str).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+}
+
 /* decrypte les fichiers locaux */
 function decryptediv(contenucrypte){
   $("#suiviappli").prepend("decryptediv(contenucrypte) <br>");
@@ -1473,12 +1506,16 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
     if ($("#matransaction").text()=="..."){
       /* pas de transaction à transférer */
     }else{
-      
       // ajout de la fin } 
       var5="{ "+$("#matransaction").text()+","+$("#mesact").text() +" } } ";
       var5 = encryptepourtransfert(var5);
       var5="&var5="+var5
     };
+  };
+  if(demandefich=="propositionetrange"){
+    // récuperer la proposition dans l'uri
+    var5=valeururl("var7");
+    var5="&var7="+var5
   };
   if(demandefich=="retiredemandeaqui"){
     var5 = refaqui; /* reference aqui à supprimer */
@@ -1502,11 +1539,18 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
   };
 
   demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 +var4+var5 ; 
+  
+  
+//1     alert(demandefich+": "+demandeauserveur);
+
 
   $("#suiviappli").prepend("script php demandeauserveur envoyé au serveur <br>");
   $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success") {
       $("#suiviappli").prepend("fichier "+demandefich+" arrivé depuis le serveur<br>");
+//if(demandefich=="propositionetrange"){alert("propositionetrange|"+responseTxt+"|");};
+//        if(demandefich=="accepteuneproposition"){alert("accepte etrange"+responseTxt);};
+
       responseTxt = decryptetransfert(responseTxt);
       var testebr = responseTxt.indexOf("<br>"); 
       var testretour = responseTxt.substring(0,4);
@@ -1552,17 +1596,22 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         case "PDEN":
         alert("Présentez le code qr"); $("#acceptetransactionstatut").html("");//ne rien faire proposition déjà enregistrée
         break;
+        
         case "TACC":
         $("#acceptetransactionstatut").html("Transaction acceptée");
         menudetailproposition("pasmatransactionfermee");  $("#acceptetransactionoublier").show();
         $(".retourserveur").html( Number(tableauretour[0])+","+Number(tableauretour[1])+","+Number(tableauretour[2])+","+contenuretour+",,");
-        var paramgraph = contenuretour.split(","); 
+        var paramgraph = contenuretour.split(",");
         changegraphsuivi(paramgraph[0],paramgraph[1],paramgraph[2],paramgraph[3]);
-        
         // retirer l'item de la liste des propositions ou aller chercher la liste sur le serveur à faire
+        break;
+        case "TEAC":
+        var renvoiautreserveur=responseTxt.substring(responseTxt.indexOf("||")+2);
+// alert(renvoiautreserveur);
+
+        transactioninterlocalite("",renvoiautreserveur,2); // efface la page et affiche le lien à suivre vers le serveur du proposeur pour finaliser l'acceptation
+        break;
         
-        
-        break; 
         case "NUCI":
         menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
         inscription(1);
@@ -1601,7 +1650,8 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         affichedetailproposition(latransaction,propositiondequi); break; 
         case "DTAO":
         $("#acceptetransactionstatut").html("Transaction disponible");
-        menudetailproposition("pasmatransaction"); affichedetailproposition(latransaction,propositiondequi);
+        menudetailproposition("pasmatransaction"); 
+        affichedetailproposition(latransaction,propositiondequi);
         break; 
         case "DIMF":
         alert(contenuretour); break; // "Demande d'inscription mal formulée"
@@ -1674,7 +1724,14 @@ function demandefichier(queldiv,nomdonnees,quelspansuivi,quelfichierlocal,quelsp
         }else{
           responseTxt = responseTxt.substring(4); propositionrefusee(responseTxt);
           if($("#offrechoisi").is(":visible")){ alert("Proposition non conforme. Relancer la page et reformulez la proposition"); };                  
-          if($("#offreconfirme").is(":visible")){ alert("Le code QR est à montrer au proposeur initial"); };                  
+          if($("#offreconfirme").is(":visible")){ 
+            if($("#qrcode .qrcodetexte").txt()==constante("siteweb")){
+              alert("code étrange");
+            }else{
+              alert("Le code QR est à montrer au proposeur initial");
+            };
+            
+          };                  
         };
         break; 
         
@@ -1812,7 +1869,9 @@ function download(filename, text) {
 /* efface l'entête utilisateur inconnu */
 function effacelentete(){
   $("#suiviappli").prepend("effacelentete() <br>");
-  $('.appentete .localisation .lieu').html(""); 
+  var lieuurl=valideurl(constante("siteweb"),1);
+  // var lieuurl=constante("nomlocalite");
+  $('.appentete .localisation .lieu').html(lieuurl); 
   $('.appentete .utilisateur .nomutilisateur').html("... mode démo ..."); 
   $('.appentete .localisation img.utilisateur').attr('src', constante("app")+"photoidentite.jpg");
   $('.alerte').html(""); 
@@ -1823,7 +1882,10 @@ function effacelentete(){
   decochestockage();
   utilisateurinconnu();
   verifiepreflocalstorage();
-  cachetout(); $(".inscription").show(); $(".serveurlocalite").hide(); $(".secret").hide();  
+  cachetout(); 
+  $(".inscription").show(); 
+  if($("#confirmationinputcode").val()){ $("#inscriptionserveurlocalitevoit").show(); }else{ $("#inscriptionserveurlocalitevoit").hide(); };
+  $(".serveurlocalite").hide(); $(".secret").hide();  
   $('#formulaireacces')[0].reset();
   $("#formulaireaccesutilisateur").show().focus(); 
 };
@@ -2412,12 +2474,20 @@ $("#suiviappli").prepend("nettoieinput("+valinput+") <br>");
   return valinput;
 };
 
-/* Précaution anti-script sur une entrée input */
+/* Précaution anti-script sur une entrée input - */
 function nettoieinputnb(valinput){
   $("#suiviappli").prepend("nettoieinputnb(valinput) <br>");
   var gardenchiffresettiret = new RegExp('[^\\d-]', 'gi');
   valinput = valinput.replace(gardenchiffresettiret, '');
   return valinput;
+};
+
+/* Numéro de la transaction _ */
+function nettoieinputnb2(numtransaction){
+  $("#suiviappli").prepend("nettoieinputnb(valinput) <br>");
+  var gardenchiffresetsoulign = new RegExp('[^\\d_]', 'gi');
+  numtransaction2 = numtransaction.replace(gardenchiffresetsoulign, '');
+  return numtransaction2;
 };
 
 /* enleve les lettres */
@@ -2486,22 +2556,6 @@ function proposechoix(){
   var var4 = nettoieinput($("#inputchercheparqui").val()); if (var4 !== ""){var4 = " "+ var4;};
   var variablelocale = nettoieinput(var1+var2+var3+var4);
   $("#inputactivite").val(variablelocale);
-};
-
-/* proposition acceptée avec nouveau résumé en retour du serveur */
-function propositionacceptee(responseduserveur){
-  $("#confirmationinputcode").val("2019"); 
-  $("#confirmationokinputcode").click();
-  //  changegraphsuivi(disponible,dispomini,unjour,dispomaxi);
-  // reçoit nouveau résumé de compte et change le graphique
-  var nouveauresume = responseduserveur;
-  var tableauretour = tableauretourquiutilise();
-  $(".retourserveur").html( tableauretour[0]+","+tableauretour[1]+","+tableauretour[2]+","+nouveauresume+",,");
-  // changegraphsuivi(disponible,unjour,dispomini,dispomaxi);
-  var paramgraph = nouveauresume.split(","); 
-   changegraphsuivi(Number(paramgraph[0]),Number(paramgraph[1]),Number(paramgraph[2]),Number(paramgraph[3]));
-   effaceconfirmation();
-  // mise à jour du stockage local à faire
 };
 
 /* proposition annulée par l'auteur */
@@ -2800,6 +2854,53 @@ function toto(variable){
   var variablelocale=variable;
 };
 
+/* fonction permettant une transaction entre 2 serveurs consignel */
+function transactioninterlocalite(adresseserveur,responseTxt,etape){
+  var urlautreconsignel=responseTxt.substring(responseTxt.indexOf(adresseserveur.substring(0,10)));
+  var lienserveur="<a href=\""+urlautreconsignel+"\">"+urlautreconsignel+"</a>"; // serveur accepteur pour étape 1 et serveur proposeur pour étape 2
+  if(etape==1){
+  $(".serveurlocalite span.suivi").html("<br> Les transactions entre localités sont manuelles. Vous devez valider la transaction sur votre serveur local en vérifiant bien les impacts chez vous<br>Étape "+etape+": Cliquez sur le lien de transfert de la proposition pour l'accepter en vous identifiant sur votre serveur <br>"+lienserveur);
+  $("#formulaireaccesserveurlocalite").hide(); $(".inscription1").hide();
+  };
+  if(etape==2){
+  $("#acceptetransactionstatut").html("<br> Transaction entre localités ... <br>Étape "+etape+": Cliquez sur le lien de confirmation de la transaction vers le serveur du proposeur <br>"+lienserveur);
+  $("#formulaireaccesserveurlocalite").hide(); $(".inscription1").hide();
+  $(".pasmatransaction").hide(); $(".utilisation").hide();
+  };
+};
+
+/* fonction validant le lien accepté hors localité */
+function transactioninterlocalitefinal(numtransaction,transaction64transfert){
+  var var1local=numtransaction;
+  var var7local=transaction64transfert;
+  $("#formulaireaccesutilisateur").val("interlocal");
+  $("#formulaireaccesserveurlocalite").val("consignel/index.html");
+  valideutilisateur("interlocal");  
+  var demandeauserveur= "var1=" + numtransaction + "&var2=" + numtransaction + "&var6=" + numtransaction + "&var7=" + transaction64transfert ;
+//  alert("avantphp:"+demandeauserveur);
+  $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
+    /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
+    if(statusTxt == "success") {
+      var tableauretour = responseTxt.split(",");
+      // tableauretour[] de 1 à 5 utilisateur inconnu, 6 indicatif retrouretrange, 7 et 8 numéro de la transaction avec et sans souligné, 9 base6 du json d'acceptation
+//alert("apresphp: "+tableauretour[6]+","+tableauretour[7]+","+tableauretour[8]+","+tableauretour[9]); 
+//      alert(tableauretour[8]+","+numtransaction);
+      if(tableauretour[6]==" retouretrange"){
+        // retouretrange avec un blanc devant
+        var retourserveur2=decodeUnicode(tableauretour[9]);
+        //alert(retourserveur2); // json en retour d'acceptation
+        alert("Merci l'acceptation de la proposition est confirmée au proposeur\n"+tableauretour[8]+"\n"+retourserveur2);
+        
+      };
+      
+  
+    }; /* Fin de la fonction de retour succès */
+    if(statusTxt == "error") { $('.alerte').html("<br><i class='eval0'> - Serveur indisponible " + xhr.status + ": " + xhr.statusText+" -</i>");};
+  }); /* Fin du .load */
+
+};
+
+/* fonction renvoyant le type inconnu */
 function utilisateurinconnu(){
   $(".retourserveur").html("u0, 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu");
 };
@@ -2885,16 +2986,18 @@ function valideutilisateur(nomutilisateur){
   };
   var demandeauserveur = "var1=" + nomcode + "&var2=" + nomcode2 + "&var3=" + nomcode3 ; // prépare la demande au serveur // envoi la demande au serveur
   var retourdansdiv = ".retourserveur";
+     
  if(serveurutil){
-   /* Procédure pour transaciton entre localités */
-   var lienserveuraccepteur="<a href=\""+serveurutil+"\">"+serveurutil+"</a>";
-   $(".serveurlocalite span.suivi").html("<br> Transactions entre localités pas encore disponible <b>"+lienserveuraccepteur);
- };
- 
+   /* Complément variables pour transaciton entre localités */
+   // var1 et var2 codes accepteur var6 numéro de transaction, var7 serveur horslocalité (accepteur), var8 serveurlocalite + "&var8=" + constante("siteweb")
+   var demandeauserveur = demandeauserveur + "&var6=" + nettoieinput($("#confirmationinputcode").val()) + "&var7=" + valideurl(nettoieinput($("#formulaireaccesserveurlocalite").val()),2);
+  };
+// alert(demandeauserveur);
  
   $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
     /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
     if(statusTxt == "success") {
+     
       /* le chargement est fait par le .load dans le div .retourserveur et dans la variable reponseTxt */
       if (responseTxt.indexOf("?php")==1) {
         $('.alerte').html("<br><i class='eval2'>Vérification d'utilisateur indisponible sur le serveur</i><br>"); 
@@ -2902,12 +3005,25 @@ function valideutilisateur(nomutilisateur){
         return;
       }else{
         responseTxt = decryptetransfert(responseTxt);
+// alert("toto"+responseTxt);
         $(retourdansdiv).html(responseTxt);
       }; 
       // séparation des variables renvoyées dans le div .retourserveur par le serveur
       try { var tableauretour = $(".retourserveur").html().split(","); }
         catch(err) {$(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};
       /* Utilisateur inconnu sur le serveur echo (" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu") */
+      /* Utilisateur inconnu sur le serveur mais accepteur hors localité echo (" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconxxxx(numeroutilisateur),numerotransaction,cheminserveur") */
+      //numtransaction = nettoieinputnb2(numtransaction);
+      var numtransaction2=nettoieinputnb2(window.location.search);
+      numtransaction2=numtransaction2.substr(1);
+      if(tableauretour[7]==numtransaction2){
+        if(tableauretour[8]){
+          transactioninterlocalite(tableauretour[8],responseTxt,1);  
+          // alert("transaction pour personne hors localité");
+        }else{
+          // alert("Vérifiez le chemin vers votre serveur ou votre nom public");
+        };
+      };
       
       if(!tableauretour[2]){ $(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};/* Utilisateur DA↺ mot réservé undefined */
       
@@ -2919,8 +3035,8 @@ function valideutilisateur(nomutilisateur){
       
       if(tableauretour[0] == " "){
         tableauretour[0]="u0"; $(".retourserveur").prepend(tableauretour[0]); /* ajout identifiant local utilisateur inconnu si ce n'est pas encore fait mauvaise identification d'utilisateur*/
-        $(".serveurlocalite").show();
-        $("#formulaireaccesserveurlocalite").val(constante("siteweb"));
+        $(".serveurlocalite").show(); $("#formulaireaccesserveurlocalite").focus();
+    //    $("#formulaireaccesserveurlocalite").val(constante("siteweb"));
         };
       //  effaceutilisation();/* efface les traces des préparations de transactions précédentes */
         /* Chargement des valeurs locales de test */
@@ -2992,6 +3108,27 @@ function validedemandeaqui(){
   miseajourdesvaleurs();
 }; 
 
+/* validation de l'url selon la longueur choisie */
+function valideurl(chaineurl,longueur){
+  var nomserveur= chaineurl;
+  // nom du serveur
+  if(longueur==1 || longueur=="undefined"){
+    nomserveur=nomserveur.substring(nomserveur.indexOf("/")+2);
+    nomserveur=nomserveur.substring(0,nomserveur.indexOf("/")-4);
+    return nomserveur;
+  };
+  // url du serveur complète sans les variables
+  if(longueur==2){
+    if(nomserveur.substring(0,3)=="www"){nomserveur="//"+nomserveur;};
+    if(nomserveur.indexOf("/index.html")!=-1){
+      nomserveur=nomserveur.substring(0,nomserveur.indexOf("/index.html")+11);
+    }else{
+      nomserveur=nomserveur+"/index.html";
+    };
+    return nomserveur;
+  };
+}; 
+
 /* mise à jour préférences avec localstorage */
 function verifiepreflocalstorage(){
   $("#suiviappli").prepend("verifiepreflocalstorage() <br>");
@@ -3029,11 +3166,29 @@ function verifieurlpropose(){
     var utilisateur = codequiutilise();
     if(utilisateur=="u0"){ 
       $('#confirmationrecherche').attr("class","attente"); $('.menupref .suivant').html(".confirmation"); 
+      var var6local = valeururl("var6");
+      if(var1local == var6local ){
+        // demande transaction etrange
+        var var7local = valeururl("var7");
+        var nbelements = var6local.split('_').length;
+        if(nbelements==3){ 
+          // finalisation avec réponse d'accpetation d'une autre localité
+          // alert("lien renvoi etrange accepté");
+          transactioninterlocalitefinal(var6local,var7local);        
+        };
+        if(nbelements==4){ 
+           //alert("lien étrange à valider besoin de la page d'identification pour avoir le lien vers le serveur hors localité");
+           $(".inscription1 .utilisateur").prepend("Identification dans votre localité pour accepter une proposition<br>");
+          // ne rien faire de particulier ici agir après identification
+        };
+      };
     };
   }else{
     $("#confirmationinputcode").val(var1local+"_"); 
+
   };
 };
+
 /* mise à jour de la valeur du consignel en fonction des autres valeurs */
 
 /* vide autocomplete du input*/
@@ -3122,7 +3277,8 @@ function videlespoubelles(){$("#poubelle").html("");$("#poubelle2").html("");mis
 function constante($nom){
 if($nom == "paiements"){ return '["$_18702","$_25343","mlc_41642",mlc_51083","↺_629160","↺_721781","↺_2220560"]'; };
 if($nom == "ouverturecompte"){ return '"150,90,30,360"'; };
-if($nom == "localite"){ return "localite/"; };
+if($nom == "localite"){ return "localite/"; };  /* répertoire des données locales */
+if($nom == "nomlocalite"){ return "Marieville"; };  /* nom de la localité */
 if($nom == "siteweb"){ 
   return nettoieinput(window.location.protocol+"//"+window.location.host + window.location.pathname) ;  /* automatique */
   /*  return "www.designvegetal.com/projets/consignel/index.html";  /* forcé */
