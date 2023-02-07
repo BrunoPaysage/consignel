@@ -5,188 +5,188 @@
 <p class="identification"></p>
 <p class="structure"></p>
 <div class="contenu">
-	<p>Tests à effectuer</p>
-	<details>
-		<summary>Prise en compte des valeurs initiales pour 2 utilisateurs inscrits</summary>
-		<ol>
-			<li>Connectez l'<a href="../consignel-utilisateurs/consignel-utilisateurs-test.html">utilisateur "moi"</a>. Il a au départ 150 ↺ en réserve</li>
-			<li>Notez la quantité si elle est différente</li>
-			<li>Connectez l'<a href="../consignel-utilisateurs/consignel-utilisateurs-test.html">utilisateur "autre"</a>. Il a au départ 250 ↺ en réserve</li>
-			<li>Notez la quantité si elle est différente</li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li></li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
-	<details>
-		<summary>Faire la proposition</summary>
-		<ol>
-			<li>L'utilisateur "autre" est connecté</li>
-			<li>Taper la lettre "a" dans la barre de recherche et sélectionnez "produit de mon jardin 1kg". </li>
-			<li>Changez la quantité à 10kg impact -20.5 ↺ réserve 229,5 ↺ <a href="../consignel-pourquoi/consignel-pourquoi-impactindividuel.html">(compensation immédiate)</a> <br>
-			229,5 ↺ = 250 ↺ - 20,5 ↺. La quantité est différente si la réserve initiale n'était pas à 250 ↺. </li>
-			<li>Cliquez sur demande</li>
-			<li>Taper la lettre "a" dans la barre de recherche et sélectionnez "produit de mon jardin 1kg". Changez la quantité à 5kg. La réserve ne change pas, mais on voit quel sera l'impact pour l'accepteur dans son DA↺ <a href="../consignel-pourquoi/consignel-pourquoi-impactindividuel.html">(chacun ses impacts principe pollueur payeur)</a></li>
-			<li>Confirmez la proposition en cliquant sur le code QR</li>
-			<li>Notez le code de la transaction 00000000_0000_0000000</li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li>Attendre longuement entre la préparation et la validation de la proposition. Nouvelle vérification d'identité avant de pouvoir valider le code QR</li>
-					<li>Cliquer à nouveau sur le code QR. L'indication "Présenter le code QR" s'affiche. Il n'y a pas de changement dans les fichiers de la base. Les clic suivant font alternativement passer passe le code QR de vert à pâle sans modification de la base.</li>
-					<li>Inverser 2 fois les items entre l'offre et la demande. La nouvelle proposition est identique à la date près. Un clic sur le code QR l'enregistre dans la base comme nouvelle proposition.</li>
-				</ul>
-			</details></li>
-		</ol>
-	</details>
-	<details>
-		<summary>Accepter la proposition</summary>
-		<ul>
-			<li>Option A passer par le code QR
-				<ol>
-					<li>Scannez le code QR<br>
-					L'url d'accès à la page contient le numéro de la transaction /index.html?var1=00000000_0000_0000000</li>
-					<li>Connectez l'<a href="../consignel-utilisateurs/consignel-utilisateurs-test.html">utilisateur "moi"</a>. Il a au départ 150 ↺ en réserve. La réserve est passée à 139,75 ↺</li>
-					<li>Cliquez sur le bouton accepté
-						<details>
-							<summary>Tests complémentaires</summary>
-							<ul>
-								<li><a href="consignel-test-qr.html">Test du code QR de transaction</a></li>
-							</ul>
-						</details>
-					</li>
-				</ol>
-			</li>
-			<li>Option B sans passer par le code QR
-				<ol>
-					<li>Fermer la fenêtre du navigateur</li>
-					<li>Ouvrir l'application</li>
-					<li>Cliquez sur le menu Conf</li>
-					<li>Entrez le numéro de la proposition dans la barre du code QR</li>
-					<li>Connectez l'utilisateur "moi"</li>
-					<li>Cliquez sur le bouton accepté</li>
-				</ol>
-			</li>
-		</ul>
-	</details>
-	<details>
-		<summary>Vérifier les montants</summary>
-		<ol>
-			<li>Ouvrir une nouvelle fenêtre ↺onsignél</li>
-			<li>Utilisateur "moi" réserve 139,75 ↺</li>
-			<li>Utilisateur "autre" réserve 229,5 ↺</li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li>Vérifier les fichier tra- et acc- dans la base horaire</li>
-					<li>Vérifier les fichiers des 2 utilisateurs dans leur base personnelle <br>00000-suiviresume.json, 00000-suivi31jours.json, 00000-resume2dates.json, 00000-resume.json, 00000-mespropositions.json</li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
-	<details>
-		<summary>Transaction avec gains</summary>
-		<ol>
-			<li>Utilisateur "moi" réserve 139,75</li>
-			<li>Faire l'offre "entretenir la nature 1h" réserve 162,75</li>
-			<li>Changer la quantité "2h" réserve 185,75</li>
-			<li>Demander  "entretenir la nature 1h" réserve inchangée impact sur accepteur 23 ↺</li>
-			<li>Valider la proposition en cliquant sur le code QR la réserve revient à 139,75 <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Zéro spéculation)</a></li>
-			<li type="square"></li>
-			<li>Scanner le code QR</li>
-			<li>Utilisateur "autre" ancienne réserve 229,5 nouvelle réserve 252,5</li>
-			<li>Cliquez sur "accepté"</li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li></li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
-	<details>
-		<summary>Vérifier les montants 2</summary>
-		<ol>
-			<li>Ouvrir une nouvelle fenêtre ↺onsignél</li>
-			<li>Utilisateur "moi" ancienne réserve 139,75 nouvelle réserve 185,75 ↺ Recharger la page et connectez l'utilisateur pour la mise à jour de l’indicateur <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Le gain accepté par une autre personne)</a></li>
-			<li>Utilisateur "autre" réserve 252,5 ↺ <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Le gain a été accepté par le proposeur au moment de sa proposition)</a></li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li>Vérifier les fichier tra- et acc- dans la base horaire</li>
-					<li>Vérifier les fichiers des 2 utilisateurs dans leur base personnelle <br>00000-suiviresume.json, 00000-suivi31jours.json, 00000-resume2dates.json, 00000-resume.json, 00000-mespropositions.json</li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
-	<details>
-		<summary>Transaction avec don de ↺onsignel</summary>
-		<ol>
-			<li>Utilisateur "autre" réserve 252,5</li>
-			<li>Faire l'offre "donner 1 ↺" réserve 252,4</li>
-			<li>Changer la quantité "25" ↺ réserve 225 <a href="../consignel-pourquoi/consignel-pourquoi-compenserplus.html">(Compenser plus pour faire un gain)</a></li>
-			<li>Demander  "produit de mon jardin 1kg"</li>
-			<li>Changer la quantité à "11" kg. L'impact pour l'accepteur sera de -22.55 ↺</li>
-			<li>Valider la proposition en cliquant sur le code QR la réserve revient à 139,75 <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Zéro spéculation)</a></li>
-			<li type="square"></li>
-			<li>Scanner le code QR</li>
-			<li>Connectez "moi" ancienne réserve 185,75 nouvelle réserve 163,2. L'indicateur de développement durable tient uniquement compte du DA↺ avant acceptation. Il tient compte du don de ↺ après acceptation. Nouvelle réserve 188,2</li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li>Vérifier les fichiers de la base</li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
-	<details>
-		<summary>Vérifier les montants 3</summary>
-		<ol>
-			<li>Utilisateur "moi" nouvelle réserve 188,2 ↺ </li>
-			<li>Utilisateur "autre" réserve 225 ↺ </li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li>Vérifier les fichier de la base </li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
-	<details>
-		<summary>Transaction avec demande de don de ↺onsignel</summary>
-		<ol>
-			<li>Utilisateur "autre" réserve 225</li>
-			<li>Faire l'offre "produit de mon jardin 1kg" réserve 222,95</li>
-			<li>Changer la quantité "11" kg réserve 202,45 </li>
-			<li>Demander "donner 1 ↺" </li>
-			<li>Changer la quantité à "25" ↺. L'impact pour l'accepteur sera de -27.5 ↺</li>
-			<li>Valider la proposition en cliquant sur le code QR la réserve ne tient pas compte de la demande de don de ↺onsignel <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Zéro spéculation)</a></li>
-			<li type="square"></li>
-			<li>Scanner le code QR</li>
-			<li>Connectez "moi" ancienne réserve 188,2 nouvelle réserve 160,7. La différence n'est pas le don de ↺onsignel mais la compensation de l'impact.</li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li>Vérifier les fichiers de la base</li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
-	<details>
-		<summary>Vérifier les montants 4</summary>
-		<ol>
-			<li>Utilisateur "moi" nouvelle réserve 160,7 ↺ </li>
-			<li>Utilisateur "autre" ancienne réserve 202,45 nouvelle réserve 227,45 ↺ Reconectez l'utilisateur pour la mise à jour</li>
-			<li><details>
-				<summary>Tests complémentaires</summary>
-				<ul>
-					<li>Vérifier les fichier de la base </li>
-				</ul>
-			</details>
-		</li></ol>
-	</details>
+  <p>Tests à effectuer</p>
+  <details>
+    <summary>Prise en compte des valeurs initiales pour 2 utilisateurs inscrits</summary>
+    <ol>
+      <li>Connectez l'<a href="../consignel-utilisateurs/consignel-utilisateurs-test.html">utilisateur "moi"</a>. Il a au départ 150 ↺ en réserve</li>
+      <li>Notez la quantité si elle est différente</li>
+      <li>Connectez l'<a href="../consignel-utilisateurs/consignel-utilisateurs-test.html">utilisateur "autre"</a>. Il a au départ 250 ↺ en réserve</li>
+      <li>Notez la quantité si elle est différente</li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li></li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
+  <details>
+    <summary>Faire la proposition</summary>
+    <ol>
+      <li>L'utilisateur "autre" est connecté</li>
+      <li>Taper la lettre "a" dans la barre de recherche et sélectionnez "produit de mon jardin 1kg". </li>
+      <li>Changez la quantité à 10kg impact -20.5 ↺ réserve 229,5 ↺ <a href="../consignel-pourquoi/consignel-pourquoi-impactindividuel.html">(compensation immédiate)</a> <br>
+      229,5 ↺ = 250 ↺ - 20,5 ↺. La quantité est différente si la réserve initiale n'était pas à 250 ↺. </li>
+      <li>Cliquez sur demande</li>
+      <li>Taper la lettre "a" dans la barre de recherche et sélectionnez "produit de mon jardin 1kg". Changez la quantité à 5kg. La réserve ne change pas, mais on voit quel sera l'impact pour l'accepteur dans son DA↺ <a href="../consignel-pourquoi/consignel-pourquoi-impactindividuel.html">(chacun ses impacts principe pollueur payeur)</a></li>
+      <li>Confirmez la proposition en cliquant sur le code QR</li>
+      <li>Notez le code de la transaction 00000000_0000_0000000</li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li>Attendre longuement entre la préparation et la validation de la proposition. Nouvelle vérification d'identité avant de pouvoir valider le code QR</li>
+          <li>Cliquer à nouveau sur le code QR. L'indication "Présenter le code QR" s'affiche. Il n'y a pas de changement dans les fichiers de la base. Les clic suivant font alternativement passer passe le code QR de vert à pâle sans modification de la base.</li>
+          <li>Inverser 2 fois les items entre l'offre et la demande. La nouvelle proposition est identique à la date près. Un clic sur le code QR l'enregistre dans la base comme nouvelle proposition.</li>
+        </ul>
+      </details></li>
+    </ol>
+  </details>
+  <details>
+    <summary>Accepter la proposition</summary>
+    <ul>
+      <li>Option A passer par le code QR
+        <ol>
+          <li>Scannez le code QR<br>
+          L'url d'accès à la page contient le numéro de la transaction /index.html?var1=00000000_0000_0000000</li>
+          <li>Connectez l'<a href="../consignel-utilisateurs/consignel-utilisateurs-test.html">utilisateur "moi"</a>. Il a au départ 150 ↺ en réserve. La réserve est passée à 139,75 ↺</li>
+          <li>Cliquez sur le bouton accepté
+            <details>
+              <summary>Tests complémentaires</summary>
+              <ul>
+                <li><a href="consignel-test-qr.html">Test du code QR de transaction</a></li>
+              </ul>
+            </details>
+          </li>
+        </ol>
+      </li>
+      <li>Option B sans passer par le code QR
+        <ol>
+          <li>Fermer la fenêtre du navigateur</li>
+          <li>Ouvrir l'application</li>
+          <li>Cliquez sur le menu Conf</li>
+          <li>Entrez le numéro de la proposition dans la barre du code QR</li>
+          <li>Connectez l'utilisateur "moi"</li>
+          <li>Cliquez sur le bouton accepté</li>
+        </ol>
+      </li>
+    </ul>
+  </details>
+  <details>
+    <summary>Vérifier les montants</summary>
+    <ol>
+      <li>Ouvrir une nouvelle fenêtre ↺onsignél</li>
+      <li>Utilisateur "moi" réserve 139,75 ↺</li>
+      <li>Utilisateur "autre" réserve 229,5 ↺</li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li>Vérifier les fichier tra- et acc- dans la base horaire</li>
+          <li>Vérifier les fichiers des 2 utilisateurs dans leur base personnelle <br>00000-suiviresume.json, 00000-suivi31jours.json, 00000-resume2dates.json, 00000-resume.json, 00000-mespropositions.json</li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
+  <details>
+    <summary>Transaction avec gains</summary>
+    <ol>
+      <li>Utilisateur "moi" réserve 139,75</li>
+      <li>Faire l'offre "entretenir la nature 1h" réserve 162,75</li>
+      <li>Changer la quantité "2h" réserve 185,75</li>
+      <li>Demander  "entretenir la nature 1h" réserve inchangée impact sur accepteur 23 ↺</li>
+      <li>Valider la proposition en cliquant sur le code QR la réserve revient à 139,75 <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Zéro spéculation)</a></li>
+      <li type="square"></li>
+      <li>Scanner le code QR</li>
+      <li>Utilisateur "autre" ancienne réserve 229,5 nouvelle réserve 252,5</li>
+      <li>Cliquez sur "accepté"</li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li></li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
+  <details>
+    <summary>Vérifier les montants 2</summary>
+    <ol>
+      <li>Ouvrir une nouvelle fenêtre ↺onsignél</li>
+      <li>Utilisateur "moi" ancienne réserve 139,75 nouvelle réserve 185,75 ↺ Recharger la page et connectez l'utilisateur pour la mise à jour de l’indicateur <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Le gain accepté par une autre personne)</a></li>
+      <li>Utilisateur "autre" réserve 252,5 ↺ <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Le gain a été accepté par le proposeur au moment de sa proposition)</a></li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li>Vérifier les fichier tra- et acc- dans la base horaire</li>
+          <li>Vérifier les fichiers des 2 utilisateurs dans leur base personnelle <br>00000-suiviresume.json, 00000-suivi31jours.json, 00000-resume2dates.json, 00000-resume.json, 00000-mespropositions.json</li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
+  <details>
+    <summary>Transaction avec don de ↺onsignel</summary>
+    <ol>
+      <li>Utilisateur "autre" réserve 252,5</li>
+      <li>Faire l'offre "donner 1 ↺" réserve 252,4</li>
+      <li>Changer la quantité "25" ↺ réserve 225 <a href="../consignel-pourquoi/consignel-pourquoi-compenserplus.html">(Compenser plus pour faire un gain)</a></li>
+      <li>Demander  "produit de mon jardin 1kg"</li>
+      <li>Changer la quantité à "11" kg. L'impact pour l'accepteur sera de -22.55 ↺</li>
+      <li>Valider la proposition en cliquant sur le code QR la réserve revient à 139,75 <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Zéro spéculation)</a></li>
+      <li type="square"></li>
+      <li>Scanner le code QR</li>
+      <li>Connectez "moi" ancienne réserve 185,75 nouvelle réserve 163,2. L'indicateur de développement durable tient uniquement compte du DA↺ avant acceptation. Il tient compte du don de ↺ après acceptation. Nouvelle réserve 188,2</li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li>Vérifier les fichiers de la base</li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
+  <details>
+    <summary>Vérifier les montants 3</summary>
+    <ol>
+      <li>Utilisateur "moi" nouvelle réserve 188,2 ↺ </li>
+      <li>Utilisateur "autre" réserve 225 ↺ </li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li>Vérifier les fichier de la base </li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
+  <details>
+    <summary>Transaction avec demande de don de ↺onsignel</summary>
+    <ol>
+      <li>Utilisateur "autre" réserve 225</li>
+      <li>Faire l'offre "produit de mon jardin 1kg" réserve 222,95</li>
+      <li>Changer la quantité "11" kg réserve 202,45 </li>
+      <li>Demander "donner 1 ↺" </li>
+      <li>Changer la quantité à "25" ↺. L'impact pour l'accepteur sera de -27.5 ↺</li>
+      <li>Valider la proposition en cliquant sur le code QR la réserve ne tient pas compte de la demande de don de ↺onsignel <a href="../consignel-pourquoi/consignel-pourquoi-0speculation.html">(Zéro spéculation)</a></li>
+      <li type="square"></li>
+      <li>Scanner le code QR</li>
+      <li>Connectez "moi" ancienne réserve 188,2 nouvelle réserve 160,7. La différence n'est pas le don de ↺onsignel mais la compensation de l'impact.</li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li>Vérifier les fichiers de la base</li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
+  <details>
+    <summary>Vérifier les montants 4</summary>
+    <ol>
+      <li>Utilisateur "moi" nouvelle réserve 160,7 ↺ </li>
+      <li>Utilisateur "autre" ancienne réserve 202,45 nouvelle réserve 227,45 ↺ Reconectez l'utilisateur pour la mise à jour</li>
+      <li><details>
+        <summary>Tests complémentaires</summary>
+        <ul>
+          <li>Vérifier les fichier de la base </li>
+        </ul>
+      </details>
+    </li></ol>
+  </details>
 
 </div>

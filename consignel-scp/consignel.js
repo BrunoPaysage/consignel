@@ -1346,6 +1346,13 @@ function decochestockage(){
   $("#localstoragemoi").val("non"); $("#localstoragemoi").prop('checked', false); $(".localstoragemoi").html('non autorisé'); videfichierspersonnels();
 };
 
+function decodeUnicode(str) {
+  // Going backwards: from bytestream, to percent-encoding, to original string.
+  return decodeURIComponent(atob(str).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+}
+
 /* decrypte les fichiers locaux */
 function decryptediv(contenucrypte){
   $("#suiviappli").prepend("decryptediv(contenucrypte) <br>");
@@ -2864,7 +2871,6 @@ function transactioninterlocalite(adresseserveur,responseTxt,etape){
 
 /* fonction validant le lien accepté hors localité */
 function transactioninterlocalitefinal(numtransaction,transaction64transfert){
-alert(numtransaction);
   var var1local=numtransaction;
   var var7local=transaction64transfert;
   $("#formulaireaccesutilisateur").val("interlocal");
@@ -2875,10 +2881,19 @@ alert(numtransaction);
   $.get(constante("php"), demandeauserveur , function(responseTxt, statusTxt, xhr){
     /* truc à faire dans tous les cas $('.test').append("<br>... Données traitées par la fonction de retour<br>"); */
     if(statusTxt == "success") {
-      try { var tableauretour = $(".retourserveur").html().split(","); }
-        catch(err) {$(".retourserveur").html(" , 0 , Inconnu , Inconnu , Inconnu , utilisateur inconnu"); tableauretour = $(".retourserveur").html().split(",");};
-
-alert("apresphp: "+responseTxt);   
+      var tableauretour = responseTxt.split(",");
+      // tableauretour[] de 1 à 5 utilisateur inconnu, 6 indicatif retrouretrange, 7 et 8 numéro de la transaction avec et sans souligné, 9 base6 du json d'acceptation
+//alert("apresphp: "+tableauretour[6]+","+tableauretour[7]+","+tableauretour[8]+","+tableauretour[9]); 
+//      alert(tableauretour[8]+","+numtransaction);
+      if(tableauretour[6]==" retouretrange"){
+        // retouretrange avec un blanc devant
+        var retourserveur2=decodeUnicode(tableauretour[9]);
+        alert(retourserveur2); // json en retour d'acceptation
+        
+        
+      };
+      
+  
     }; /* Fin de la fonction de retour succès */
     if(statusTxt == "error") { $('.alerte').html("<br><i class='eval0'> - Serveur indisponible " + xhr.status + ": " + xhr.statusText+" -</i>");};
   }); /* Fin du .load */
